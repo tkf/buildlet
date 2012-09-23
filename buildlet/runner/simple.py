@@ -1,4 +1,10 @@
 def run(task):
+    """
+    Simple blocking task runner.
+
+    Run `task` and its unfinished ancestors.
+
+    """
     task.pre_run()
     try:
         if task.is_finished():
