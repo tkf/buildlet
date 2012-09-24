@@ -17,7 +17,7 @@ class MixInStreamTestCase(BaseMixnInTestCase):
 
     def test_write_read(self):
         data = 'some text'
-        with self.ds.open() as f:
+        with self.ds.open('w+b') as f:
             f.write(data)
         self.assertTrue(self.ds.stream.closed)
 
@@ -34,7 +34,7 @@ class MixInNestableTestCase(BaseMixnInTestCase):
         ds = ds or self.ds
         data = 'some text'
         key = 'key_stream'
-        with ds.get_filestore(key).open() as s:
+        with ds.get_filestore(key).open('w+b') as s:
             s.write(data)
 
         with ds.get_filestore(key).open() as s:
@@ -45,7 +45,7 @@ class MixInNestableTestCase(BaseMixnInTestCase):
         ds = self.ds
         key = self.key_nested
         subds = ds.get_substore(key)
-        self.assertTrue(ds[key] is subds)
+        self.assertEqual(ds[key], subds)
         self.test_one_stream(subds)
 
 

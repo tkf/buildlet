@@ -17,7 +17,8 @@ def mkdirp(path):
 class DataFile(MixInDataStoreFileSystem, BaseDataStream):
 
     def open(self, *args, **kwds):
-        return open(self.path, *args, **kwds)
+        self.stream = open(self.path, *args, **kwds)
+        return self.stream
 
 
 class DataDirectory(BaseDataDirectory):
@@ -35,7 +36,7 @@ class DataDirectory(BaseDataDirectory):
         return os.listdir(self.path)
 
     def __len__(self):
-        return len(self._listdir)
+        return len(self._listdir())
 
     def __iter__(self):
         sep = os.path.sep
@@ -57,7 +58,9 @@ class DataDirectory(BaseDataDirectory):
 
     def _get_store(self, key):
         path = self.aspath(key)
-        if key.endswith(os.path.sep):
+        if not os.path.exists(path):
+            raise KeyError(key)
+        if os.path.isdir(path):
             cls = self.default_substore_type or self.__class__
             return cls(path=path)
         else:

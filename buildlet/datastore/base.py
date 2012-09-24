@@ -211,5 +211,5 @@ class BaseDataDirectory(MixInDataStoreFileSystem, BaseDataStoreNestable):
         if 'path' not in dskwds:
             dskwds = dskwds.copy()
             dskwds['path'] = self.aspath(key)
-        super(BaseDataDirectory, self) \
+        return super(BaseDataDirectory, self) \
             .get_substore(key, dstype=dstype, dskwds=dskwds)
