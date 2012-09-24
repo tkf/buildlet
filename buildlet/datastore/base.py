@@ -211,4 +211,4 @@ class BaseDataDirectory(MixInDataStoreFileSystem, BaseDataStoreNestable):
             dskwds = dskwds.copy()
             dskwds['path'] = self.aspath(key)
         super(BaseDataDirectory, self) \
-            .get_file(key, dstype=dstype, dskwds=dskwds)
+            .get_substore(key, dstype=dstype, dskwds=dskwds)

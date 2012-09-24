@@ -5,8 +5,7 @@ File system directory oriented data store.
 import os
 import shutil
 
-from .base import BaseDataDirectory, BaseDataStream
-from .autoserialize import DataValuePickle
+from .base import BaseDataDirectory, BaseDataStream, MixInDataStoreFileSystem
 
 
 def mkdirp(path):
@@ -15,7 +14,7 @@ def mkdirp(path):
         os.makedirs(path)
 
 
-class DataFile(BaseDataStream):
+class DataFile(MixInDataStoreFileSystem, BaseDataStream):
 
     def open(self, *args, **kwds):
         return open(self.path, *args, **kwds)
@@ -23,8 +22,7 @@ class DataFile(BaseDataStream):
 
 class DataDirectory(BaseDataDirectory):
 
-    default_substore_type = DataFile
-    default_valuestore_type = DataValuePickle
+    default_streamstore_type = DataFile
 
     def __init__(self, *args, **kwds):
         super(DataDirectory, self).__init__(*args, **kwds)
