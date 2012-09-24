@@ -8,8 +8,7 @@ from .mixintestcase import (
 
 class TestDataValueInMemory(MixInValueTestCase, unittest.TestCase):
 
-    def setUp(self):
-        self.ds = DataValueInMemory()
+    dstype = DataValueInMemory
 
     def test_set_get_singleton(self):
         obj = object()
@@ -18,13 +17,9 @@ class TestDataValueInMemory(MixInValueTestCase, unittest.TestCase):
 
 
 class TestDataStreamInMemory(MixInStreamTestCase, unittest.TestCase):
-
-    def setUp(self):
-        self.ds = DataStreamInMemory()
+    dstype = DataStreamInMemory
 
 
 class TestDataStoreNestableInMemory(MixInNestableAutoValueTestCase,
                                     unittest.TestCase):
-
-    def setUp(self):
-        self.ds = DataStoreNestableInMemory()
+    dstype = DataStoreNestableInMemory

@@ -1,8 +1,12 @@
 class BaseMixnInTestCase(object):
 
-    def setUp(self):
+    @property
+    def dstype(self):
         raise NotImplementedError(
-            'You must set data store `self.ds` here!')
+            "Child class must set `dstype` to a data store class.")
+
+    def setUp(self):
+        self.ds = self.dstype()
 
 
 class MixInValueTestCase(BaseMixnInTestCase):
