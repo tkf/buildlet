@@ -1,3 +1,7 @@
+import tempfile
+import shutil
+
+
 class BaseMixnInTestCase(object):
 
     @property
@@ -89,3 +93,23 @@ class MixInNestableAutoValueTestCase(MixInNestableTestCase):
     def test_nested_store(self):
         super(MixInNestableAutoValueTestCase, self).test_nested_store()
         self.test_one_value(self.ds[self.key_nested])
+
+
+class MixInWithTempFile(BaseMixnInTestCase):
+
+    def setUp(self):
+        self.tempfile = tempfile.NamedTemporaryFile()
+        self.ds = self.dstype(self.tempfile.name)
+
+    def tearDown(self):
+        self.tempfile.close()
+
+
+class MixInWithTempDirectory(BaseMixnInTestCase):
+
+    def setUp(self):
+        self.tempdir = tempfile.mkdtemp()
+        self.ds = self.dstype(self.tempdir)
+
+    def tearDown(self):
+        shutil.rmtree(self.tempdir)
