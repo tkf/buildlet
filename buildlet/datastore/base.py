@@ -97,9 +97,10 @@ class BaseDataStoreNestable(collections.MutableMapping, BaseDataStore):
             s = self[key]
             if not isinstance(s, dstype):
                 raise ValueError(
-                    'Data store of type {0} is requested, but '
-                    'current value {1!r} is not instance of it.'
-                    .format(dstype, s))
+                    "Cannot create sub-data store for key '{0}'.\n"
+                    "Data store of type {1} is requested, but "
+                    "current value {2!r} is not instance of it."
+                    .format(key, dstype, s))
             return s
         s = dstype(**dskwds)
         self[key] = s
