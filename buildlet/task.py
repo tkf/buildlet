@@ -1,4 +1,4 @@
-class TaskBase(object):
+class BaseTask(object):
 
     """
     Task base class with empty method definitions.
@@ -45,7 +45,7 @@ class TaskBase(object):
         return False
 
 
-class SimpleTaskBase(TaskBase):
+class BaseSimpleTask(BaseTask):
 
     """
     Task base class with predefined methods.

@@ -1,10 +1,10 @@
 import unittest
 
-from buildlet.task import SimpleTaskBase
+from buildlet.task import BaseSimpleTask
 from buildlet.runner import simple
 
 
-class TestingTaskBase(SimpleTaskBase):
+class TestingTaskBase(BaseSimpleTask):
     state = None
 
     def run(self):
