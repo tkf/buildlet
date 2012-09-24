@@ -72,7 +72,7 @@ class BaseDataStoreNestable(collections.MutableMapping, BaseDataStore):
 
     def get_substore(self, key, dstype=None, dskwds={}):
         if dstype is None:
-            dstype = self.default_substore_type
+            dstype = self.default_substore_type or self.__class__
         if key in self:
             s = self[key]
             if not isinstance(s, dstype):
