@@ -39,10 +39,9 @@ class DataDirectory(BaseDataDirectory):
         return len(self._listdir())
 
     def __iter__(self):
-        sep = os.path.sep
         for key in self._listdir():
-            if os.path.isdir(self.aspath(key)) and not key.endswith(sep):
-                yield key + sep
+            if os.path.isdir(self.aspath(key)):
+                yield key
             else:
                 yield key
 

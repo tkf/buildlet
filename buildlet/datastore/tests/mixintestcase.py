@@ -48,6 +48,30 @@ class MixInNestableTestCase(BaseMixnInTestCase):
         self.assertEqual(ds[key], subds)
         self.test_one_stream(subds)
 
+    def check_clear(self, ds, adder):
+        self.assertEqual(sorted(ds), [])
+
+        keys = sorted(['a', 'b', 'c'])
+        for key in keys:
+            adder(key)
+
+        self.assertEqual(sorted(ds), keys)
+        self.ds.clear()
+        self.assertEqual(sorted(ds), [])
+
+    def test_clear_filestore(self):
+        ds = self.ds
+
+        def add_filestore(key):
+            with ds.get_filestore(key).open('w+b') as s:
+                s.write('dummy')
+
+        self.check_clear(ds, add_filestore)
+
+    def test_clear_substore(self):
+        ds = self.ds
+        self.check_clear(ds, ds.get_substore)
+
 
 class MixInNestableAutoValueTestCase(MixInNestableTestCase):
 
