@@ -20,6 +20,8 @@ class MixInStreamTestCase(BaseMixnInTestCase):
 
 class MixInNestableTestCase(BaseMixnInTestCase):
 
+    key_nested = 'key_nested'
+
     def test_one_stream(self, ds=None):
         ds = ds or self.ds
         data = 'some text'
@@ -33,7 +35,7 @@ class MixInNestableTestCase(BaseMixnInTestCase):
 
     def test_nested_store(self):
         ds = self.ds
-        key = 'key_nested'
+        key = self.key_nested
         subds = ds.get_substore(key)
         self.assertTrue(ds[key] is subds)
         self.test_one_stream(subds)
@@ -50,4 +52,4 @@ class MixInNestableAutoValueTestCase(MixInNestableTestCase):
 
     def test_nested_store(self):
         super(MixInNestableAutoValueTestCase, self).test_nested_store()
-        self.test_one_value(self.ds['key_nested'])
+        self.test_one_value(self.ds[self.key_nested])
