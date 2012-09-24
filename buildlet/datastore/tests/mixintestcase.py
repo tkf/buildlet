@@ -5,6 +5,14 @@ class BaseMixnInTestCase(object):
             'You must set data store `self.ds` here!')
 
 
+class MixInValueTestCase(BaseMixnInTestCase):
+
+    def test_set_get(self):
+        data = dict(a=1)
+        self.ds.set(data)
+        self.assertEqual(self.ds.get(), data)
+
+
 class MixInStreamTestCase(BaseMixnInTestCase):
 
     def test_write_read(self):

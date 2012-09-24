@@ -3,15 +3,15 @@ import unittest
 from ..inmemory import (
     DataValueInMemory, DataStreamInMemory, DataStoreNestableInMemory)
 from .mixintestcase import (
-    MixInStreamTestCase, MixInNestableAutoValueTestCase)
+    MixInValueTestCase, MixInStreamTestCase, MixInNestableAutoValueTestCase)
 
 
-class TestDataValueInMemory(unittest.TestCase):
+class TestDataValueInMemory(MixInValueTestCase, unittest.TestCase):
 
     def setUp(self):
         self.ds = DataValueInMemory()
 
-    def test_set_get(self):
+    def test_set_get_singleton(self):
         obj = object()
         self.ds.set(obj)
         self.assertTrue(self.ds.get() is obj)
