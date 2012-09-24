@@ -10,6 +10,19 @@ from .base import BaseDataStoreNestableAutoValue, BaseDataStream, BaseDataValue
 
 class DataValueInMemory(BaseDataValue):
 
+    """
+    In-memory value store.
+
+    >>> ds = DataValueInMemory()
+    >>> obj = object()
+    >>> ds.set(obj)
+    >>> ds.get() is obj
+    True
+    >>> ds.hash() == hash(obj)
+    True
+
+    """
+
     def clear(self):
         if hasattr(self, '_value'):
             del self._value
@@ -62,6 +75,19 @@ class BytesIOWrapper(io.BytesIO):
 
 class DataStreamInMemory(BaseDataStream):
 
+    """
+    In-memory file-like data store.
+
+    >>> ds = DataStreamInMemory()
+    >>> with ds.open('w') as f:
+    ...     f.write('some data')
+    9L
+    >>> with ds.open() as f:
+    ...     print f.read()
+    some data
+
+    """
+
     path = None
     stream = None
 
@@ -84,6 +110,28 @@ class DataStreamInMemory(BaseDataStream):
 
 
 class DataStoreNestableInMemory(BaseDataStoreNestableAutoValue):
+
+    """
+    Nestable in-memory data store
+
+    >>> ds = DataStoreNestableInMemory()
+    >>> ds_stream = ds.get_filestore('key_stream')
+    >>> ds_stream                                      # doctest: +ELLIPSIS
+    <buildlet.datastore.inmemory.DataStreamInMemory object at ...>
+
+    Once data store is set, you can use ``ds[key]`` to get data store.
+
+    >>> ds['key_stream'] is ds_stream
+    True
+
+    You can also use ``ds[key]``-access to automatically set/get
+    any Python object.
+
+    >>> ds['key'] = {'a': 1}
+    >>> ds['key']
+    {'a': 1}
+
+    """
 
     default_streamstore_type = DataStreamInMemory
     default_valuestore_type = DataValueInMemory
