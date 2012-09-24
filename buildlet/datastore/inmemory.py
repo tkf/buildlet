@@ -32,6 +32,7 @@ class BytesIOWrapper(io.BytesIO):
 
     >>> with BytesIOWrapper() as s:
     ...     s.write('value')
+    5L
     >>> s.getvalue()
     'value'
 
@@ -39,8 +40,9 @@ class BytesIOWrapper(io.BytesIO):
 
     >>> with io.BytesIO() as s:
     ...     s.write('value')
+    5L
     >>> s.getvalue()
-    Traceback (most recent call last)
+    Traceback (most recent call last):
       ...
     ValueError: I/O operation on closed file.
 
