@@ -121,14 +121,6 @@ class BaseDataStoreNestable(collections.MutableMapping, BaseDataStore):
         """
         Get or create value type data store under `key`.
 
-        Note that you don't need to use this method directly most of
-        the time.  Easiest way to store any Python value is to do::
-
-          ds[key] = value
-
-        Here, `value` must be serialise-able by the data store
-        specified by `dstype`.
-
         Default `dstype` is defined by :attr:`default_valuestore_type`.
         See also :meth:`get_substore`.
 
@@ -141,20 +133,12 @@ class BaseDataStoreNestable(collections.MutableMapping, BaseDataStore):
         return self.get_substore(self.metakey)
 
     def __getitem__(self, key):
-        value = self._get_store(key)
-        if isinstance(value, BaseDataValue):
-            return value.get()
-        else:
-            return value
+        return self._get_store(key)
 
     def __setitem__(self, key, value):
         if key in self.specialkeys:
             raise KeyError('{0} is a special key'.format(key))
-        if isinstance(value, BaseDataStore):
-            self._set_store(key, value)
-        else:
-            store = self.get_valuestore(key)
-            store.set(value)
+        self._set_store(key, value)
 
     def __delitem__(self, key):
         if key in self.specialkeys:
@@ -173,6 +157,41 @@ class BaseDataStoreNestable(collections.MutableMapping, BaseDataStore):
             strings.append(subhash)
         strings.apppend(self.__class__.__name__)
         return hexdigest(strings)
+
+
+class BaseDataStoreNestableAutoValue(BaseDataStoreNestable):
+
+    """
+    Base class for fancy automatic get/set.
+
+    Storing Python object is simply done by::
+
+      ds[key] = value
+
+    To load value, simply do::
+
+      value = ds[key]
+
+    Here, `value` must be serialise-able by the data store
+    specified by :attr:`default_valuestore_type`.
+
+    """
+
+    def __getitem__(self, key):
+        value = self._get_store(key)
+        if isinstance(value, BaseDataValue):
+            return value.get()
+        else:
+            return value
+
+    def __setitem__(self, key, value):
+        if key in self.specialkeys:
+            raise KeyError('{0} is a special key'.format(key))
+        if isinstance(value, BaseDataStore):
+            self._set_store(key, value)
+        else:
+            store = self.get_valuestore(key)
+            store.set(value)
 
 
 class MixInDataStoreFileSystem(BaseDataStore):

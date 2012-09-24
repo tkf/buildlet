@@ -5,7 +5,7 @@ In-memory data store, mainly for testing purpose.
 import io
 import collections
 
-from .base import BaseDataStoreNestable, BaseDataStream, BaseDataValue
+from .base import BaseDataStoreNestableAutoValue, BaseDataStream, BaseDataValue
 
 
 class DataValueInMemory(BaseDataValue):
@@ -81,7 +81,7 @@ class DataStreamInMemory(BaseDataStream):
             return hash(value)
 
 
-class DataStoreNestableInMemory(BaseDataStoreNestable):
+class DataStoreNestableInMemory(BaseDataStoreNestableAutoValue):
 
     default_streamstore_type = DataStreamInMemory
     default_valuestore_type = DataValueInMemory
