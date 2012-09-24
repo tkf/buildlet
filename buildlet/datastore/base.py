@@ -14,6 +14,14 @@ class BaseDataStore(object):
         raise NotImplementedError
 
     def hash(self):
+        """
+        Return some comparable object for automatic dependency check.
+
+        To enable automatic dependency check, child class must define
+        this function.  Returning `None` (default) means to always
+        re-run tasks.
+
+        """
         return None
 
 
@@ -35,6 +43,10 @@ class BaseDataStream(BaseDataStore):
 
 
 class BaseDataStoreNestable(collections.MutableMapping, BaseDataStore):
+
+    """
+    Base class for nestable data store.
+    """
 
     metakey = '.buildlet'
     """
@@ -71,6 +83,14 @@ class BaseDataStoreNestable(collections.MutableMapping, BaseDataStore):
         raise NotImplementedError
 
     def get_substore(self, key, dstype=None, dskwds={}):
+        """
+        Get or create sub-data store under `key`.
+
+        If requested data store does not exist, it is initialized
+        by ``dstype(**dskwds)``.  If `dstype` is None,
+        :attr:`default_substore_type` is used instead.
+
+        """
         if dstype is None:
             dstype = self.default_substore_type or self.__class__
         if key in self:
@@ -86,11 +106,33 @@ class BaseDataStoreNestable(collections.MutableMapping, BaseDataStore):
         return s
 
     def get_filestore(self, key, dstype=None, dskwds={}):
+        """
+        Get or create stream type data store under `key`.
+
+        Default `dstype` is defined by :attr:`default_streamstore_type`.
+        See also :meth:`get_substore`.
+
+        """
         if dstype is None:
             dstype = self.default_streamstore_type
         return self.get_substore(key, dstype, dskwds)
 
     def get_valuestore(self, key, dstype=None, dskwds={}):
+        """
+        Get or create value type data store under `key`.
+
+        Note that you don't need to use this method directly most of
+        the time.  Easiest way to store any Python value is to do::
+
+          ds[key] = value
+
+        Here, `value` must be serialise-able by the data store
+        specified by `dstype`.
+
+        Default `dstype` is defined by :attr:`default_valuestore_type`.
+        See also :meth:`get_substore`.
+
+        """
         if dstype is None:
             dstype = self.default_valuestore_type
         return self.get_substore(key, dstype, dskwds)
