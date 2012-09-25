@@ -12,9 +12,6 @@ class ImMemoryCachedTask(BaseCachedTask, BaseSimpleTask):
     def run(self):
         self.num_run += 1
 
-    def get_paramvalue(self):
-        return self.paramvalue
-
 
 class TestCachedTask(unittest.TestCase):
 
@@ -27,8 +24,7 @@ class TestCachedTask(unittest.TestCase):
 
         def generate_parents(self):
             return [
-                ImMemoryCachedTask(datastore=self.datastore.get_substore(i),
-                                   paramvalue=())
+                ImMemoryCachedTask(datastore=self.datastore.get_substore(i))
                 for i in range(self.num_parents)]
 
     def assert_run_num(self, root_num, parent_num=None):
@@ -42,7 +38,7 @@ class TestCachedTask(unittest.TestCase):
 
     def test_simple_run(self):
         self.ds = DataStoreNestableInMemory()
-        self.task = self.Task(paramvalue=(), datastore=self.ds)
+        self.task = self.Task(datastore=self.ds)
         self.runner.run(self.task)
         self.assert_run_num(1)
 
@@ -75,6 +71,6 @@ class TestCachedTask(unittest.TestCase):
 
     def test_rerun_new_instance(self):
         self.test_simple_run()
-        self.task = self.Task(paramvalue=(), datastore=self.ds)
+        self.task = self.Task(datastore=self.ds)
         self.runner.run(self.task)
         self.assert_run_num(0)

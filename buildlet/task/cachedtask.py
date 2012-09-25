@@ -12,10 +12,11 @@ class BaseCachedTask(BaseTask):
     """
     Base task class for automatic dependency check based on cached result.
 
-    Child class must implement :meth:`get_paramvalue`.  Optionally,
-    child class implement :meth:`get_resultvalue` to represent
-    "unpredictable result" (see :meth:`get_resultvalue` document for
-    more).
+    Child class control when to re-run task by implementing
+    :meth:`get_paramvalue` and :meth:`get_resultvalue`.  Use
+    :meth:`get_paramvalue` to represent parameter given to the task
+    and use :meth:`get_resultvalue` to represent result of the task.
+    See their docstrings for more information.
 
     Based on these values, `paramhash` and `resulthash` are
     calculated as follows.::
@@ -49,7 +50,7 @@ class BaseCachedTask(BaseTask):
 
     def get_paramvalue(self):
         """
-        Return a hash-able object which can identify this task.
+        Return a hash-able object which represents parameter for this task.
 
         Note that this value should not depend on the result
         of the :meth:`run` function.  Use :meth:`get_resultvalue`
@@ -61,7 +62,7 @@ class BaseCachedTask(BaseTask):
         hash of your source code in `paramvalue`.
 
         """
-        raise NotImplementedError
+        return None
 
     def get_resultvalue(self):
         """
