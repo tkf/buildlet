@@ -20,6 +20,15 @@ class TestingTaskBase(BaseSimpleTask):
     def run(self):
         self.inc_counter('run')
 
+    def pre_run(self):
+        self.inc_counter('pre_run')
+
+    def post_success_run(self):
+        self.inc_counter('post_success_run')
+
+    def post_error_run(self):
+        self.inc_counter('post_error_run')
+
 
 class SimpleRootTask(TestingTaskBase):
     num_parents = 3
@@ -43,16 +52,19 @@ class TestSimpleTask(unittest.TestCase):
     def setup_task(self):
         self.task = self.TaskClass()
 
-    def assert_run_num(self, root_num, parent_num=None):
+    def assert_run_num(self, root_num, parent_num=None, func='run'):
         if parent_num is None:
             parent_num = root_num
-        self.assertEqual(self.task.get_counter('run'), root_num)
+        self.assertEqual(self.task.get_counter(func), root_num)
         parents = self.task.get_parents()
         self.assertEqual(len(parents), self.task.num_parents)
         for p in parents:
-            self.assertEqual(p.get_counter('run'), parent_num)
+            self.assertEqual(p.get_counter(func), parent_num)
 
     def test_simple_run(self):
         self.assert_run_num(0)
         self.runner.run(self.task)
         self.assert_run_num(1)
+        self.assert_run_num(1, func='pre_run')
+        self.assert_run_num(1, func='post_success_run')
+        self.assert_run_num(0, func='post_error_run')
