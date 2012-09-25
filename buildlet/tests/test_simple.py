@@ -61,7 +61,11 @@ class TestSimpleTask(unittest.TestCase):
         self.task = self.TaskClass()
 
     def tearDown(self):
+        self.teardown_runner()
         self.teardown_task()
+
+    def teardown_runner(self):
+        pass
 
     def teardown_task(self):
         pass
