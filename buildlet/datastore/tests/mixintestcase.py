@@ -88,6 +88,10 @@ class MixInNestableTestCase(BaseMixnInTestCase):
         ds = self.ds
         self.check_clear(ds, ds.get_substore)
 
+    def test_metastore(self):
+        ms = self.ds.get_metastore()
+        assert isinstance(ms, ms.__class__)
+
 
 class MixInNestableAutoValueTestCase(MixInNestableTestCase):
 

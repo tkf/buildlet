@@ -85,7 +85,8 @@ class BaseDataStoreNestable(collections.MutableMapping, BaseDataStore):
     def _del_store(self, key):
         raise NotImplementedError
 
-    def get_substore(self, key, dstype=None, dskwds={}):
+    def get_substore(self, key, dstype=None, dskwds={},
+                     allow_specialkeys=False):
         """
         Get or create sub-data store under `key`.
 
@@ -94,6 +95,8 @@ class BaseDataStoreNestable(collections.MutableMapping, BaseDataStore):
         :attr:`default_substore_type` is used instead.
 
         """
+        if not allow_specialkeys and key in self.specialkeys:
+            raise KeyError('{0} is a special key'.format(key))
         if dstype is None:
             dstype = self.default_substore_type or self.__class__
         if key in self:
@@ -106,7 +109,7 @@ class BaseDataStoreNestable(collections.MutableMapping, BaseDataStore):
                     .format(key, dstype, s))
             return s
         s = dstype(**dskwds)
-        self[key] = s
+        self._set_store(key, s)
         return s
 
     def get_filestore(self, key, dstype=None, dskwds={}):
@@ -134,7 +137,7 @@ class BaseDataStoreNestable(collections.MutableMapping, BaseDataStore):
         return self.get_substore(key, dstype, dskwds)
 
     def get_metastore(self):
-        return self.get_substore(self.metakey)
+        return self.get_substore(self.metakey, allow_specialkeys=True)
 
     def __getitem__(self, key):
         return self._get_store(key)
@@ -210,9 +213,9 @@ class MixInDataStoreFileSystem(BaseDataStore):
 
 class BaseDataDirectory(MixInDataStoreFileSystem, BaseDataStoreNestable):
 
-    def get_substore(self, key, dstype=None, dskwds={}):
+    def get_substore(self, key, dstype=None, dskwds={}, **kwds):
         if 'path' not in dskwds:
             dskwds = dskwds.copy()
             dskwds['path'] = self.aspath(key)
         return super(BaseDataDirectory, self) \
-            .get_substore(key, dstype=dstype, dskwds=dskwds)
+            .get_substore(key, dstype=dstype, dskwds=dskwds, **kwds)
