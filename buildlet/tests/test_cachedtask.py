@@ -31,10 +31,12 @@ class TestCachedTask(unittest.TestCase):
                                    paramvalue=())
                 for i in range(self.num_parents)]
 
-    def assert_run_num(self, num):
-        self.assertEqual(self.task.num_run, num)
+    def assert_run_num(self, root_num, parent_num=None):
+        if parent_num is None:
+            parent_num = root_num
+        self.assertEqual(self.task.num_run, root_num)
         for p in self.task.get_parents():
-            self.assertEqual(p.num_run, num)
+            self.assertEqual(p.num_run, parent_num)
 
     def test_simple_run(self):
         self.ds = DataStoreNestableInMemory()
@@ -54,9 +56,7 @@ class TestCachedTask(unittest.TestCase):
         self.runner.run(self.task)
 
         self.assertRaises(AssertionError, self.assert_run_num, 1)
-        self.assertEqual(self.task.num_run, 2)
-        for other in self.task.get_parents():
-            self.assertEqual(other.num_run, 1)
+        self.assert_run_num(2, 1)
 
     def test_invalidate_parent(self):
         self.test_simple_run()
