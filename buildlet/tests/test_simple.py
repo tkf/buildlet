@@ -11,16 +11,17 @@ class TestingTaskBase(BaseSimpleTask):
         self.num_run += 1
 
 
+class SimpleRootTask(TestingTaskBase):
+    num_parents = 3
+
+    def generate_parents(self):
+        return [TestingTaskBase() for _ in range(self.num_parents)]
+
+
 class TestSimpleRunner(unittest.TestCase):
 
     runnerclass = SimpleRunner
-
-    class Task(TestingTaskBase):
-
-        num_parents = 3
-
-        def generate_parents(self):
-            return [TestingTaskBase() for _ in range(self.num_parents)]
+    Task = SimpleRootTask
 
     def setUp(self):
         self.runner = self.runnerclass()

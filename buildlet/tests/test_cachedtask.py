@@ -1,7 +1,7 @@
 from ..task.cachedtask import BaseCachedTask
 from ..datastore.inmemory import DataStoreNestableInMemory
 
-from .test_simple import TestingTaskBase, TestSimpleRunner
+from .test_simple import TestingTaskBase, TestSimpleRunner, SimpleRootTask
 
 
 class ImMemoryCachedTask(BaseCachedTask, TestingTaskBase):
@@ -10,9 +10,7 @@ class ImMemoryCachedTask(BaseCachedTask, TestingTaskBase):
 
 class TestCachedTask(TestSimpleRunner):
 
-    class Task(ImMemoryCachedTask):
-
-        num_parents = 3
+    class Task(ImMemoryCachedTask, SimpleRootTask):
 
         def generate_parents(self):
             return [
