@@ -61,3 +61,8 @@ class BaseCachedTask(BaseTask):
         taskhash = self.get_taskhash()
         with self.get_taskhashstore().open('w') as f:
             f.write(str(taskhash))
+
+    def post_run(self):
+        # TODO: check if task raises an error and do NOT set cache if so.
+        self.set_cached_taskhash()
+        super(BaseCachedTask, self).post_run()

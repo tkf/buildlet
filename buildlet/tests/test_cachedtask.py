@@ -31,10 +31,19 @@ class TestSimpleRunner(unittest.TestCase):
                                    taskvalue=())
                 for i in range(self.num_parents)]
 
-    def test_simple_run(self):
-        ds = DataStoreNestableInMemory()
-        task = self.Task(taskvalue=(), datastore=ds)
-        self.runner.run(task)
-        self.assertEqual(task.num_run, 1)
-        for p in task.get_parents():
+    def assert_run_once(self):
+        self.assertEqual(self.task.num_run, 1)
+        for p in self.task.get_parents():
             self.assertEqual(p.num_run, 1)
+
+    def test_simple_run(self):
+        self.ds = DataStoreNestableInMemory()
+        self.task = self.Task(taskvalue=(), datastore=self.ds)
+        self.runner.run(self.task)
+        self.assert_run_once()
+
+    def test_cached_run(self):
+        self.test_simple_run()
+        for i in range(2):
+            self.runner.run(self.task)
+            self.assert_run_once()
