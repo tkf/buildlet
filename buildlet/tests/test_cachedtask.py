@@ -16,7 +16,10 @@ class TestCachedTask(TestSimpleTask):
 
         def generate_parents(self):
             return [
-                TestingCachedTask(datastore=self.datastore.get_substore(i))
+                TestingCachedTask(
+                    # Only string key is supported by all nestable
+                    # data store types.
+                    datastore=self.datastore.get_substore(str(i)))
                 for i in range(self.num_parents)]
 
     def setup_task(self):

@@ -147,7 +147,11 @@ class BaseCachedTask(BaseTask):
         if not store.exists():
             return None
         with store.open() as f:
-            return int(f.read())
+            cache = f.read()
+        # I need this check, as DataDirectory creates empty file to
+        # represent the existence of key.
+        if cache:
+            return int(cache)
 
     def set_cached_hash(self, hashname):
         store = self.get_hashfilestore(hashname)

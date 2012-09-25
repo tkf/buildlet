@@ -60,6 +60,12 @@ class TestSimpleTask(unittest.TestCase):
     def setup_task(self):
         self.task = self.TaskClass()
 
+    def tearDown(self):
+        self.teardown_task()
+
+    def teardown_task(self):
+        pass
+
     def assert_run_num(self, root_num, parent_num=None, func='run'):
         if parent_num is None:
             parent_num = root_num
