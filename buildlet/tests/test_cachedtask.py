@@ -10,7 +10,7 @@ class ImMemoryCachedTask(BaseCachedTask, TestingTaskBase):
 
 class TestCachedTask(TestSimpleRunner):
 
-    class Task(ImMemoryCachedTask, SimpleRootTask):
+    class TaskClass(ImMemoryCachedTask, SimpleRootTask):
 
         def generate_parents(self):
             return [
@@ -20,7 +20,7 @@ class TestCachedTask(TestSimpleRunner):
     def setUp(self):
         self.runner = self.runnerclass()
         self.ds = DataStoreNestableInMemory()
-        self.task = self.Task(datastore=self.ds)
+        self.task = self.TaskClass(datastore=self.ds)
 
     def test_cached_run(self):
         self.test_simple_run()
@@ -51,6 +51,6 @@ class TestCachedTask(TestSimpleRunner):
 
     def test_rerun_new_instance(self):
         self.test_simple_run()
-        self.task = self.Task(datastore=self.ds)
+        self.task = self.TaskClass(datastore=self.ds)
         self.runner.run(self.task)
         self.assert_run_num(0)
