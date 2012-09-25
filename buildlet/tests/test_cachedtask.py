@@ -16,7 +16,7 @@ class ImMemoryCachedTask(BaseCachedTask, BaseSimpleTask):
         return self.taskvalue
 
 
-class TestSimpleRunner(unittest.TestCase):
+class TestCachedTask(unittest.TestCase):
 
     runner = simple
     """Runner module."""
