@@ -16,18 +16,29 @@ class BaseCachedTask(BaseTask):
     These hashes are used to determine when to load cached data
     or run task again.
 
-    Child class can control when to re-run task by implementing
-    :meth:`get_paramvalue` and :meth:`get_resultvalue`.  Use
-    :meth:`get_paramvalue` to represent parameter given to the task
-    and use :meth:`get_resultvalue` to represent result of the task.
-    See their docstrings for more information.
+    There are there "states" for one task:
+
+    `paramvalue`
+       Parameters given to the task.  Using this, you can re-run task
+       when changing the parameter given to the task.
+       You can change this by :meth:`get_paramvalue`.
+
+    `resultvalue`
+       Result of the task.  If the result of this task is predictable
+       by its parameter (i.e., `paramvalue`), you do not care about
+       this value.  If the result is `unpredictable`, this value is
+       useful. You can change this by :meth:`get_returnvalue`.
+
+    `parent_hashes`
+       A (possibly empty) tuple of parent task `resulthash` (see
+       below).  User of this class does not need to care about this
+       value, as this class automatically takes care of it.
 
     Based on these values, `paramhash` and `resulthash` are
     calculated as follows.::
 
         paramhash  = hash((paramvalue, parent_hashes))
         resulthash = hash((paramvalue, parent_hashes, resultvalue))
-        parent_hashes = (parent_resulthash, ...)
 
     When the cache on :attr:`datastore` is found, cached `paramhash`
     is compared with calculated one (by :meth:`is_finished`).  If
