@@ -1,7 +1,7 @@
 import unittest
 
 from ..task import BaseSimpleTask
-from ..runner import simple
+from ..runner.simple import SimpleRunner
 
 
 class TestingTaskBase(BaseSimpleTask):
@@ -13,8 +13,7 @@ class TestingTaskBase(BaseSimpleTask):
 
 class TestSimpleRunner(unittest.TestCase):
 
-    runner = simple
-    """Runner module."""
+    runnerclass = SimpleRunner
 
     class SimpleRunTask(TestingTaskBase):
 
@@ -22,6 +21,9 @@ class TestSimpleRunner(unittest.TestCase):
 
         def generate_parents(self):
             return [TestingTaskBase() for _ in range(self.num_parents)]
+
+    def setUp(self):
+        self.runner = self.runnerclass()
 
     def test_simple_run(self):
         task = self.SimpleRunTask()

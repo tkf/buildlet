@@ -1,18 +1,21 @@
-def run(task):
-    """
-    Simple blocking task runner.
+class SimpleRunner(object):
 
-    Run `task` and its unfinished ancestors.
+    @classmethod
+    def run(cls, task):
+        """
+        Simple blocking task runner.
 
-    """
-    task.pre_run()
-    try:
-        if task.is_finished():
-            task.load()
-        else:
-            for parent in task.get_parents():
-                run(parent)
-            task.run()
-        task.post_success_run()
-    except Exception as e:
-        task.post_error_run(e)
+        Run `task` and its unfinished ancestors.
+
+        """
+        task.pre_run()
+        try:
+            if task.is_finished():
+                task.load()
+            else:
+                for parent in task.get_parents():
+                    cls.run(parent)
+                task.run()
+            task.post_success_run()
+        except Exception as e:
+            task.post_error_run(e)

@@ -2,7 +2,7 @@ import unittest
 
 from ..task import BaseSimpleTask
 from ..task.cachedtask import BaseCachedTask
-from ..runner import simple
+from ..runner.simple import SimpleRunner
 from ..datastore.inmemory import DataStoreNestableInMemory
 
 
@@ -15,8 +15,7 @@ class ImMemoryCachedTask(BaseCachedTask, BaseSimpleTask):
 
 class TestCachedTask(unittest.TestCase):
 
-    runner = simple
-    """Runner module."""
+    runnerclass = SimpleRunner
 
     class Task(ImMemoryCachedTask):
 
@@ -26,6 +25,9 @@ class TestCachedTask(unittest.TestCase):
             return [
                 ImMemoryCachedTask(datastore=self.datastore.get_substore(i))
                 for i in range(self.num_parents)]
+
+    def setUp(self):
+        self.runner = self.runnerclass()
 
     def assert_run_num(self, root_num, parent_num=None):
         if parent_num is None:
