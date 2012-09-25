@@ -52,8 +52,7 @@ class TestCachedTask(unittest.TestCase):
         self.test_simple_run()
         # Invalidate 0-th parent node cache
         ptask = self.task.get_parents()[0]
-        ptask.get_hashfilestore('param').clear()
-        ptask.get_hashfilestore('result').clear()
+        ptask.invalidate_cache()
         self.runner.run(self.task)
 
         self.assertRaises(AssertionError, self.assert_run_num, 1)

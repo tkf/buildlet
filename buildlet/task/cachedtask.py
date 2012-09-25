@@ -144,3 +144,10 @@ class BaseCachedTask(BaseTask):
         self.set_cached_hash('result')
         self.set_cached_hash('param')
         super(BaseCachedTask, self).post_run()
+
+    def invalidate_cache(self):
+        """
+        Invalidate cache of this task.
+        """
+        self.get_hashfilestore('result').clear()
+        self.get_hashfilestore('param').clear()
