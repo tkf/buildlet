@@ -9,7 +9,7 @@ from ..runner.simple import SimpleRunner
 class TestingTaskBase(BaseSimpleTask):
 
     mock_methods = [
-        'run', 'pre_run', 'post_success_run', 'post_error_run']
+        'run', 'load', 'pre_run', 'post_success_run', 'post_error_run']
 
     def __init__(self, *args, **kwds):
         super(TestingTaskBase, self).__init__(*args, **kwds)
@@ -73,6 +73,7 @@ class TestSimpleTask(unittest.TestCase):
         self.assert_run_num(0)
         self.runner.run(self.task)
         self.assert_run_num(1)
+        self.assert_run_num(0, func='load')
         self.assert_run_num(1, func='pre_run')
         self.assert_run_num(1, func='post_success_run')
         self.assert_run_num(0, func='post_error_run')
@@ -82,6 +83,7 @@ class TestSimpleTask(unittest.TestCase):
         self.task.mock['run'].side_effect = exception
         self.assertRaises(ValueError, self.runner.run, self.task)
         self.assert_run_num(1)
+        self.assert_run_num(0, func='load')
         self.assert_run_num(1, func='pre_run')
         self.assert_run_num(0, 1, func='post_success_run')
         self.assert_run_num(1, 0, func='post_error_run')
