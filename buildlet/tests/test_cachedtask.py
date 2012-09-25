@@ -18,7 +18,7 @@ class TestCachedTask(TestSimpleRunner):
                 for i in range(self.num_parents)]
 
     def setUp(self):
-        self.runner = self.runnerclass()
+        self.runner = self.RunnerClass()
         self.ds = DataStoreNestableInMemory()
         self.task = self.TaskClass(datastore=self.ds)
 

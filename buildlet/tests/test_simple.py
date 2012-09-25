@@ -20,11 +20,11 @@ class SimpleRootTask(TestingTaskBase):
 
 class TestSimpleRunner(unittest.TestCase):
 
-    runnerclass = SimpleRunner
+    RunnerClass = SimpleRunner
     TaskClass = SimpleRootTask
 
     def setUp(self):
-        self.runner = self.runnerclass()
+        self.runner = self.RunnerClass()
         self.task = self.TaskClass()
 
     def assert_run_num(self, root_num, parent_num=None):
