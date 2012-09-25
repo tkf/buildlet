@@ -18,7 +18,7 @@ class SimpleRootTask(TestingTaskBase):
         return [TestingTaskBase() for _ in range(self.num_parents)]
 
 
-class TestSimpleRunner(unittest.TestCase):
+class TestSimpleTask(unittest.TestCase):
 
     RunnerClass = SimpleRunner
     TaskClass = SimpleRootTask

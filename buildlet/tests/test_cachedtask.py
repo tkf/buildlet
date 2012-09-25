@@ -1,14 +1,14 @@
 from ..task.cachedtask import BaseCachedTask
 from ..datastore.inmemory import DataStoreNestableInMemory
 
-from .test_simple import TestingTaskBase, TestSimpleRunner, SimpleRootTask
+from .test_simple import TestingTaskBase, TestSimpleTask, SimpleRootTask
 
 
 class ImMemoryCachedTask(BaseCachedTask, TestingTaskBase):
     pass
 
 
-class TestCachedTask(TestSimpleRunner):
+class TestCachedTask(TestSimpleTask):
 
     class TaskClass(ImMemoryCachedTask, SimpleRootTask):
 
