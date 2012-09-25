@@ -1,21 +1,14 @@
-import unittest
-
-from ..task import BaseSimpleTask
 from ..task.cachedtask import BaseCachedTask
-from ..runner.simple import SimpleRunner
 from ..datastore.inmemory import DataStoreNestableInMemory
 
-
-class ImMemoryCachedTask(BaseCachedTask, BaseSimpleTask):
-    num_run = 0
-
-    def run(self):
-        self.num_run += 1
+from .test_simple import TestingTaskBase, TestSimpleRunner
 
 
-class TestCachedTask(unittest.TestCase):
+class ImMemoryCachedTask(BaseCachedTask, TestingTaskBase):
+    pass
 
-    runnerclass = SimpleRunner
+
+class TestCachedTask(TestSimpleRunner):
 
     class Task(ImMemoryCachedTask):
 
@@ -28,21 +21,8 @@ class TestCachedTask(unittest.TestCase):
 
     def setUp(self):
         self.runner = self.runnerclass()
-
-    def assert_run_num(self, root_num, parent_num=None):
-        if parent_num is None:
-            parent_num = root_num
-        self.assertEqual(self.task.num_run, root_num)
-        parents = self.task.get_parents()
-        self.assertEqual(len(parents), self.task.num_parents)
-        for p in parents:
-            self.assertEqual(p.num_run, parent_num)
-
-    def test_simple_run(self):
         self.ds = DataStoreNestableInMemory()
         self.task = self.Task(datastore=self.ds)
-        self.runner.run(self.task)
-        self.assert_run_num(1)
 
     def test_cached_run(self):
         self.test_simple_run()
