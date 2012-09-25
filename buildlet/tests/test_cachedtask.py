@@ -61,3 +61,9 @@ class TestCachedTask(unittest.TestCase):
         self.assertEqual(ptask.num_run, 2)
         for other in self.task.get_parents()[1:]:
             self.assertEqual(other.num_run, 1)
+
+    def test_rerun_new_instance(self):
+        self.test_simple_run()
+        self.task = self.Task(taskvalue=(), datastore=self.ds)
+        self.runner.run(self.task)
+        self.assert_run_num(0)
