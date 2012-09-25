@@ -16,6 +16,13 @@ def mkdirp(path):
 
 class DataFile(MixInDataStoreFileSystem, BaseDataStream):
 
+    def clear(self):
+        self.stream = None
+        os.remove(self.path)
+
+    def exists(self):
+        return os.path.exists(self.path)
+
     def open(self, *args, **kwds):
         self.stream = open(self.path, *args, **kwds)
         return self.stream

@@ -94,6 +94,9 @@ class DataStreamInMemory(BaseDataStream):
     def clear(self):
         self.stream = None
 
+    def exists(self):
+        return bool(self.stream)
+
     def open(self, *_):
         value = None
         if self.stream:

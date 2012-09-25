@@ -38,6 +38,9 @@ class BaseDataStream(BaseDataStore):
 
     path = None
 
+    def exists(self):
+        raise NotImplementedError
+
     def open(self, *args):
         raise NotImplementedError
 
