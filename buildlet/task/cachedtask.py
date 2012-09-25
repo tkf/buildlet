@@ -30,6 +30,20 @@ class BaseCachedTask(BaseTask):
         """
         raise NotImplementedError
 
+    # TODO: Use this value to consider result of parent tasks.
+    def get_resultvalue(self):
+        """
+        Return a hash-able object which represents result of this task.
+
+        Define this method to return an object which can identify the
+        result of this task.  For example, if the result differs for
+        every run, downstream tasks must be run again when this task
+        is run after them.  This method is needed to detect when to
+        re-run downstream tasks.
+
+        """
+        return None
+
     def get_taskhash(self):
         if not self.is_parent_cacheable():
             return None
