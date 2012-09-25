@@ -139,11 +139,10 @@ class BaseCachedTask(BaseTask):
         with store.open('w') as f:
             f.write(str(taskhash))
 
-    def post_run(self):
-        # TODO: check if task raises an error and do NOT set cache if so.
+    def post_success_run(self):
         self.set_cached_hash('result')
         self.set_cached_hash('param')
-        super(BaseCachedTask, self).post_run()
+        super(BaseCachedTask, self).post_success_run()
 
     def invalidate_cache(self):
         """

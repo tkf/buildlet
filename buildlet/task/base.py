@@ -33,9 +33,17 @@ class BaseTask(object):
         Run by task runner before anything else.
         """
 
-    def post_run(self):
+    def post_success_run(self):
         """
-        Run by task runner after the actual task, even if it failed.
+        Run after :meth:`run` or :meth:`load`, when it finishes w/o error.
+        """
+
+    def post_error_run(self, exception):
+        """
+        Run after :meth:`run` or :meth:`load`, when it raise an error.
+
+        It gets an argument `exception`.
+
         """
 
     def is_finished(self):

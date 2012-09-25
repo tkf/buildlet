@@ -13,5 +13,6 @@ def run(task):
             for parent in task.get_parents():
                 run(parent)
             task.run()
-    finally:
-        task.post_run()
+        task.post_success_run()
+    except Exception as e:
+        task.post_error_run(e)
