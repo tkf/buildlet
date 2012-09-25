@@ -8,29 +8,34 @@ from ..runner.simple import SimpleRunner
 
 class TestingTaskBase(BaseSimpleTask):
 
+    mock_methods = [
+        'run', 'pre_run', 'post_success_run', 'post_error_run']
+
     def __init__(self, *args, **kwds):
         super(TestingTaskBase, self).__init__(*args, **kwds)
 
         # As these methods can be inherited from other classes, use
         # mock "indirectly" here (don't do ``self.run = mock.Mock()``).
         self.mock = {}
-        for func in ['run', 'pre_run', 'post_success_run', 'post_error_run']:
+        for func in self.mock_methods:
             self.mock[func] = mock.Mock()
 
     def get_counter(self, key):
         return self.mock[key].call_count
 
-    def run(self):
-        self.mock['run']()
+    @classmethod
+    def define_mocked_method(cls, key):
+        def method(self, *args, **kwds):
+            return self.mock[key](*args, **kwds)
+        setattr(cls, key, method)
 
-    def pre_run(self):
-        self.mock['pre_run']()
+    @classmethod
+    def define_all_mocked_methods(cls):
+        for func in cls.mock_methods:
+            cls.define_mocked_method(func)
 
-    def post_success_run(self):
-        self.mock['post_success_run']()
 
-    def post_error_run(self, exception):
-        self.mock['post_error_run'](exception=exception)
+TestingTaskBase.define_all_mocked_methods()
 
 
 class SimpleRootTask(TestingTaskBase):
@@ -80,5 +85,4 @@ class TestSimpleTask(unittest.TestCase):
         self.assert_run_num(1, func='pre_run')
         self.assert_run_num(0, 1, func='post_success_run')
         self.assert_run_num(1, 0, func='post_error_run')
-        self.task.mock['post_error_run'] \
-            .assert_called_once_with(exception=exception)
+        self.task.mock['post_error_run'].assert_called_once_with(exception)
