@@ -12,7 +12,11 @@ class BaseCachedTask(BaseTask):
     """
     Base task class for automatic dependency check based on cached result.
 
-    Child class control when to re-run task by implementing
+    This class store hashes representing "state" of this task.
+    These hashes are used to determine when to load cached data
+    or run task again.
+
+    Child class can control when to re-run task by implementing
     :meth:`get_paramvalue` and :meth:`get_resultvalue`.  Use
     :meth:`get_paramvalue` to represent parameter given to the task
     and use :meth:`get_resultvalue` to represent result of the task.
@@ -27,7 +31,7 @@ class BaseCachedTask(BaseTask):
 
     When the cache on :attr:`datastore` is found, cached `paramhash`
     is compared with calculated one (by :meth:`is_finished`).  If
-    they differ, this task will be run.  Otherwise, data will be
+    they differ, this task will be run again.  Otherwise, data will be
     loaded from :attr:`datastore`.
 
     """
