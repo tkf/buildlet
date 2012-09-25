@@ -1,5 +1,7 @@
 import unittest
 
+import mock
+
 from ..task import BaseSimpleTask
 from ..runner.simple import SimpleRunner
 
@@ -7,29 +9,28 @@ from ..runner.simple import SimpleRunner
 class TestingTaskBase(BaseSimpleTask):
 
     def __init__(self, *args, **kwds):
-        self.do_run = kwds.pop('do_run', lambda: None)
         super(TestingTaskBase, self).__init__(*args, **kwds)
-        self._counter = {}
 
-    def inc_counter(self, key):
-        self.get_counter(key)
-        self._counter[key] += 1
+        # As these methods can be inherited from other classes, use
+        # mock "indirectly" here (don't do ``self.run = mock.Mock()``).
+        self.mock = {}
+        for func in ['run', 'pre_run', 'post_success_run', 'post_error_run']:
+            self.mock[func] = mock.Mock()
 
     def get_counter(self, key):
-        return self._counter.setdefault(key, 0)
+        return self.mock[key].call_count
 
     def run(self):
-        self.inc_counter('run')
-        self.do_run()
+        self.mock['run']()
 
     def pre_run(self):
-        self.inc_counter('pre_run')
+        self.mock['pre_run']()
 
     def post_success_run(self):
-        self.inc_counter('post_success_run')
+        self.mock['post_success_run']()
 
     def post_error_run(self, exception):
-        self.inc_counter('post_error_run')
+        self.mock['post_error_run'](exception=exception)
 
 
 class SimpleRootTask(TestingTaskBase):
@@ -72,8 +73,8 @@ class TestSimpleTask(unittest.TestCase):
         self.assert_run_num(0, func='post_error_run')
 
     def test_post_error_run(self):
-        self.task.do_run = lambda: 1 / 0
-        self.assertRaises(ZeroDivisionError, self.runner.run, self.task)
+        self.task.mock['run'].side_effect = ValueError('Error for test')
+        self.assertRaises(ValueError, self.runner.run, self.task)
         self.assert_run_num(1)
         self.assert_run_num(1, func='pre_run')
         self.assert_run_num(0, 1, func='post_success_run')
