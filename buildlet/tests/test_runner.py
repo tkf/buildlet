@@ -1,7 +1,7 @@
 import unittest
 
-from buildlet.task import BaseSimpleTask
-from buildlet.runner import simple
+from ..task import BaseSimpleTask
+from ..runner import simple
 
 
 class TestingTaskBase(BaseSimpleTask):
