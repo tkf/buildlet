@@ -19,3 +19,4 @@ class SimpleRunner(object):
             task.post_success_run()
         except Exception as e:
             task.post_error_run(e)
+            raise
