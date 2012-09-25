@@ -73,9 +73,12 @@ class TestSimpleTask(unittest.TestCase):
         self.assert_run_num(0, func='post_error_run')
 
     def test_post_error_run(self):
-        self.task.mock['run'].side_effect = ValueError('Error for test')
+        exception = ValueError('Error for test')
+        self.task.mock['run'].side_effect = exception
         self.assertRaises(ValueError, self.runner.run, self.task)
         self.assert_run_num(1)
         self.assert_run_num(1, func='pre_run')
         self.assert_run_num(0, 1, func='post_success_run')
         self.assert_run_num(1, 0, func='post_error_run')
+        self.task.mock['post_error_run'] \
+            .assert_called_once_with(exception=exception)
