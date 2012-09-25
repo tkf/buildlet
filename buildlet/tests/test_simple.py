@@ -24,7 +24,13 @@ class TestSimpleRunner(unittest.TestCase):
     TaskClass = SimpleRootTask
 
     def setUp(self):
+        self.setup_runner()
+        self.setup_task()
+
+    def setup_runner(self):
         self.runner = self.RunnerClass()
+
+    def setup_task(self):
         self.task = self.TaskClass()
 
     def assert_run_num(self, root_num, parent_num=None):
