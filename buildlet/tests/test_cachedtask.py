@@ -4,21 +4,23 @@ from ..datastore.inmemory import DataStoreNestableInMemory
 from .test_simple import TestingTaskBase, TestSimpleTask, SimpleRootTask
 
 
-class ImMemoryCachedTask(BaseCachedTask, TestingTaskBase):
+class TestingCachedTask(BaseCachedTask, TestingTaskBase):
     pass
 
 
 class TestCachedTask(TestSimpleTask):
 
-    class TaskClass(ImMemoryCachedTask, SimpleRootTask):
+    DataStoreClass = DataStoreNestableInMemory
+
+    class TaskClass(TestingCachedTask, SimpleRootTask):
 
         def generate_parents(self):
             return [
-                ImMemoryCachedTask(datastore=self.datastore.get_substore(i))
+                TestingCachedTask(datastore=self.datastore.get_substore(i))
                 for i in range(self.num_parents)]
 
     def setup_task(self):
-        self.ds = DataStoreNestableInMemory()
+        self.ds = self.DataStoreClass()
         self.task = self.TaskClass(datastore=self.ds)
 
     def test_cached_run(self):
