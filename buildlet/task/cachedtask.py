@@ -39,7 +39,7 @@ class BaseCachedTask(BaseTask):
         taskvalue = self.get_taskvalue()
         # TODO: This relies on that `hash` returns the same value for every
         #       run.  Does it hold always?  Find out!
-        return hash((taskvalue, parent_hashes))
+        return hash((taskvalue, tuple(parent_hashes)))
 
     def get_parent_hashes(self):
         return map(BaseCachedTask.get_cached_taskhash, self.get_parents())
