@@ -2,10 +2,34 @@
 Tasks cached on data store.
 """
 
+import operator
+
 from .base import BaseTask
 
 
 class BaseCachedTask(BaseTask):
+
+    """
+    Base task class for automatic dependency check based on cached result.
+
+    Child class must implement :meth:`get_paramvalue`.  Optionally,
+    child class implement :meth:`get_resultvalue` to represent
+    "unpredictable result" (see :meth:`get_resultvalue` document for
+    more).
+
+    Based on these values, `paramhash` and `resulthash` are
+    calculated as follows.::
+
+        paramhash  = hash((paramvalue, parent_hashes))
+        resulthash = hash((paramvalue, parent_hashes, resultvalue))
+        parent_hashes = (parent_resulthash, ...)
+
+    When the cache on :attr:`datastore` is found, cached `paramhash`
+    is compared with calculated one (by :meth:`is_finished`).  If
+    they differ, this task will be run.  Otherwise, data will be
+    loaded from :attr:`datastore`.
+
+    """
 
     datastore = None
     """
@@ -13,11 +37,15 @@ class BaseCachedTask(BaseTask):
     """
 
     def is_finished(self):
-        current = self.get_taskhash()
-        cached = self.get_cached_taskhash()
+        current = self.get_hash('param')
+        cached = self.get_cached_hash('param')
         return current is not None and \
             cached is not None and \
             current == cached
+
+    #----------------------------------------------------------------------
+    # Task value calculation
+    #----------------------------------------------------------------------
 
     def get_paramvalue(self):
         """
@@ -30,7 +58,6 @@ class BaseCachedTask(BaseTask):
         """
         raise NotImplementedError
 
-    # TODO: Use this value to consider result of parent tasks.
     def get_resultvalue(self):
         """
         Return a hash-able object which represents result of this task.
@@ -44,39 +71,71 @@ class BaseCachedTask(BaseTask):
         """
         return None
 
-    def get_taskhash(self):
+    #----------------------------------------------------------------------
+    # Hash calculation
+    #----------------------------------------------------------------------
+
+    @staticmethod
+    def _check_hashname(hashname):
+        if hashname not in ('param', 'result'):
+            raise ValueError(
+                "`hashname` must be 'param' or 'result. '"
+                "given value is '{0}'.".format(hashname))
+
+    def get_hash(self, hashname):
+        """
+        Get a hash based on `paramvalue`, `parent_hashes` (and `resultvalue`).
+        """
+        self._check_hashname(hashname)
         if not self.is_parent_cacheable():
             return None
         parent_hashes = self.get_parent_hashes()
         if any(h is None for h in parent_hashes):
             return None
         paramvalue = self.get_paramvalue()
+        value = (paramvalue, parent_hashes)
+        if hashname == 'result':
+            value += (self.get_resultvalue(),)
         # TODO: This relies on that `hash` returns the same value for every
         #       run.  Does it hold always?  Find out!
-        return hash((paramvalue, tuple(parent_hashes)))
+        return hash(value)
 
-    def get_parent_hashes(self):
-        return map(BaseCachedTask.get_cached_taskhash, self.get_parents())
+    def get_parent_hashes(self, hashname='result'):
+        """
+        Get a tuple of of parent hashes.
+        """
+        get = operator.methodcaller('get_cached_hash', hashname=hashname)
+        return tuple(map(get, self.get_parents()))
 
     def is_parent_cacheable(self):
         return all(isinstance(p, BaseCachedTask) for p in self.get_parents())
 
-    def get_taskhashstore(self):
-        return self.datastore.get_metastore().get_filestore('taskhash')
+    #----------------------------------------------------------------------
+    # Hash caching
+    #----------------------------------------------------------------------
 
-    def get_cached_taskhash(self):
-        store = self.get_taskhashstore()
+    def get_metafilestore(self, key):
+        return self.datastore.get_metastore().get_filestore(key)
+
+    def get_hashfilestore(self, hashname):
+        self._check_hashname(hashname)
+        return self.get_metafilestore(hashname + 'hash')
+
+    def get_cached_hash(self, hashname):
+        store = self.get_hashfilestore(hashname)
         if not store.exists():
             return None
         with store.open() as f:
             return int(f.read())
 
-    def set_cached_taskhash(self):
-        taskhash = self.get_taskhash()
-        with self.get_taskhashstore().open('w') as f:
+    def set_cached_hash(self, hashname):
+        store = self.get_hashfilestore(hashname)
+        taskhash = self.get_hash(hashname)
+        with store.open('w') as f:
             f.write(str(taskhash))
 
     def post_run(self):
         # TODO: check if task raises an error and do NOT set cache if so.
-        self.set_cached_taskhash()
+        self.set_cached_hash('result')
+        self.set_cached_hash('param')
         super(BaseCachedTask, self).post_run()
