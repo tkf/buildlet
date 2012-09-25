@@ -35,7 +35,9 @@ class TestCachedTask(unittest.TestCase):
         if parent_num is None:
             parent_num = root_num
         self.assertEqual(self.task.num_run, root_num)
-        for p in self.task.get_parents():
+        parents = self.task.get_parents()
+        self.assertEqual(len(parents), self.task.num_parents)
+        for p in parents:
             self.assertEqual(p.num_run, parent_num)
 
     def test_simple_run(self):
