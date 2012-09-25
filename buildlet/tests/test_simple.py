@@ -5,17 +5,17 @@ from ..runner.simple import SimpleRunner
 
 
 class TestingTaskBase(BaseSimpleTask):
-    state = None
+    num_run = 0
 
     def run(self):
-        self.state = 'done'
+        self.num_run += 1
 
 
 class TestSimpleRunner(unittest.TestCase):
 
     runnerclass = SimpleRunner
 
-    class SimpleRunTask(TestingTaskBase):
+    class Task(TestingTaskBase):
 
         num_parents = 3
 
@@ -24,10 +24,18 @@ class TestSimpleRunner(unittest.TestCase):
 
     def setUp(self):
         self.runner = self.runnerclass()
+        self.task = self.Task()
+
+    def assert_run_num(self, root_num, parent_num=None):
+        if parent_num is None:
+            parent_num = root_num
+        self.assertEqual(self.task.num_run, root_num)
+        parents = self.task.get_parents()
+        self.assertEqual(len(parents), self.task.num_parents)
+        for p in parents:
+            self.assertEqual(p.num_run, parent_num)
 
     def test_simple_run(self):
-        task = self.SimpleRunTask()
-        self.runner.run(task)
-        self.assertEqual(task.state, 'done')
-        for p in task.get_parents():
-            self.assertEqual(p.state, 'done')
+        self.assert_run_num(0)
+        self.runner.run(self.task)
+        self.assert_run_num(1)
