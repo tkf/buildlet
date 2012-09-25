@@ -19,7 +19,7 @@ class BaseCachedTask(BaseTask):
             cached is not None and \
             current == cached
 
-    def get_taskvalue(self):
+    def get_paramvalue(self):
         """
         Return a hash-able object which can identify this task.
 
@@ -36,10 +36,10 @@ class BaseCachedTask(BaseTask):
         parent_hashes = self.get_parent_hashes()
         if any(h is None for h in parent_hashes):
             return None
-        taskvalue = self.get_taskvalue()
+        paramvalue = self.get_paramvalue()
         # TODO: This relies on that `hash` returns the same value for every
         #       run.  Does it hold always?  Find out!
-        return hash((taskvalue, tuple(parent_hashes)))
+        return hash((paramvalue, tuple(parent_hashes)))
 
     def get_parent_hashes(self):
         return map(BaseCachedTask.get_cached_taskhash, self.get_parents())
