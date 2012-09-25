@@ -43,10 +43,10 @@ class TestCachedTask(TestSimpleTask):
         self.runner.run(self.task)
 
         self.assertRaises(AssertionError, self.assert_run_num, 1)
-        self.assertEqual(self.task.num_run, 2)
-        self.assertEqual(ptask.num_run, 2)
+        self.assertEqual(self.task.get_counter('run'), 2)
+        self.assertEqual(ptask.get_counter('run'), 2)
         for other in self.task.get_parents()[1:]:
-            self.assertEqual(other.num_run, 1)
+            self.assertEqual(other.get_counter('run'), 1)
 
     def test_rerun_new_instance(self):
         self.test_simple_run()
