@@ -1,3 +1,4 @@
+import os
 import tempfile
 import shutil
 
@@ -32,6 +33,13 @@ class MixInStreamTestCase(BaseMixnInTestCase):
         with self.ds.open() as f:
             written = f.read()
         self.assertEqual(written, data)
+
+    def test_clear_and_exists(self):
+        assert not self.ds.exists()
+        self.test_write_read()
+        assert self.ds.exists()
+        self.ds.clear()
+        assert not self.ds.exists()
 
 
 class MixInNestableTestCase(BaseMixnInTestCase):
@@ -98,6 +106,7 @@ class MixInNestableAutoValueTestCase(MixInNestableTestCase):
 class MixInWithTempFile(BaseMixnInTestCase):
 
     def setUp(self):
+        self.tempdir = tempfile.mkdtemp()
         self.tempfile = tempfile.NamedTemporaryFile()
         self.ds = self.dstype(self.tempfile.name)
 
@@ -113,3 +122,11 @@ class MixInWithTempDirectory(BaseMixnInTestCase):
 
     def tearDown(self):
         shutil.rmtree(self.tempdir)
+
+
+class MixInWithTempFile(MixInWithTempDirectory):
+
+    def setUp(self):
+        self.tempdir = tempfile.mkdtemp()
+        self.tempfilename = os.path.join(self.tempdir, 'tempfile')
+        self.ds = self.dstype(self.tempfilename)
