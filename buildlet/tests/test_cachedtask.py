@@ -47,3 +47,17 @@ class TestSimpleRunner(unittest.TestCase):
         for i in range(2):
             self.runner.run(self.task)
             self.assert_run_once()
+
+    def test_invalidate_parent(self):
+        self.test_simple_run()
+        # Invalidate 0-th parent node cache
+        ptask = self.task.get_parents()[0]
+        pths = ptask.get_taskhashstore()
+        pths.clear()
+        self.runner.run(self.task)
+
+        self.assertRaises(AssertionError, self.assert_run_once)
+        self.assertEqual(self.task.num_run, 2)
+        self.assertEqual(ptask.num_run, 2)
+        for other in self.task.get_parents()[1:]:
+            self.assertEqual(other.num_run, 1)
