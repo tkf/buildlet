@@ -10,10 +10,9 @@ class TestCachedTaskWithDirectory(TestCachedTask):
 
     DataStoreClass = DataDirectory
 
-    def setup_task(self):
+    def setup_datastore(self):
         self.tempdir = tempfile.mkdtemp()
         self.ds = self.DataStoreClass(self.tempdir)
-        self.task = self.TaskClass(datastore=self.ds)
 
-    def teardown_task(self):
+    def teardown_datastore(self):
         shutil.rmtree(self.tempdir)

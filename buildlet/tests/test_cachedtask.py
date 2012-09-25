@@ -23,8 +23,17 @@ class TestCachedTask(TestSimpleTask):
                 for i in range(self.num_parents)]
 
     def setup_task(self):
-        self.ds = self.DataStoreClass()
+        self.setup_datastore()
         self.task = self.TaskClass(datastore=self.ds)
+
+    def setup_datastore(self):
+        self.ds = self.DataStoreClass()
+
+    def teardown_task(self):
+        self.teardown_datastore()
+
+    def teardown_datastore(self):
+        pass
 
     def test_cached_run(self):
         self.test_simple_run()
