@@ -52,8 +52,13 @@ class BaseCachedTask(BaseTask):
         Return a hash-able object which can identify this task.
 
         Note that this value should not depend on the result
-        of the :meth:`run` function.  However, this value should
-        provide enough information to get the same result.
+        of the :meth:`run` function.  Use :meth:`get_resultvalue`
+        for that purpose.
+
+        It is better if this value provides enough information to get
+        the same result.  In this case, you don't need to implement
+        :meth:`get_resultvalue`.  For example, you can include file
+        hash of your source code in `paramvalue`.
 
         """
         raise NotImplementedError
