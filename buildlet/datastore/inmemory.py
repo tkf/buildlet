@@ -44,16 +44,16 @@ class BytesIOWrapper(io.BytesIO):
     Tweaked version of `io.BytesIO` which can do `getvalue` after close.
 
     >>> with BytesIOWrapper() as s:
-    ...     s.write('value')
-    5L
+    ...     s.write('value')                           # doctest: +ELLIPSIS
+    5...
     >>> s.getvalue()
     'value'
 
     Note that you can't do this with `io.BytesIO` in stdlib.
 
     >>> with io.BytesIO() as s:
-    ...     s.write('value')
-    5L
+    ...     s.write('value')                           # doctest: +ELLIPSIS
+    5...
     >>> s.getvalue()
     Traceback (most recent call last):
       ...
@@ -80,8 +80,8 @@ class DataStreamInMemory(BaseDataStream):
 
     >>> ds = DataStreamInMemory()
     >>> with ds.open('w') as f:
-    ...     f.write('some data')
-    9L
+    ...     f.write('some data')                       # doctest: +ELLIPSIS
+    9...
     >>> with ds.open() as f:
     ...     print f.read()
     some data
