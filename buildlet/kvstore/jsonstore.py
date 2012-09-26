@@ -12,7 +12,7 @@ class KVStoreJSON(BaseKVStore):
         json.dump(self._db, fp)
 
     @staticmethod
-    def _filtered_key(key):
+    def filtered_key(key):
         # convert tuples to list, etc.
         # there should be lot better way to do this...
         return json.loads(json.dumps(key))

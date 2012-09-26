@@ -16,11 +16,11 @@ class BaseKVStore(collections.MutableMapping):
         raise NotImplementedError
 
     @staticmethod
-    def _filtered_key(key):
+    def filter_key(key):
         return key
 
     def __getitem__(self, key):
-        key = self._filtered_key(key)
+        key = self.filter_key(key)
         for (k, v) in self._db:
             if k == key:
                 return v
@@ -28,11 +28,11 @@ class BaseKVStore(collections.MutableMapping):
 
     def __setitem__(self, key, value):
         del self[key]
-        key = self._filtered_key(key)
+        key = self.filter_key(key)
         self._db.append((key, value))
 
     def __delitem__(self, key):
-        key = self._filtered_key(key)
+        key = self.filter_key(key)
         self._db = [(k, v) for (k, v) in self._db if not k == key]
 
     def values(self):
