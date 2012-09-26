@@ -107,17 +107,6 @@ class MixInNestableAutoValueTestCase(MixInNestableTestCase):
         self.test_one_value(self.ds[self.key_nested])
 
 
-class MixInWithTempFile(BaseMixnInTestCase):
-
-    def setUp(self):
-        self.tempdir = tempfile.mkdtemp()
-        self.tempfile = tempfile.NamedTemporaryFile()
-        self.ds = self.dstype(self.tempfile.name)
-
-    def tearDown(self):
-        self.tempfile.close()
-
-
 class MixInWithTempDirectory(BaseMixnInTestCase):
 
     def setUp(self):
