@@ -4,7 +4,7 @@ Data store on file system with automatically generated directory/file name.
 
 import os
 
-from ..kvstore.jsonstore import KVStoreJSON
+from ..kvstore.picklestore import KVStorePickle
 from .directory import DataDirectory
 
 
@@ -37,7 +37,7 @@ class DataAutoDirectory(DataDirectory):
 
     """
 
-    KeyPathMapClass = KVStoreJSON
+    KeyPathMapClass = KVStorePickle
     default_metastore_type = DataDirectory
     pathwidth = 3
 
