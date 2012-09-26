@@ -53,6 +53,6 @@ class KVStoreJSON(collections.MutableMapping):
         if os.path.exists(self.path):
             with open(self.path) as fp:
                 self.load(fp)
-        yield self
+        yield
         with file(self.path, 'w') as fp:
             self.dump(fp)

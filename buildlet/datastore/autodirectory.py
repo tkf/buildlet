@@ -39,7 +39,7 @@ class DataAutoDirectory(DataDirectory):
 
     KeyPathMapClass = KVStoreJSON
     default_metastore_type = DataDirectory
-    _pathwidth = 3
+    pathwidth = 3
 
     def __init__(self, *args, **kwds):
         super(DataAutoDirectory, self).__init__(*args, **kwds)
@@ -55,13 +55,13 @@ class DataAutoDirectory(DataDirectory):
     def get_keypathmappath(self):
         return os.path.join(self.get_metastorepath(), 'keypathmap')
 
-    def newpath(self, db):
-        values = db.values()
+    def newpath(self):
+        values = self.keypathmap.values()
         if values:
             next = max((int(v, 16) for v in values)) + 1
         else:
             next = 0
-        path = '{0:0{1}x}'.format(next, self._pathwidth)
+        path = '{0:0{1}x}'.format(next, self.pathwidth)
         assert path != self.metakey
         return path
 
@@ -70,7 +70,7 @@ class DataAutoDirectory(DataDirectory):
         if key in db:
             path = db[key]
         else:
-            db[key] = path = self.newpath(db)
+            db[key] = path = self.newpath()
         return path
 
     def aspath(self, key):
@@ -87,6 +87,11 @@ class DataAutoDirectory(DataDirectory):
         with self.keypathmap.autosync():
             super(DataAutoDirectory, self)._del_store(key)
             del self.keypathmap[key]
+
+    # TODO: Data store type handling depends on DataDirectory
+    #       implementation, which is not good because it relies only
+    #       on information of file system.  Store the information on
+    #       self.keypathmap to support rich type of data stores.
 
     def _get_store(self, key):
         with self.keypathmap.autosync():
