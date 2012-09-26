@@ -3,12 +3,14 @@ from .base import MixInDataStoreFileSystem, BaseDataValue
 
 class BaseDataValueAutoSerialize(MixInDataStoreFileSystem, BaseDataValue):
 
+    mode = 't'
+
     def set(self, value):
-        with open(self.path, 'w+b') as fp:
+        with open(self.path, 'w' + self.mode) as fp:
             self.dump(value, fp)
 
     def get(self):
-        with open(self.path) as fp:
+        with open(self.path, 'r' + self.mode) as fp:
             return self.load(fp)
 
     def dump(self, obj, fp):
@@ -19,6 +21,8 @@ class BaseDataValueAutoSerialize(MixInDataStoreFileSystem, BaseDataValue):
 
 
 class DataValuePickle(BaseDataValueAutoSerialize):
+
+    mode = 'b'
 
     def dump(self, obj, fp):
         from ..utils import _pickle

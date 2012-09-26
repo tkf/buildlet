@@ -20,7 +20,7 @@ class DataAutoDirectory(DataDirectory):
     ...     ds = DataAutoDirectory(tempdir)
     ...     # Any serialize-able complex key type can be used:
     ...     ds_stream = ds.get_filestore(('complex', 'key', 100))
-    ...     with ds_stream.open('wb') as f:
+    ...     with ds_stream.open('wt') as f:
     ...         f.write('some data')
     ...     with ds_stream.open() as f:
     ...         print f.read()
