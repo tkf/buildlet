@@ -10,6 +10,33 @@ from .directory import DataDirectory
 
 class DataAutoDirectory(DataDirectory):
 
+    """
+    Nestable data store on file system with automatic name assignment.
+
+    How to use file-type data store under :class:`DataAutoDirectory`:
+
+    >>> from buildlet.utils.tempdir import TemporaryDirectory
+    >>> with TemporaryDirectory() as tempdir:
+    ...     ds = DataAutoDirectory(tempdir)
+    ...     # Any serialize-able complex key type can be used:
+    ...     ds_stream = ds.get_filestore(('complex', 'key', 100))
+    ...     with ds_stream.open('w') as f:
+    ...         f.write('some data')
+    ...     with ds_stream.open() as f:
+    ...         print f.read()
+    some data
+
+
+    How to make nested data store:
+
+    >>> with TemporaryDirectory() as tempdir:
+    ...     ds = DataAutoDirectory(tempdir)
+    ...     ds_nested = ds.get_substore(('very', 'complex', 'key'))
+    ...     print ds_nested                            # doctest: +ELLIPSIS
+    <buildlet.datastore.autodirectory.DataAutoDirectory object at ...>
+
+    """
+
     KeyPathMapClass = KVStoreJSON
     default_metastore_type = DataDirectory
     _pathwidth = 3
