@@ -5,6 +5,8 @@ from .base import BaseKVStore
 
 class KVStorePickle(BaseKVStore):
 
+    mode = 'b'
+
     def load(self, fp):
         self._db = pickle.load(fp)
 

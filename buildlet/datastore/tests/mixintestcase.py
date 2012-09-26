@@ -25,12 +25,12 @@ class MixInValueTestCase(BaseMixnInTestCase):
 class MixInStreamTestCase(BaseMixnInTestCase):
 
     def test_write_read(self):
-        data = 'some text'
+        data = 'some text'.encode()
         with self.ds.open('w+b') as f:
             f.write(data)
         self.assertTrue(self.ds.stream.closed)
 
-        with self.ds.open() as f:
+        with self.ds.open('rb') as f:
             written = f.read()
         self.assertEqual(written, data)
 
@@ -48,12 +48,12 @@ class MixInNestableTestCase(BaseMixnInTestCase):
 
     def test_one_stream(self, ds=None):
         ds = ds or self.ds
-        data = 'some text'
+        data = 'some text'.encode()
         key = 'key_stream'
         with ds.get_filestore(key).open('w+b') as s:
             s.write(data)
 
-        with ds.get_filestore(key).open() as s:
+        with ds.get_filestore(key).open('rb') as s:
             written = s.read()
         self.assertEqual(written, data)
 
@@ -80,7 +80,7 @@ class MixInNestableTestCase(BaseMixnInTestCase):
 
         def add_filestore(key):
             with ds.get_filestore(key).open('w+b') as s:
-                s.write('dummy')
+                s.write('dummy'.encode())
 
         self.check_clear(ds, add_filestore)
 

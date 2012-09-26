@@ -5,6 +5,8 @@ from contextlib import contextmanager
 
 class BaseKVStore(collections.MutableMapping):
 
+    mode = 't'
+
     def __init__(self, path):
         self.path = path
         self._db = []
@@ -54,8 +56,8 @@ class BaseKVStore(collections.MutableMapping):
         Context manger to automatically load/dump any change.
         """
         if os.path.exists(self.path):
-            with open(self.path) as fp:
+            with open(self.path, 'r' + self.mode) as fp:
                 self.load(fp)
         yield
-        with file(self.path, 'w') as fp:
+        with open(self.path, 'w' + self.mode) as fp:
             self.dump(fp)

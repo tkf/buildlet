@@ -1,6 +1,15 @@
-from distutils.core import setup
+try:
+    from setuptools import setup
+except:
+    from distutils.core import setup
+import sys
 
 import buildlet
+
+setup_kwds = {}
+
+if sys.version_info[0] >= 3:
+    setup_kwds['use_2to3'] = True
 
 setup(
     name='buildlet',
@@ -20,4 +29,5 @@ setup(
         "Development Status :: 3 - Alpha",
         # see: http://pypi.python.org/pypi?%3Aaction=list_classifiers
     ],
+    **setup_kwds
 )
