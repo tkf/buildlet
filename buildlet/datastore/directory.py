@@ -16,6 +16,20 @@ def mkdirp(path):
 
 class DataFile(MixInDataStoreFileSystem, BaseDataStream):
 
+    """
+    File based stream data store.
+
+    >>> import tempfile
+    >>> with tempfile.NamedTemporaryFile() as temp:
+    ...     ds = DataFile(temp.name)
+    ...     with ds.open('w') as f:
+    ...         f.write('some data')
+    ...     with ds.open() as f:
+    ...         print f.read()
+    some data
+
+    """
+
     def clear(self):
         self.stream = None
         os.remove(self.path)
@@ -29,6 +43,32 @@ class DataFile(MixInDataStoreFileSystem, BaseDataStream):
 
 
 class DataDirectory(BaseDataDirectory):
+
+    """
+    Directory based nestable data store.
+
+    How to use file-type data store under :class:`DataDirectory`:
+
+    >>> from buildlet.utils.tempdir import TemporaryDirectory
+    >>> with TemporaryDirectory() as tempdir:
+    ...     ds = DataDirectory(tempdir)
+    ...     ds_stream = ds.get_filestore('key')
+    ...     with ds_stream.open('w') as f:
+    ...         f.write('some data')
+    ...     with ds_stream.open() as f:
+    ...         print f.read()
+    some data
+
+
+    How to make nested data store:
+
+    >>> with TemporaryDirectory() as tempdir:
+    ...     ds = DataDirectory(tempdir)
+    ...     ds_nested = ds.get_substore('key')
+    ...     print ds_nested                            # doctest: +ELLIPSIS
+    <buildlet.datastore.directory.DataDirectory object at ...>
+
+    """
 
     default_streamstore_type = DataFile
 
