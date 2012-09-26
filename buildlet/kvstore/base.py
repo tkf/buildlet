@@ -17,6 +17,9 @@ class BaseKVStore(collections.MutableMapping):
 
     @staticmethod
     def filter_key(key):
+        """
+        Filter out some unserializeable details from `key`.
+        """
         return key
 
     def __getitem__(self, key):
@@ -47,6 +50,9 @@ class BaseKVStore(collections.MutableMapping):
 
     @contextmanager
     def autosync(self):
+        """
+        Context manger to automatically load/dump any change.
+        """
         if os.path.exists(self.path):
             with open(self.path) as fp:
                 self.load(fp)
