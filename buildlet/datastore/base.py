@@ -5,7 +5,7 @@ Base data store classes.
 import collections
 import itertools
 
-from ..hashutils import hexdigest
+from ..utils.hashutils import hexdigest
 
 
 class BaseDataStore(object):
