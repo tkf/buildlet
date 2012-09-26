@@ -21,11 +21,11 @@ class BaseDataValueAutoSerialize(MixInDataStoreFileSystem, BaseDataValue):
 class DataValuePickle(BaseDataValueAutoSerialize):
 
     def dump(self, obj, fp):
-        from .. import _pickle
+        from ..utils import _pickle
         _pickle.dump(obj, fp)
 
     def load(self, fp):
-        from .. import _pickle
+        from ..utils import _pickle
         return _pickle.load(fp)
 
 
