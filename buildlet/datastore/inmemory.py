@@ -44,17 +44,17 @@ class BytesIOWrapper(io.BytesIO):
     Tweaked version of `io.BytesIO` which can do `getvalue` after close.
 
     >>> with BytesIOWrapper() as s:
-    ...     s.write('value')                           # doctest: +ELLIPSIS
+    ...     s.write('value'.encode())                  # doctest: +ELLIPSIS
     5...
-    >>> s.getvalue()
-    'value'
+    >>> print(s.getvalue().decode())
+    value
 
     Note that you can't do this with `io.BytesIO` in stdlib.
 
     >>> with io.BytesIO() as s:
-    ...     s.write('value')                           # doctest: +ELLIPSIS
+    ...     s.write('value'.encode())                  # doctest: +ELLIPSIS
     5...
-    >>> s.getvalue()
+    >>> print(s.getvalue().decode())
     Traceback (most recent call last):
       ...
     ValueError: I/O operation on closed file.
@@ -80,10 +80,10 @@ class DataStreamInMemory(BaseDataStream):
 
     >>> ds = DataStreamInMemory()
     >>> with ds.open('wb') as f:
-    ...     f.write('some data')                       # doctest: +ELLIPSIS
+    ...     f.write('some data'.encode())              # doctest: +ELLIPSIS
     9...
-    >>> with ds.open() as f:
-    ...     print f.read()
+    >>> with ds.open('rb') as f:
+    ...     print(f.read().decode())
     some data
 
     """

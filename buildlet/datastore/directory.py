@@ -23,9 +23,9 @@ class DataFile(MixInDataStoreFileSystem, BaseDataStream):
     >>> with tempfile.NamedTemporaryFile() as temp:
     ...     ds = DataFile(temp.name)
     ...     with ds.open('wt') as f:
-    ...         f.write('some data')
+    ...         _ = f.write('some data')
     ...     with ds.open() as f:
-    ...         print f.read()
+    ...         print(f.read())
     some data
 
     """
@@ -54,9 +54,9 @@ class DataDirectory(BaseDataDirectory):
     ...     ds = DataDirectory(tempdir)
     ...     ds_stream = ds.get_filestore('key')
     ...     with ds_stream.open('wt') as f:
-    ...         f.write('some data')
+    ...         _ = f.write('some data')
     ...     with ds_stream.open() as f:
-    ...         print f.read()
+    ...         print(f.read())
     some data
 
 
@@ -65,7 +65,7 @@ class DataDirectory(BaseDataDirectory):
     >>> with TemporaryDirectory() as tempdir:
     ...     ds = DataDirectory(tempdir)
     ...     ds_nested = ds.get_substore('key')
-    ...     print ds_nested                            # doctest: +ELLIPSIS
+    ...     print(ds_nested)                           # doctest: +ELLIPSIS
     <buildlet.datastore.directory.DataDirectory object at ...>
 
     """

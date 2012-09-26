@@ -21,9 +21,9 @@ class DataAutoDirectory(DataDirectory):
     ...     # Any serialize-able complex key type can be used:
     ...     ds_stream = ds.get_filestore(('complex', 'key', 100))
     ...     with ds_stream.open('wt') as f:
-    ...         f.write('some data')
+    ...         _ = f.write('some data')
     ...     with ds_stream.open() as f:
-    ...         print f.read()
+    ...         print(f.read())
     some data
 
 
@@ -32,7 +32,7 @@ class DataAutoDirectory(DataDirectory):
     >>> with TemporaryDirectory() as tempdir:
     ...     ds = DataAutoDirectory(tempdir)
     ...     ds_nested = ds.get_substore(('very', 'complex', 'key'))
-    ...     print ds_nested                            # doctest: +ELLIPSIS
+    ...     print(ds_nested)                           # doctest: +ELLIPSIS
     <buildlet.datastore.autodirectory.DataAutoDirectory object at ...>
 
     """
