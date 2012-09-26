@@ -156,7 +156,7 @@ class BaseCachedTask(BaseTask):
     def set_cached_hash(self, hashname):
         store = self.get_hashfilestore(hashname)
         taskhash = self.get_hash(hashname)
-        with store.open('w') as f:
+        with store.open('wb') as f:
             f.write(str(taskhash))
 
     def post_success_run(self):

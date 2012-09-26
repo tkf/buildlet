@@ -79,7 +79,7 @@ class DataStreamInMemory(BaseDataStream):
     In-memory file-like data store.
 
     >>> ds = DataStreamInMemory()
-    >>> with ds.open('w') as f:
+    >>> with ds.open('wb') as f:
     ...     f.write('some data')                       # doctest: +ELLIPSIS
     9...
     >>> with ds.open() as f:

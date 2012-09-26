@@ -22,7 +22,7 @@ class DataFile(MixInDataStoreFileSystem, BaseDataStream):
     >>> import tempfile
     >>> with tempfile.NamedTemporaryFile() as temp:
     ...     ds = DataFile(temp.name)
-    ...     with ds.open('w') as f:
+    ...     with ds.open('wb') as f:
     ...         f.write('some data')
     ...     with ds.open() as f:
     ...         print f.read()
@@ -53,7 +53,7 @@ class DataDirectory(BaseDataDirectory):
     >>> with TemporaryDirectory() as tempdir:
     ...     ds = DataDirectory(tempdir)
     ...     ds_stream = ds.get_filestore('key')
-    ...     with ds_stream.open('w') as f:
+    ...     with ds_stream.open('wb') as f:
     ...         f.write('some data')
     ...     with ds_stream.open() as f:
     ...         print f.read()
@@ -117,7 +117,7 @@ class DataDirectory(BaseDataDirectory):
         if isinstance(value, BaseDataDirectory):
             mkdirp(path)
         elif isinstance(value, DataFile) and not os.path.exists(path):
-            open(path, 'w').close()
+            open(path, 'wb').close()
         else:
             raise ValueError(
                 'Value {0!r} is not supported data store type.'.format(value))

@@ -57,5 +57,5 @@ class BaseKVStore(collections.MutableMapping):
             with open(self.path) as fp:
                 self.load(fp)
         yield
-        with file(self.path, 'w') as fp:
+        with open(self.path, 'wb') as fp:
             self.dump(fp)
