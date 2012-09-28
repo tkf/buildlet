@@ -115,6 +115,24 @@ class MixInNestableTestCase(BaseMixnInTestCase):
     def callback_nondatastore_value(self):
         self.ds['key'] = {}
 
+    def test_len(self):
+        keys = map('k{0}'.format, range(3))
+        for (i, k) in enumerate(keys):
+            self.assertEqual(len(self.ds), i)
+            self.ds.get_filestore(k)
+            self.assertEqual(len(self.ds), i + 1)
+
+    def test_iter_and_delete(self):
+        self.test_len()
+        keys = list(self.ds)
+        num = len(keys)
+        assert num > 0
+        for (i, k) in enumerate(keys):
+            self.assertEqual(len(self.ds), num - i)
+            del self.ds[k]
+            self.assertEqual(len(self.ds), num - i - 1)
+        self.assertEqual(len(self.ds), 0)
+
     def set_some_value(self):
         self.test_nested_store()
 
