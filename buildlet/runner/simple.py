@@ -1,5 +1,9 @@
 class SimpleRunner(object):
 
+    """
+    Simple blocking task runner.
+    """
+
     @classmethod
     def run(cls, task):
         """
