@@ -45,7 +45,9 @@ pygments_style = 'sphinx'
 
 html_theme = 'default'
 
-#html_theme_options = {}
+html_theme_options = {
+    'nosidebar': True,
+}
 
 html_static_path = []  # default: ['_static']
 
