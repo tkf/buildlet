@@ -1,9 +1,11 @@
 import unittest
 
 from ..inmemory import (
-    DataValueInMemory, DataStreamInMemory, DataStoreNestableInMemory)
+    DataValueInMemory, DataStreamInMemory,
+    DataStoreNestableInMemory, DataStoreNestableInMemoryAutoValue)
 from .mixintestcase import (
-    MixInValueTestCase, MixInStreamTestCase, MixInNestableAutoValueTestCase)
+    MixInValueTestCase, MixInStreamTestCase,
+    MixInNestableTestCase, MixInNestableAutoValueTestCase)
 
 
 class TestDataValueInMemory(MixInValueTestCase, unittest.TestCase):
@@ -20,6 +22,11 @@ class TestDataStreamInMemory(MixInStreamTestCase, unittest.TestCase):
     dstype = DataStreamInMemory
 
 
-class TestDataStoreNestableInMemory(MixInNestableAutoValueTestCase,
+class TestDataStoreNestableInMemory(MixInNestableTestCase,
                                     unittest.TestCase):
     dstype = DataStoreNestableInMemory
+
+
+class TestDataStoreNestableInMemoryAutoValue(MixInNestableAutoValueTestCase,
+                                             unittest.TestCase):
+    dstype = DataStoreNestableInMemoryAutoValue

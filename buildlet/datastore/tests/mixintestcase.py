@@ -13,6 +13,17 @@ class BaseMixnInTestCase(object):
     def setUp(self):
         self.ds = self.dstype()
 
+    def set_some_value(self):
+        raise NotImplementedError
+
+    def test_hash(self):
+        self.set_some_value()
+        val = self.ds.hash()
+        if val is None or isinstance(val, (basestring, int)):
+            return
+        assert hasattr(val, '__eq__'), \
+            "`{0!r}` does not have __eq__".format(val)
+
 
 class MixInValueTestCase(BaseMixnInTestCase):
 
@@ -20,6 +31,9 @@ class MixInValueTestCase(BaseMixnInTestCase):
         data = dict(a=1)
         self.ds.set(data)
         self.assertEqual(self.ds.get(), data)
+
+    def set_some_value(self):
+        self.test_set_get()
 
 
 class MixInStreamTestCase(BaseMixnInTestCase):
@@ -40,6 +54,9 @@ class MixInStreamTestCase(BaseMixnInTestCase):
         assert self.ds.exists()
         self.ds.clear()
         assert not self.ds.exists()
+
+    def set_some_value(self):
+        self.test_write_read()
 
 
 class MixInNestableTestCase(BaseMixnInTestCase):
@@ -90,7 +107,37 @@ class MixInNestableTestCase(BaseMixnInTestCase):
 
     def test_metastore(self):
         ms = self.ds.get_metastore()
-        assert isinstance(ms, ms.__class__)
+        assert isinstance(ms, self.ds.default_metastore_type)
+
+    def test_nondatastore_value(self):
+        self.assertRaises(ValueError, self.callback_nondatastore_value)
+
+    def callback_nondatastore_value(self):
+        self.ds['key'] = {}
+
+    def test_len(self):
+        keys = map('k{0}'.format, range(3))
+        for (i, k) in enumerate(keys):
+            self.assertEqual(len(self.ds), i)
+            self.ds.get_filestore(k)
+            self.assertEqual(len(self.ds), i + 1)
+
+    def test_iter_and_delete(self):
+        self.test_len()
+        keys = list(self.ds)
+        num = len(keys)
+        assert num > 0
+        for (i, k) in enumerate(keys):
+            self.assertEqual(len(self.ds), num - i)
+            del self.ds[k]
+            self.assertEqual(len(self.ds), num - i - 1)
+        self.assertEqual(len(self.ds), 0)
+
+    def test_keyerror(self):
+        self.assertRaises(KeyError, lambda: self.ds['non_existing_key'])
+
+    def set_some_value(self):
+        self.test_nested_store()
 
 
 class MixInNestableAutoValueTestCase(MixInNestableTestCase):
@@ -102,9 +149,31 @@ class MixInNestableAutoValueTestCase(MixInNestableTestCase):
         ds[key] = data
         self.assertEqual(ds[key], data)
 
+        new_data = range(3)
+        ds_value = ds.get_valuestore(key)
+        self.assertEqual(ds_value.get(), data)
+        ds_value.set(new_data)
+        self.assertEqual(ds[key], new_data)
+
+    def test_one_value_reverse(self, ds=None):
+        ds = ds or self.ds
+        data = dict(a=1)
+        key = 'key_value'
+        ds_value = ds.get_valuestore(key)
+        ds_value.set(data)
+        self.assertEqual(ds_value.get(), data)
+
+        new_data = range(3)
+        self.assertEqual(ds[key], data)
+        ds[key] = new_data
+        self.assertEqual(ds_value.get(), new_data)
+
     def test_nested_store(self):
         super(MixInNestableAutoValueTestCase, self).test_nested_store()
         self.test_one_value(self.ds[self.key_nested])
+
+    def test_nondatastore_value(self):
+        self.callback_nondatastore_value()
 
 
 class MixInWithTempDirectory(BaseMixnInTestCase):

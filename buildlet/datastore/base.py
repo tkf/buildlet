@@ -7,6 +7,8 @@ import itertools
 
 from ..utils.hashutils import hexdigest
 
+METAKEY = '.buildlet'
+
 
 class BaseDataStore(object):
 
@@ -51,50 +53,68 @@ class BaseDataStoreNestable(collections.MutableMapping, BaseDataStore):
     Base class for nestable data store.
     """
 
-    default_substore_type = None
-    """
-    Default class for sub-data store.  None means same as this class.
-    """
+    @property
+    def default_substore_type(self):
+        """
+        Default class for sub-data store.
+        Default is same as the class of `self`.
+        """
+        return self.__class__
 
-    default_streamstore_type = None
-    """
-    Default class for stream type data store.  Child class **must** define it.
-    """
+    @property
+    def default_streamstore_type(self):
+        """
+        Default class for stream type data store.
+        Child class **must** define this attribute.
+        """
+        raise NotImplementedError
 
-    default_valuestore_type = None
-    """
-    Default class for value type data store.  Child class **must** define it.
-    """
+    @property
+    def default_valuestore_type(self):
+        """
+        Default class for value type data store.
+        Child class **must** define this attribute.
+        """
+        raise NotImplementedError
 
-    default_metastore_type = None
-    """
-    Default class for metadata store.
-    None means same as :attr:`default_substore_type` or this class.
-    """
+    @property
+    def default_metastore_type(self):
+        """
+        Default class for metadata store.
+        Default is same as :attr:`default_substore_type`.
+        """
+        return self.default_substore_type
 
-    default_metastore_kwds = None
-    """
-    Default keyword arguments to given to :attr:`default_metastore_type`.
-    None means no argument.
-    """
+    @property
+    def default_metastore_kwds(self):
+        """
+        Default keyword arguments given to :attr:`default_metastore_type`.
+        """
+        return {}
 
     def _get_store(self, key):
-        raise NotImplementedError
+        """
+        "Raw" definition of :meth:`__getitem__`.
+
+        :meth:`_get_store` and :meth:`_set_store` is for internal use.
+        It is appropriate for separating actual data store
+        getter/setter from ``self[key]`` operator.  Default
+        implementation is same as ``self[key]``.
+
+        See :class:`MixInDataStoreNestableAutoValue` for how they are
+        used.
+
+        """
+        return self[key]
 
     def _set_store(self, key, value):
-        raise NotImplementedError
+        """
+        "Raw" definition of :meth:`__setitem__`.
 
-    def _del_store(self, key):
-        raise NotImplementedError
+        See also: :meth:`_get_store` for more info.
 
-    def _iter_store_keys(self, key):
-        raise NotImplementedError
-
-    def get_substore_type(self):
-        return self.default_substore_type or self.__class__
-
-    def get_metastore_type(self):
-        return self.default_metastore_type or self.get_substore_type()
+        """
+        self[key] = value
 
     def get_substore(self, key, dstype=None, dskwds={},
                      allow_specialkeys=False):
@@ -107,9 +127,9 @@ class BaseDataStoreNestable(collections.MutableMapping, BaseDataStore):
 
         """
         if dstype is None:
-            dstype = self.get_substore_type()
+            dstype = self.default_substore_type
         if key in self:
-            s = self[key]
+            s = self._get_store(key)
             if not isinstance(s, dstype):
                 raise ValueError(
                     "Cannot create sub-data store for key '{0}'.\n"
@@ -150,22 +170,10 @@ class BaseDataStoreNestable(collections.MutableMapping, BaseDataStore):
     def get_metastore(self):
         if self._metastore:
             return self._metastore
-        dstype = self.get_metastore_type()
-        dskwds = self.default_metastore_kwds or {}
+        dstype = self.default_metastore_type
+        dskwds = self.default_metastore_kwds
         self._metastore = dstype(**dskwds)
         return self._metastore
-
-    def __getitem__(self, key):
-        return self._get_store(key)
-
-    def __setitem__(self, key, value):
-        self._set_store(key, value)
-
-    def __delitem__(self, key):
-        self._del_store(key)
-
-    def __iter__(self):
-        return self._iter_store_keys()
 
     def __len__(self):
         """
@@ -180,20 +188,20 @@ class BaseDataStoreNestable(collections.MutableMapping, BaseDataStore):
     def hash(self):
         strings = []
         for key in itertools.chain(sorted(self)):
-            store = self[key]
+            store = self._get_store(key)
             subhash = store.hash()
             if subhash is None:
                 return None
             strings.append(key)
-            strings.append(subhash)
-        strings.apppend(self.__class__.__name__)
+            strings.append(str(subhash))
+        strings.append(self.__class__.__name__)
         return hexdigest(strings)
 
 
-class BaseDataStoreNestableMetaInKey(BaseDataStoreNestable):
+class MixInDataStoreNestableMetaInKey(BaseDataStoreNestable):
 
     """
-    Base class for datastore
+    Mix-in class for datastore
 
     Use this class for datastores in which metastore shares namespace.
     For example, when the key is a file name in a directory and
@@ -202,7 +210,7 @@ class BaseDataStoreNestableMetaInKey(BaseDataStoreNestable):
 
     """
 
-    metakey = '.buildlet'
+    metakey = METAKEY
     """
     Key to store metadata.
     """
@@ -220,27 +228,27 @@ class BaseDataStoreNestableMetaInKey(BaseDataStoreNestable):
                      _allow_specialkeys=False, **kwds):
         if not _allow_specialkeys:
             self.__assert_not_specialkeys(key)
-        return super(BaseDataStoreNestableMetaInKey, self) \
+        return super(MixInDataStoreNestableMetaInKey, self) \
             .get_substore(key, dstype=dstype, dskwds=dskwds, **kwds)
 
     def __setitem__(self, key, value):
         self.__assert_not_specialkeys(key)
-        super(BaseDataStoreNestableMetaInKey, self).__setitem__(key, value)
+        super(MixInDataStoreNestableMetaInKey, self).__setitem__(key, value)
 
     def __delitem__(self, key):
         self.__assert_not_specialkeys(key)
-        super(BaseDataStoreNestableMetaInKey, self).__delitem__(key)
+        super(MixInDataStoreNestableMetaInKey, self).__delitem__(key)
 
     def __iter__(self):
         return itertools.ifilterfalse(
             lambda k: k in self.specialkeys,
-            super(BaseDataStoreNestableMetaInKey, self).__iter__())
+            super(MixInDataStoreNestableMetaInKey, self).__iter__())
 
 
-class BaseDataStoreNestableAutoValue(BaseDataStoreNestable):
+class MixInDataStoreNestableAutoValue(BaseDataStoreNestable):
 
     """
-    Base class for fancy automatic get/set.
+    Mix-in class for fancy automatic get/set.
 
     Storing Python object is simply done by::
 
@@ -254,6 +262,12 @@ class BaseDataStoreNestableAutoValue(BaseDataStoreNestable):
     specified by :attr:`default_valuestore_type`.
 
     """
+
+    def _get_store(self, key):
+        return super(MixInDataStoreNestableAutoValue, self).__getitem__(key)
+
+    def _set_store(self, key, value):
+        super(MixInDataStoreNestableAutoValue, self).__setitem__(key, value)
 
     def __getitem__(self, key):
         value = self._get_store(key)
@@ -288,3 +302,17 @@ class BaseDataDirectory(MixInDataStoreFileSystem, BaseDataStoreNestable):
             dskwds['path'] = self.aspath(key)
         return super(BaseDataDirectory, self) \
             .get_substore(key, dstype=dstype, dskwds=dskwds, **kwds)
+
+
+# -------------------------------------------------------------------------
+# Utility functions
+# -------------------------------------------------------------------------
+
+
+def is_datastore(obj):
+    return isinstance(obj, BaseDataStore)
+
+
+def assert_datastore(obj, exception=AssertionError):
+    if not is_datastore(obj):
+        raise exception("`{0!r}` is not datastore.".format(obj))

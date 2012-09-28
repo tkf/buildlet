@@ -5,10 +5,10 @@ Data store on file system with automatically generated directory/file name.
 import os
 
 from ..kvstore.picklestore import KVStorePickle
-from .directory import DataDirectory
+from .directory import _DataDirectory, DataDirectory
 
 
-class DataAutoDirectory(DataDirectory):
+class DataAutoDirectory(_DataDirectory):
 
     """
     Nestable data store on file system with automatic name assignment.
@@ -74,12 +74,12 @@ class DataAutoDirectory(DataDirectory):
     def __len__(self):
         return len(self.keypathmap)
 
-    def _iter_store_keys(self):
+    def __iter__(self):
         return iter(self.keypathmap)
 
-    def _del_store(self, key):
+    def __delitem__(self, key):
         with self.keypathmap.autosync():
-            super(DataAutoDirectory, self)._del_store(key)
+            super(DataAutoDirectory, self).__delitem__(key)
             del self.keypathmap[key]
 
     # TODO: Data store type handling depends on DataDirectory
@@ -87,11 +87,11 @@ class DataAutoDirectory(DataDirectory):
     #       on information of file system.  Store the information on
     #       self.keypathmap to support rich type of data stores.
 
-    def _get_store(self, key):
+    def __getitem__(self, key):
         with self.keypathmap.autosync():
-            return super(DataAutoDirectory, self)._get_store(key)
+            return super(DataAutoDirectory, self).__getitem__(key)
 
-    def _set_store(self, key, value):
+    def __setitem__(self, key, value):
         with self.keypathmap.autosync():
             self.getpath(key)
-            super(DataAutoDirectory, self)._set_store(key, value)
+            super(DataAutoDirectory, self).__setitem__(key, value)

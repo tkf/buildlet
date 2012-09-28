@@ -5,7 +5,9 @@ In-memory data store, mainly for testing purpose.
 import io
 import collections
 
-from .base import BaseDataStoreNestableAutoValue, BaseDataStream, BaseDataValue
+from .base import (
+    assert_datastore, BaseDataValue, BaseDataStream, BaseDataStoreNestable,
+    MixInDataStoreNestableAutoValue)
 
 
 class DataValueInMemory(BaseDataValue):
@@ -109,7 +111,7 @@ class DataStreamInMemory(BaseDataStream):
             return hash(value)
 
 
-class DataStoreNestableInMemory(BaseDataStoreNestableAutoValue):
+class DataStoreNestableInMemory(BaseDataStoreNestable):
 
     """
     Nestable in-memory data store
@@ -124,13 +126,6 @@ class DataStoreNestableInMemory(BaseDataStoreNestableAutoValue):
     >>> ds['key_stream'] is ds_stream
     True
 
-    You can also use ``ds[key]``-access to automatically set/get
-    any Python object.
-
-    >>> ds['key'] = {'a': 1}
-    >>> ds['key']
-    {'a': 1}
-
     """
 
     default_streamstore_type = DataStreamInMemory
@@ -142,14 +137,40 @@ class DataStoreNestableInMemory(BaseDataStoreNestableAutoValue):
     def __len__(self):
         return len(self.__data)
 
-    def _iter_store_keys(self):
+    def __iter__(self):
         return iter(self.__data)
 
-    def _del_store(self, key):
+    def __delitem__(self, key):
         del self.__data[key]
 
-    def _get_store(self, key):
+    def __getitem__(self, key):
         return self.__data[key]
 
-    def _set_store(self, key, value):
+    def __setitem__(self, key, value):
+        assert_datastore(value, ValueError)
         self.__data[key] = value
+
+
+class DataStoreNestableInMemoryAutoValue(MixInDataStoreNestableAutoValue,
+                                         DataStoreNestableInMemory):
+    """
+    Nestable in-memory data store with "auto value" feature.
+
+    You can also use ``ds[key]``-access to automatically set/get
+    any Python object.
+
+    >>> ds = DataStoreNestableInMemoryAutoValue()
+    >>> ds['key'] = {'a': 1}
+    >>> ds['key']
+    {'a': 1}
+
+    Internally, it is saved in a value store.  See:
+
+    >>> ds_value = ds.get_valuestore('key')
+    >>> ds_value.get()
+    {'a': 1}
+    >>> ds_value.set(range(3))
+    >>> ds['key']
+    [0, 1, 2]
+
+    """
