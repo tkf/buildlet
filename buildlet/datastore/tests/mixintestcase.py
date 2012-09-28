@@ -133,6 +133,9 @@ class MixInNestableTestCase(BaseMixnInTestCase):
             self.assertEqual(len(self.ds), num - i - 1)
         self.assertEqual(len(self.ds), 0)
 
+    def test_keyerror(self):
+        self.assertRaises(KeyError, lambda: self.ds['non_existing_key'])
+
     def set_some_value(self):
         self.test_nested_store()
 
