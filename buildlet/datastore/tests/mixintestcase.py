@@ -109,6 +109,12 @@ class MixInNestableTestCase(BaseMixnInTestCase):
         ms = self.ds.get_metastore()
         assert isinstance(ms, self.ds.default_metastore_type)
 
+    def test_nondatastore_value(self):
+        self.assertRaises(ValueError, self.callback_nondatastore_value)
+
+    def callback_nondatastore_value(self):
+        self.ds['key'] = {}
+
     def set_some_value(self):
         self.test_nested_store()
 
@@ -144,6 +150,9 @@ class MixInNestableAutoValueTestCase(MixInNestableTestCase):
     def test_nested_store(self):
         super(MixInNestableAutoValueTestCase, self).test_nested_store()
         self.test_one_value(self.ds[self.key_nested])
+
+    def test_nondatastore_value(self):
+        self.callback_nondatastore_value()
 
 
 class MixInWithTempDirectory(BaseMixnInTestCase):
