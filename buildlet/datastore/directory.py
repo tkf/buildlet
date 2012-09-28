@@ -107,7 +107,7 @@ class DataDirectory(BaseDataDirectory):
         if not os.path.exists(path):
             raise KeyError(key)
         if os.path.isdir(path):
-            cls = self.default_substore_type or self.__class__
+            cls = self.get_substore_type()
             return cls(path=path)
         else:
             return self.default_streamstore_type(path=path)

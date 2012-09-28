@@ -85,6 +85,9 @@ class BaseDataStoreNestable(collections.MutableMapping, BaseDataStore):
     def _del_store(self, key):
         raise NotImplementedError
 
+    def get_substore_type(self):
+        return self.default_substore_type or self.__class__
+
     def get_substore(self, key, dstype=None, dskwds={},
                      allow_specialkeys=False):
         """
@@ -98,7 +101,7 @@ class BaseDataStoreNestable(collections.MutableMapping, BaseDataStore):
         if not allow_specialkeys and key in self.specialkeys:
             raise KeyError('{0} is a special key'.format(key))
         if dstype is None:
-            dstype = self.default_substore_type or self.__class__
+            dstype = self.get_substore_type()
         if key in self:
             s = self[key]
             if not isinstance(s, dstype):
