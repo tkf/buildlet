@@ -51,16 +51,6 @@ class BaseDataStoreNestable(collections.MutableMapping, BaseDataStore):
     Base class for nestable data store.
     """
 
-    metakey = '.buildlet'
-    """
-    Key to store metadata.
-    """
-
-    specialkeys = (metakey,)
-    """
-    Special purpose keys.  Trying to set this key raise an error.
-    """
-
     default_substore_type = None
     """
     Default class for sub-data store.  None means same as this class.
@@ -97,6 +87,9 @@ class BaseDataStoreNestable(collections.MutableMapping, BaseDataStore):
     def _del_store(self, key):
         raise NotImplementedError
 
+    def _iter_store_keys(self, key):
+        raise NotImplementedError
+
     def get_substore_type(self):
         return self.default_substore_type or self.__class__
 
@@ -113,8 +106,6 @@ class BaseDataStoreNestable(collections.MutableMapping, BaseDataStore):
         :attr:`default_substore_type` is used instead.
 
         """
-        if not allow_specialkeys and key in self.specialkeys:
-            raise KeyError('{0} is a special key'.format(key))
         if dstype is None:
             dstype = self.get_substore_type()
         if key in self:
@@ -168,19 +159,27 @@ class BaseDataStoreNestable(collections.MutableMapping, BaseDataStore):
         return self._get_store(key)
 
     def __setitem__(self, key, value):
-        if key in self.specialkeys:
-            raise KeyError('{0} is a special key'.format(key))
         self._set_store(key, value)
 
     def __delitem__(self, key):
-        if key in self.specialkeys:
-            raise KeyError('{0} is a special key'.format(key))
         self._del_store(key)
+
+    def __iter__(self):
+        return self._iter_store_keys()
+
+    def __len__(self):
+        """
+        Safe and stupid `len` implementation based on :meth:`__iter__`
+
+        Child class author can override this function, but must be
+        careful about :meth:`specialkeys`.
+
+        """
+        return sum(1 for _ in self)
 
     def hash(self):
         strings = []
-        specialkeys = (k for k in self.specialkeys if k in self)
-        for key in itertools.chain(sorted(self), specialkeys):
+        for key in itertools.chain(sorted(self)):
             store = self[key]
             subhash = store.hash()
             if subhash is None:
@@ -189,6 +188,53 @@ class BaseDataStoreNestable(collections.MutableMapping, BaseDataStore):
             strings.append(subhash)
         strings.apppend(self.__class__.__name__)
         return hexdigest(strings)
+
+
+class BaseDataStoreNestableMetaInKey(BaseDataStoreNestable):
+
+    """
+    Base class for datastore
+
+    Use this class for datastores in which metastore shares namespace.
+    For example, when the key is a file name in a directory and
+    metastore must be in the same directory, you need to protect
+    a key for metadata.
+
+    """
+
+    metakey = '.buildlet'
+    """
+    Key to store metadata.
+    """
+
+    specialkeys = (metakey,)
+    """
+    Special purpose keys.  Trying to set this key raise an error.
+    """
+
+    def __assert_not_specialkeys(self, key):
+        if key in self.specialkeys:
+            raise KeyError('{0} is a special key'.format(key))
+
+    def get_substore(self, key, dstype=None, dskwds={},
+                     _allow_specialkeys=False, **kwds):
+        if not _allow_specialkeys:
+            self.__assert_not_specialkeys(key)
+        return super(BaseDataStoreNestableMetaInKey, self) \
+            .get_substore(key, dstype=dstype, dskwds=dskwds, **kwds)
+
+    def __setitem__(self, key, value):
+        self.__assert_not_specialkeys(key)
+        super(BaseDataStoreNestableMetaInKey, self).__setitem__(key, value)
+
+    def __delitem__(self, key):
+        self.__assert_not_specialkeys(key)
+        super(BaseDataStoreNestableMetaInKey, self).__delitem__(key)
+
+    def __iter__(self):
+        return itertools.ifilterfalse(
+            lambda k: k in self.specialkeys,
+            super(BaseDataStoreNestableMetaInKey, self).__iter__())
 
 
 class BaseDataStoreNestableAutoValue(BaseDataStoreNestable):
@@ -217,8 +263,6 @@ class BaseDataStoreNestableAutoValue(BaseDataStoreNestable):
             return value
 
     def __setitem__(self, key, value):
-        if key in self.specialkeys:
-            raise KeyError('{0} is a special key'.format(key))
         if isinstance(value, BaseDataStore):
             self._set_store(key, value)
         else:

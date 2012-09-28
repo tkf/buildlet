@@ -142,7 +142,7 @@ class DataStoreNestableInMemory(BaseDataStoreNestableAutoValue):
     def __len__(self):
         return len(self.__data)
 
-    def __iter__(self):
+    def _iter_store_keys(self):
         return iter(self.__data)
 
     def _del_store(self, key):

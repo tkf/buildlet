@@ -5,7 +5,9 @@ File system directory oriented data store.
 import os
 import shutil
 
-from .base import BaseDataDirectory, BaseDataStream, MixInDataStoreFileSystem
+from .base import (
+    BaseDataDirectory, BaseDataStream, MixInDataStoreFileSystem,
+    BaseDataStoreNestableMetaInKey)
 
 
 def mkdirp(path):
@@ -42,7 +44,7 @@ class DataFile(MixInDataStoreFileSystem, BaseDataStream):
         return self.stream
 
 
-class DataDirectory(BaseDataDirectory):
+class DataDirectory(BaseDataStoreNestableMetaInKey, BaseDataDirectory):
 
     """
     Directory based nestable data store.
@@ -86,18 +88,8 @@ class DataDirectory(BaseDataDirectory):
     def aspath(self, key):
         return os.path.join(self.path, key)
 
-    def _listdir(self):
-        return os.listdir(self.path)
-
-    def __len__(self):
-        return len(self._listdir())
-
-    def __iter__(self):
-        for key in self._listdir():
-            if os.path.isdir(self.aspath(key)):
-                yield key
-            else:
-                yield key
+    def _iter_store_keys(self):
+        return iter(os.listdir(self.path))
 
     def _del_store(self, key):
         path = self.aspath(key)

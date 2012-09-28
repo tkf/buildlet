@@ -74,7 +74,7 @@ class DataAutoDirectory(DataDirectory):
     def __len__(self):
         return len(self.keypathmap)
 
-    def __iter__(self):
+    def _iter_store_keys(self):
         return iter(self.keypathmap)
 
     def _del_store(self, key):
