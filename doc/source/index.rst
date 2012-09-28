@@ -6,6 +6,8 @@ Contents:
 .. toctree::
    :maxdepth: 1
 
+   datastore
+
 
 
 Indices and tables

@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# import sys
-# import os
+import sys
+import os
 
-# sys.path.insert(0, os.path.abspath('..'))
+sys.path.insert(0, os.path.abspath('../..'))
 
 # -- General configuration ----------------------------------------------------
 
@@ -12,6 +12,7 @@ extensions = [
     'sphinx.ext.doctest',
     'sphinx.ext.intersphinx',
     'sphinx.ext.todo',
+    'sphinx.ext.inheritance_diagram',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -103,3 +104,5 @@ texinfo_documents = [
 
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {'http://docs.python.org/': None}
+
+inheritance_graph_attrs = dict(rankdir="TB")
