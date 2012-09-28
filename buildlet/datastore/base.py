@@ -267,3 +267,17 @@ class BaseDataDirectory(MixInDataStoreFileSystem, BaseDataStoreNestable):
             dskwds['path'] = self.aspath(key)
         return super(BaseDataDirectory, self) \
             .get_substore(key, dstype=dstype, dskwds=dskwds, **kwds)
+
+
+# -------------------------------------------------------------------------
+# Utility functions
+# -------------------------------------------------------------------------
+
+
+def is_datastore(obj):
+    return isinstance(obj, BaseDataStore)
+
+
+def assert_datastore(obj, exception=AssertionError):
+    if not is_datastore(obj):
+        raise exception("`{0!r}` is not datastore.".format(obj))

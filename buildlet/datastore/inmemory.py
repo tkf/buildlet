@@ -6,7 +6,7 @@ import io
 import collections
 
 from .base import (
-    BaseDataValue, BaseDataStream, BaseDataStoreNestable,
+    assert_datastore, BaseDataValue, BaseDataStream, BaseDataStoreNestable,
     MixInDataStoreNestableAutoValue)
 
 
@@ -147,6 +147,7 @@ class DataStoreNestableInMemory(BaseDataStoreNestable):
         return self.__data[key]
 
     def __setitem__(self, key, value):
+        assert_datastore(value, ValueError)
         self.__data[key] = value
 
 
