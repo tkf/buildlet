@@ -87,9 +87,27 @@ class BaseDataStoreNestable(collections.MutableMapping, BaseDataStore):
         return self.default_metastore_type or self.get_substore_type()
 
     def _get_store(self, key):
+        """
+        "Raw" definition of :meth:`__getitem__`.
+
+        :meth:`_get_store` and :meth:`_set_store` is for internal use.
+        It is appropriate for separating actual data store
+        getter/setter from ``self[key]`` operator.  Default
+        implementation is same as ``self[key]``.
+
+        See :class:`MixInDataStoreNestableAutoValue` for how they are
+        used.
+
+        """
         return self[key]
 
     def _set_store(self, key, value):
+        """
+        "Raw" definition of :meth:`__setitem__`.
+
+        See also: :meth:`_get_store` for more info.
+
+        """
         self[key] = value
 
     def get_substore(self, key, dstype=None, dskwds={},
