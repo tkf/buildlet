@@ -16,7 +16,7 @@ class BaseCachedTask(BaseTask):
     These hashes are used to determine when to load cached data
     or run task again.
 
-    There are there "states" for one task:
+    There are three types of "states" for this task:
 
     `paramvalue`
        Parameters given to the task.  Using this, you can re-run task
