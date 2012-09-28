@@ -182,13 +182,13 @@ class BaseDataStoreNestable(collections.MutableMapping, BaseDataStore):
     def hash(self):
         strings = []
         for key in itertools.chain(sorted(self)):
-            store = self[key]
+            store = self._get_store(key)
             subhash = store.hash()
             if subhash is None:
                 return None
             strings.append(key)
-            strings.append(subhash)
-        strings.apppend(self.__class__.__name__)
+            strings.append(str(subhash))
+        strings.append(self.__class__.__name__)
         return hexdigest(strings)
 
 
