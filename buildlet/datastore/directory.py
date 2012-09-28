@@ -1,6 +1,5 @@
 """
 File system directory oriented data store.
-------------------------------------------
 """
 
 import os

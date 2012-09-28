@@ -1,6 +1,5 @@
 """
 In-memory data store, mainly for testing purpose.
--------------------------------------------------
 """
 
 import io

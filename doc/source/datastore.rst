@@ -1,3 +1,7 @@
+===========================
+ Buildlet datastore module
+===========================
+
 .. automodule:: buildlet.datastore
 
 
@@ -13,14 +17,26 @@
    buildlet.datastore.autoserialize.DataValueYAML
    :parts: 1
 
+:py:mod:`buildlet.datastore.inmemory`
+=====================================
+
 .. automodule:: buildlet.datastore.inmemory
    :members:
+
+:py:mod:`buildlet.datastore.directory`
+======================================
 
 .. automodule:: buildlet.datastore.directory
    :members:
 
+:py:mod:`buildlet.datastore.autodirectory`
+==========================================
+
 .. automodule:: buildlet.datastore.autodirectory
    :members:
+
+:py:mod:`buildlet.datastore.autoserialize`
+==========================================
 
 .. automodule:: buildlet.datastore.autoserialize
    :members:
