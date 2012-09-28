@@ -107,7 +107,7 @@ class MixInNestableTestCase(BaseMixnInTestCase):
 
     def test_metastore(self):
         ms = self.ds.get_metastore()
-        assert isinstance(ms, ms.__class__)
+        assert isinstance(ms, self.ds.default_metastore_type)
 
     def set_some_value(self):
         self.test_nested_store()
