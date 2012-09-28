@@ -1,5 +1,6 @@
 """
 Data store on file system with automatically generated directory/file name.
+---------------------------------------------------------------------------
 """
 
 import os

@@ -12,3 +12,15 @@
    buildlet.datastore.autoserialize.DataValueJSON
    buildlet.datastore.autoserialize.DataValueYAML
    :parts: 1
+
+.. automodule:: buildlet.datastore.inmemory
+   :members:
+
+.. automodule:: buildlet.datastore.directory
+   :members:
+
+.. automodule:: buildlet.datastore.autodirectory
+   :members:
+
+.. automodule:: buildlet.datastore.autoserialize
+   :members:

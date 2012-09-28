@@ -1,3 +1,8 @@
+"""
+Value store with automatic serialization (Pickle/JSON/YAML).
+------------------------------------------------------------
+"""
+
 from .base import MixInDataStoreFileSystem, BaseDataValue
 
 
