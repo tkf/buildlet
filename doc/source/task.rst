@@ -9,6 +9,13 @@
    :parts: 1
 
 
+:py:mod:`buildlet.task.base`
+============================
+
+.. automodule:: buildlet.task.base
+   :members:
+
+
 :py:mod:`buildlet.task.cachedtask`
 ==================================
 
