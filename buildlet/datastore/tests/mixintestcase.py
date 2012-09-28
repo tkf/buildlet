@@ -102,6 +102,25 @@ class MixInNestableAutoValueTestCase(MixInNestableTestCase):
         ds[key] = data
         self.assertEqual(ds[key], data)
 
+        new_data = range(3)
+        ds_value = ds.get_valuestore(key)
+        self.assertEqual(ds_value.get(), data)
+        ds_value.set(new_data)
+        self.assertEqual(ds[key], new_data)
+
+    def test_one_value_reverse(self, ds=None):
+        ds = ds or self.ds
+        data = dict(a=1)
+        key = 'key_value'
+        ds_value = ds.get_valuestore(key)
+        ds_value.set(data)
+        self.assertEqual(ds_value.get(), data)
+
+        new_data = range(3)
+        self.assertEqual(ds[key], data)
+        ds[key] = new_data
+        self.assertEqual(ds_value.get(), new_data)
+
     def test_nested_store(self):
         super(MixInNestableAutoValueTestCase, self).test_nested_store()
         self.test_one_value(self.ds[self.key_nested])
