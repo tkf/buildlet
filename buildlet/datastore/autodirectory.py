@@ -46,12 +46,6 @@ class DataAutoDirectory(DataDirectory):
         self.get_metastore()
         self.keypathmap = self.KeyPathMapClass(self.get_keypathmappath())
 
-    def get_metastorepath(self):
-        return os.path.join(self.path, self.metakey)
-
-    def get_metastore(self):
-        return self.default_metastore_type(self.get_metastorepath())
-
     def get_keypathmappath(self):
         return os.path.join(self.get_metastorepath(), 'keypathmap')
 

@@ -76,6 +76,13 @@ class DataDirectory(BaseDataDirectory):
         super(DataDirectory, self).__init__(*args, **kwds)
         mkdirp(self.path)
 
+    def get_metastorepath(self):
+        return os.path.join(self.path, self.metakey)
+
+    @property
+    def default_metastore_kwds(self):
+        return dict(path=self.get_metastorepath())
+
     def aspath(self, key):
         return os.path.join(self.path, key)
 

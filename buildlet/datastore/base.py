@@ -76,6 +76,18 @@ class BaseDataStoreNestable(collections.MutableMapping, BaseDataStore):
     Default class for value type data store.  Child class **must** define it.
     """
 
+    default_metastore_type = None
+    """
+    Default class for metadata store.
+    None means same as :attr:`default_substore_type` or this class.
+    """
+
+    default_metastore_kwds = None
+    """
+    Default keyword arguments to given to :attr:`default_metastore_type`.
+    None means no argument.
+    """
+
     def _get_store(self, key):
         raise NotImplementedError
 
@@ -87,6 +99,9 @@ class BaseDataStoreNestable(collections.MutableMapping, BaseDataStore):
 
     def get_substore_type(self):
         return self.default_substore_type or self.__class__
+
+    def get_metastore_type(self):
+        return self.default_metastore_type or self.get_substore_type()
 
     def get_substore(self, key, dstype=None, dskwds={},
                      allow_specialkeys=False):
@@ -139,8 +154,15 @@ class BaseDataStoreNestable(collections.MutableMapping, BaseDataStore):
             dstype = self.default_valuestore_type
         return self.get_substore(key, dstype, dskwds)
 
+    _metastore = None
+
     def get_metastore(self):
-        return self.get_substore(self.metakey, allow_specialkeys=True)
+        if self._metastore:
+            return self._metastore
+        dstype = self.get_metastore_type()
+        dskwds = self.default_metastore_kwds or {}
+        self._metastore = dstype(**dskwds)
+        return self._metastore
 
     def __getitem__(self, key):
         return self._get_store(key)
