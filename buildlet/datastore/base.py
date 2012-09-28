@@ -7,6 +7,8 @@ import itertools
 
 from ..utils.hashutils import hexdigest
 
+METAKEY = '.buildlet'
+
 
 class BaseDataStore(object):
 
@@ -78,18 +80,6 @@ class BaseDataStoreNestable(collections.MutableMapping, BaseDataStore):
     None means no argument.
     """
 
-    def _get_store(self, key):
-        raise NotImplementedError
-
-    def _set_store(self, key, value):
-        raise NotImplementedError
-
-    def _del_store(self, key):
-        raise NotImplementedError
-
-    def _iter_store_keys(self, key):
-        raise NotImplementedError
-
     def get_substore_type(self):
         return self.default_substore_type or self.__class__
 
@@ -118,7 +108,7 @@ class BaseDataStoreNestable(collections.MutableMapping, BaseDataStore):
                     .format(key, dstype, s))
             return s
         s = dstype(**dskwds)
-        self._set_store(key, s)
+        self.__setitem__(key, s)
         return s
 
     def get_filestore(self, key, dstype=None, dskwds={}):
@@ -155,18 +145,6 @@ class BaseDataStoreNestable(collections.MutableMapping, BaseDataStore):
         self._metastore = dstype(**dskwds)
         return self._metastore
 
-    def __getitem__(self, key):
-        return self._get_store(key)
-
-    def __setitem__(self, key, value):
-        self._set_store(key, value)
-
-    def __delitem__(self, key):
-        self._del_store(key)
-
-    def __iter__(self):
-        return self._iter_store_keys()
-
     def __len__(self):
         """
         Safe and stupid `len` implementation based on :meth:`__iter__`
@@ -190,10 +168,10 @@ class BaseDataStoreNestable(collections.MutableMapping, BaseDataStore):
         return hexdigest(strings)
 
 
-class BaseDataStoreNestableMetaInKey(BaseDataStoreNestable):
+class MixInDataStoreNestableMetaInKey(BaseDataStoreNestable):
 
     """
-    Base class for datastore
+    Mix-in class for datastore
 
     Use this class for datastores in which metastore shares namespace.
     For example, when the key is a file name in a directory and
@@ -202,7 +180,7 @@ class BaseDataStoreNestableMetaInKey(BaseDataStoreNestable):
 
     """
 
-    metakey = '.buildlet'
+    metakey = METAKEY
     """
     Key to store metadata.
     """
@@ -220,27 +198,27 @@ class BaseDataStoreNestableMetaInKey(BaseDataStoreNestable):
                      _allow_specialkeys=False, **kwds):
         if not _allow_specialkeys:
             self.__assert_not_specialkeys(key)
-        return super(BaseDataStoreNestableMetaInKey, self) \
+        return super(MixInDataStoreNestableMetaInKey, self) \
             .get_substore(key, dstype=dstype, dskwds=dskwds, **kwds)
 
     def __setitem__(self, key, value):
         self.__assert_not_specialkeys(key)
-        super(BaseDataStoreNestableMetaInKey, self).__setitem__(key, value)
+        super(MixInDataStoreNestableMetaInKey, self).__setitem__(key, value)
 
     def __delitem__(self, key):
         self.__assert_not_specialkeys(key)
-        super(BaseDataStoreNestableMetaInKey, self).__delitem__(key)
+        super(MixInDataStoreNestableMetaInKey, self).__delitem__(key)
 
     def __iter__(self):
         return itertools.ifilterfalse(
             lambda k: k in self.specialkeys,
-            super(BaseDataStoreNestableMetaInKey, self).__iter__())
+            super(MixInDataStoreNestableMetaInKey, self).__iter__())
 
 
-class BaseDataStoreNestableAutoValue(BaseDataStoreNestable):
+class MixInDataStoreNestableAutoValue(BaseDataStoreNestable):
 
     """
-    Base class for fancy automatic get/set.
+    Mix-in class for fancy automatic get/set.
 
     Storing Python object is simply done by::
 
@@ -256,7 +234,7 @@ class BaseDataStoreNestableAutoValue(BaseDataStoreNestable):
     """
 
     def __getitem__(self, key):
-        value = self._get_store(key)
+        value = super(MixInDataStoreNestableAutoValue, self).__getitem__(key)
         if isinstance(value, BaseDataValue):
             return value.get()
         else:
@@ -264,7 +242,8 @@ class BaseDataStoreNestableAutoValue(BaseDataStoreNestable):
 
     def __setitem__(self, key, value):
         if isinstance(value, BaseDataStore):
-            self._set_store(key, value)
+            super(MixInDataStoreNestableAutoValue, self) \
+                .__setitem__(key, value)
         else:
             store = self.get_valuestore(key)
             store.set(value)

@@ -7,7 +7,7 @@ import shutil
 
 from .base import (
     BaseDataDirectory, BaseDataStream, MixInDataStoreFileSystem,
-    BaseDataStoreNestableMetaInKey)
+    MixInDataStoreNestableMetaInKey, METAKEY)
 
 
 def mkdirp(path):
@@ -44,8 +44,72 @@ class DataFile(MixInDataStoreFileSystem, BaseDataStream):
         return self.stream
 
 
-class DataDirectory(BaseDataStoreNestableMetaInKey, BaseDataDirectory):
+class _DataDirectory(BaseDataDirectory):
 
+    """
+    **Unsafe** internal implementation of :class:`DataDirectory`.
+
+    This class is unsafe to use as-is because there is no mechanism
+    to make sure key is different from :attr:`metakey`.  Child class
+    must either use :class:`MixInDataStoreNestableMetaInKey` or
+    override :meth:`aspath`.
+
+    """
+
+    default_streamstore_type = DataFile
+
+    metakey = METAKEY
+    # this is needed to use this class w/o MixInDataStoreNestableMetaInKey.
+
+    def __init__(self, *args, **kwds):
+        super(_DataDirectory, self).__init__(*args, **kwds)
+        mkdirp(self.path)
+
+    def get_metastorepath(self):
+        return os.path.join(self.path, self.metakey)
+
+    @property
+    def default_metastore_kwds(self):
+        return dict(path=self.get_metastorepath())
+
+    def aspath(self, key):
+        return os.path.join(self.path, key)
+
+    def __iter__(self):
+        return iter(os.listdir(self.path))
+
+    def __delitem__(self, key):
+        path = self.aspath(key)
+        if not os.path.exists(path):
+            raise KeyError(
+                'Key {0} (path: {1}) does not exist'.format(key, path))
+        if os.path.isdir(path):
+            shutil.rmtree(self.aspath(key))
+        else:
+            os.remove(path)
+
+    def __getitem__(self, key):
+        path = self.aspath(key)
+        if not os.path.exists(path):
+            raise KeyError(key)
+        if os.path.isdir(path):
+            cls = self.get_substore_type()
+            return cls(path=path)
+        else:
+            return self.default_streamstore_type(path=path)
+
+    def __setitem__(self, key, value):
+        path = self.aspath(key)
+        if isinstance(value, BaseDataDirectory):
+            mkdirp(path)
+        elif isinstance(value, DataFile) and not os.path.exists(path):
+            open(path, 'wb').close()
+        else:
+            raise ValueError(
+                'Value {0!r} is not supported data store type.'.format(value))
+
+
+class DataDirectory(MixInDataStoreNestableMetaInKey, _DataDirectory):
     """
     Directory based nestable data store.
 
@@ -71,52 +135,3 @@ class DataDirectory(BaseDataStoreNestableMetaInKey, BaseDataDirectory):
     <buildlet.datastore.directory.DataDirectory object at ...>
 
     """
-
-    default_streamstore_type = DataFile
-
-    def __init__(self, *args, **kwds):
-        super(DataDirectory, self).__init__(*args, **kwds)
-        mkdirp(self.path)
-
-    def get_metastorepath(self):
-        return os.path.join(self.path, self.metakey)
-
-    @property
-    def default_metastore_kwds(self):
-        return dict(path=self.get_metastorepath())
-
-    def aspath(self, key):
-        return os.path.join(self.path, key)
-
-    def _iter_store_keys(self):
-        return iter(os.listdir(self.path))
-
-    def _del_store(self, key):
-        path = self.aspath(key)
-        if not os.path.exists(path):
-            raise KeyError(
-                'Key {0} (path: {1}) does not exist'.format(key, path))
-        if os.path.isdir(path):
-            shutil.rmtree(self.aspath(key))
-        else:
-            os.remove(path)
-
-    def _get_store(self, key):
-        path = self.aspath(key)
-        if not os.path.exists(path):
-            raise KeyError(key)
-        if os.path.isdir(path):
-            cls = self.get_substore_type()
-            return cls(path=path)
-        else:
-            return self.default_streamstore_type(path=path)
-
-    def _set_store(self, key, value):
-        path = self.aspath(key)
-        if isinstance(value, BaseDataDirectory):
-            mkdirp(path)
-        elif isinstance(value, DataFile) and not os.path.exists(path):
-            open(path, 'wb').close()
-        else:
-            raise ValueError(
-                'Value {0!r} is not supported data store type.'.format(value))
