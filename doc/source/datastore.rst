@@ -17,6 +17,12 @@
    buildlet.datastore.autoserialize.DataValueYAML
    :parts: 1
 
+:py:mod:`buildlet.datastore.base`
+=================================
+
+.. automodule:: buildlet.datastore.base
+   :members:
+
 :py:mod:`buildlet.datastore.inmemory`
 =====================================
 
