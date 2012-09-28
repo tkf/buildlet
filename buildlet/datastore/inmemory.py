@@ -159,8 +159,18 @@ class DataStoreNestableInMemoryAutoValue(MixInDataStoreNestableAutoValue,
     You can also use ``ds[key]``-access to automatically set/get
     any Python object.
 
+    >>> ds = DataStoreNestableInMemoryAutoValue()
     >>> ds['key'] = {'a': 1}
     >>> ds['key']
     {'a': 1}
+
+    Internally, it is saved in a value store.  See:
+
+    >>> ds_value = ds.get_valuestore('key')
+    >>> ds_value.get()
+    {'a': 1}
+    >>> ds_value.set(range(3))
+    >>> ds['key']
+    [0, 1, 2]
 
     """

@@ -86,6 +86,12 @@ class BaseDataStoreNestable(collections.MutableMapping, BaseDataStore):
     def get_metastore_type(self):
         return self.default_metastore_type or self.get_substore_type()
 
+    def _get_store(self, key):
+        return self[key]
+
+    def _set_store(self, key, value):
+        self[key] = value
+
     def get_substore(self, key, dstype=None, dskwds={},
                      allow_specialkeys=False):
         """
@@ -99,7 +105,7 @@ class BaseDataStoreNestable(collections.MutableMapping, BaseDataStore):
         if dstype is None:
             dstype = self.get_substore_type()
         if key in self:
-            s = self[key]
+            s = self._get_store(key)
             if not isinstance(s, dstype):
                 raise ValueError(
                     "Cannot create sub-data store for key '{0}'.\n"
@@ -108,7 +114,7 @@ class BaseDataStoreNestable(collections.MutableMapping, BaseDataStore):
                     .format(key, dstype, s))
             return s
         s = dstype(**dskwds)
-        self.__setitem__(key, s)
+        self._set_store(key, s)
         return s
 
     def get_filestore(self, key, dstype=None, dskwds={}):
@@ -233,8 +239,14 @@ class MixInDataStoreNestableAutoValue(BaseDataStoreNestable):
 
     """
 
+    def _get_store(self, key):
+        return super(MixInDataStoreNestableAutoValue, self).__getitem__(key)
+
+    def _set_store(self, key, value):
+        super(MixInDataStoreNestableAutoValue, self).__setitem__(key, value)
+
     def __getitem__(self, key):
-        value = super(MixInDataStoreNestableAutoValue, self).__getitem__(key)
+        value = self._get_store(key)
         if isinstance(value, BaseDataValue):
             return value.get()
         else:
@@ -242,8 +254,7 @@ class MixInDataStoreNestableAutoValue(BaseDataStoreNestable):
 
     def __setitem__(self, key, value):
         if isinstance(value, BaseDataStore):
-            super(MixInDataStoreNestableAutoValue, self) \
-                .__setitem__(key, value)
+            self._set_store(key, value)
         else:
             store = self.get_valuestore(key)
             store.set(value)
