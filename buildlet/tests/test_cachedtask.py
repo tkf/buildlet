@@ -11,13 +11,14 @@ class TestingCachedTask(BaseCachedTask, test_simple.TestingTaskBase):
 
 class TestCachedTask(test_simple.TestSimpleTask):
 
+    ParentTaskClass = TestingCachedTask
     DataStoreClass = DataStoreNestableInMemory
 
     class TaskClass(TestingCachedTask, test_simple.SimpleRootTask):
 
         def generate_parents(self):
             return [
-                TestingCachedTask(
+                self.ParentTaskClass(
                     MockClass=self.MockClass,
                     # Only string key is supported by all nestable
                     # data store types.
