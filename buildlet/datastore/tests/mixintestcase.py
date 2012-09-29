@@ -24,6 +24,9 @@ class BaseMixnInTestCase(object):
         assert hasattr(val, '__eq__'), \
             "`{0!r}` does not have __eq__".format(val)
 
+    def test_clear_empty_store_should_not_fail(self):
+        self.ds.clear()
+
 
 class MixInValueTestCase(BaseMixnInTestCase):
 
