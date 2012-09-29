@@ -25,7 +25,7 @@
 Three kinds of datastore classes
 ================================
 
-.. py:module:: buildlet.datastore.base
+.. py:currentmodule:: buildlet.datastore.base
 
 There are three kinds of datastore classes:
 stream type (:py:class:`BaseDataStream`),
