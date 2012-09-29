@@ -7,7 +7,7 @@ from ..datastore.directory import DataDirectory
 from . import test_cachedtask
 
 
-class TestCachedTaskDirectory(test_cachedtask.TestCachedTask):
+class MixInTestDataDirectory(object):
 
     DataStoreClass = DataDirectory
 
@@ -17,3 +17,8 @@ class TestCachedTaskDirectory(test_cachedtask.TestCachedTask):
 
     def teardown_datastore(self):
         shutil.rmtree(self.tempdir)
+
+
+class TestCachedTaskDirectory(MixInTestDataDirectory,
+                              test_cachedtask.TestCachedTask):
+    pass
