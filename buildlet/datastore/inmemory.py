@@ -153,6 +153,9 @@ class DataStoreNestableInMemory(BaseDataStoreNestable):
         assert_datastore(value, ValueError)
         self.__data[key] = value
 
+    def exists(self):
+        return bool(self.__data)
+
 
 class DataStoreNestableInMemoryAutoValue(MixInDataStoreNestableAutoValue,
                                          DataStoreNestableInMemory):
