@@ -29,7 +29,6 @@ class IPythonParallelRunner(MixInParallelRunner, SimpleRunner):
         self.results = results = {}
         for node in self.sorted_nodes():
             deps = [results[n] for n in self.graph.predecessors(node)]
-            results[node] = self.apply_async(self.nodetaskmap[node], deps)
             with view.temp_flags(after=deps):
                 results[node] = view.apply_async(self.run_func,
                                                  self.nodetaskmap[node])
