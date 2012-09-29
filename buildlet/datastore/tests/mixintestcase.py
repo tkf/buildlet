@@ -27,16 +27,19 @@ class BaseMixnInTestCase(object):
 
 class MixInValueTestCase(BaseMixnInTestCase):
 
+    def set_some_value(self):
+        self.test_set_get()
+
     def test_set_get(self):
         data = dict(a=1)
         self.ds.set(data)
         self.assertEqual(self.ds.get(), data)
 
-    def set_some_value(self):
-        self.test_set_get()
-
 
 class MixInStreamTestCase(BaseMixnInTestCase):
+
+    def set_some_value(self):
+        self.test_write_read()
 
     def test_write_read(self):
         data = 'some text'.encode()
@@ -55,13 +58,13 @@ class MixInStreamTestCase(BaseMixnInTestCase):
         self.ds.clear()
         assert not self.ds.exists()
 
-    def set_some_value(self):
-        self.test_write_read()
-
 
 class MixInNestableTestCase(BaseMixnInTestCase):
 
     key_nested = 'key_nested'
+
+    def set_some_value(self):
+        self.test_nested_store()
 
     def test_one_stream(self, ds=None):
         ds = ds or self.ds
@@ -135,9 +138,6 @@ class MixInNestableTestCase(BaseMixnInTestCase):
 
     def test_keyerror(self):
         self.assertRaises(KeyError, lambda: self.ds['non_existing_key'])
-
-    def set_some_value(self):
-        self.test_nested_store()
 
 
 class MixInNestableAutoValueTestCase(MixInNestableTestCase):
