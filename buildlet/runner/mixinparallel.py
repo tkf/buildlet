@@ -7,7 +7,7 @@ from .simple import primitive_run
 
 class MixInParallelRunner(object):
 
-    def run_parent(self, task):
+    def do_run(self, task):
         self.create_graph(task)
         self.submit_tasks()
         self.wait_tasks()
@@ -52,9 +52,10 @@ class MixInParallelRunner(object):
 
 
 def run_task_load_parents(task):
-    primitive_run(task, load_parents)
+    primitive_run(task, do_run_load_parents)
 
 
-def load_parents(task):
+def do_run_load_parents(task):
     for parent in task.get_parents():
         parent.load()
+    task.run()
