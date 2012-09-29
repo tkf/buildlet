@@ -3,11 +3,10 @@ File system directory oriented data store.
 """
 
 import os
-import shutil
 
 from .base import (
-    BaseDataDirectory, BaseDataStream, MixInDataStoreFileSystem,
-    MixInDataStoreNestableMetaInKey, METAKEY)
+    assert_datastore, BaseDataDirectory, BaseDataStream,
+    MixInDataStoreFileSystem, MixInDataStoreNestableMetaInKey, METAKEY)
 
 from .autoserialize import BaseDataValueAutoSerialize, DataValuePickle
 
@@ -36,7 +35,8 @@ class DataFile(MixInDataStoreFileSystem, BaseDataStream):
 
     def clear(self):
         self.stream = None
-        os.remove(self.path)
+        if self.exists():
+            os.remove(self.path)
 
     def exists(self):
         return os.path.exists(self.path)
@@ -67,6 +67,7 @@ class _DataDirectory(BaseDataDirectory):
     def __init__(self, *args, **kwds):
         super(_DataDirectory, self).__init__(*args, **kwds)
         mkdirp(self.path)
+        self.__store = {}
 
     def get_metastorepath(self):
         return os.path.join(self.path, self.metakey)
@@ -79,38 +80,40 @@ class _DataDirectory(BaseDataDirectory):
         return os.path.join(self.path, key)
 
     def __iter__(self):
-        return iter(os.listdir(self.path))
+        return iter(self.__store)
 
     def __delitem__(self, key):
-        path = self.aspath(key)
-        if not os.path.exists(path):
-            raise KeyError(
-                'Key {0} (path: {1}) does not exist'.format(key, path))
-        if os.path.isdir(path):
-            shutil.rmtree(self.aspath(key))
-        else:
-            os.remove(path)
+        store = self.__store[key]
+        store.clear()
+        del self.__store[key]
 
     def __getitem__(self, key):
-        path = self.aspath(key)
-        if not os.path.exists(path):
-            raise KeyError(key)
-        if os.path.isdir(path):
-            cls = self.default_substore_type
-            return cls(path=path)
-        else:
-            return self.default_streamstore_type(path=path)
+        return self.__store[key]
 
     def __setitem__(self, key, value):
+        assert_datastore(value, ValueError)
         path = self.aspath(key)
-        if isinstance(value, BaseDataDirectory):
-            mkdirp(path)
-        elif isinstance(value, (DataFile, BaseDataValueAutoSerialize)):
-            if not os.path.exists(path):
-                open(path, 'wb').close()
-        else:
-            raise ValueError(
-                'Value {0!r} is not supported data store type.'.format(value))
+        if isinstance(value, BaseDataDirectory) and \
+           os.path.exists(path) and not os.path.isdir(path):
+            if key not in self:
+                raise KeyError(
+                    "{0!r}: Trying to set directory type, but"
+                    "unknown non-directory file exists already."
+                    .format(key))
+            else:
+                # streamstore or valuestore
+                self._get_store(key).clean()
+        elif isinstance(value, (DataFile, BaseDataValueAutoSerialize)) and \
+             os.path.isdir(path):
+            if key not in self:
+                raise KeyError(
+                    "{0!r}: Trying to set file/value type, but"
+                    "unknown directory exists already."
+                    .format(key))
+            else:
+                # nestable store
+                self._get_store(key).clean()
+        self.__store[key] = value
 
 
 class DataDirectory(MixInDataStoreNestableMetaInKey, _DataDirectory):
