@@ -15,7 +15,7 @@ in `IPython Documentation`_.
 
 """
 
-from IPython import parallel
+import IPython.parallel
 
 from .simple import SimpleRunner
 from .mixinparallel import MixInParallelRunner
@@ -24,7 +24,7 @@ from .mixinparallel import MixInParallelRunner
 class IPythonParallelRunner(MixInParallelRunner, SimpleRunner):
 
     def submit_tasks(self):
-        self.client = parallel.Client()
+        self.client = IPython.parallel.Client()
         self.view = view = self.client.load_balanced_view()
         self.results = results = {}
         for node in self.sorted_nodes():
