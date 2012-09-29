@@ -38,7 +38,7 @@ class IPythonParallelRunner(SimpleRunner):
     def create_tree(task):
         G = nx.DiGraph()
         jobs = {}
-        counter = itertools.count()
+        counter = itertools.count().next
 
         def creator(i, t):
             jobs[i] = t
@@ -49,11 +49,11 @@ class IPythonParallelRunner(SimpleRunner):
                 creator(k, p)
 
         root = counter()
-        creator(counter(), task)
+        creator(root, task)
         return (root, G, jobs)
 
     @staticmethod
-    def submit_jobs(cls, view, G, jobs):
+    def submit_jobs(view, G, jobs):
         """Submit jobs via client where G describes dependencies."""
         results = {}
         for node in nx.topological_sort(G):
