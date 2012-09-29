@@ -2,6 +2,7 @@
 Base data store classes.
 """
 
+import os
 import collections
 import itertools
 
@@ -323,6 +324,9 @@ class MixInDataStoreFileSystem(BaseDataStore):
     def __init__(self, path, *args, **kwds):
         self.path = path
         super(MixInDataStoreFileSystem, self).__init__(*args, **kwds)
+
+    def exists(self):
+        return os.path.exists(self.path)
 
     def aspath(self, key):
         raise NotImplementedError

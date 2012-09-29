@@ -19,9 +19,6 @@ class BaseDataValueAutoSerialize(MixInDataStoreFileSystem, BaseDataValue):
         with open(self.path, 'r' + self.mode) as fp:
             return self.load(fp)
 
-    def exists(self):
-        return os.path.exists(self.path)
-
     def clear(self):
         if self.exists():
             os.remove(self.path)

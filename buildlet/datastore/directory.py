@@ -38,9 +38,6 @@ class DataFile(MixInDataStoreFileSystem, BaseDataStream):
         if self.exists():
             os.remove(self.path)
 
-    def exists(self):
-        return os.path.exists(self.path)
-
     def open(self, *args, **kwds):
         self.stream = open(self.path, *args, **kwds)
         return self.stream
