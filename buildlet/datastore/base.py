@@ -230,7 +230,7 @@ class BaseDataStoreNestable(collections.MutableMapping, BaseDataStore):
 class MixInDataStoreNestableMetaInKey(BaseDataStoreNestable):
 
     """
-    Mix-in class for datastore
+    Mix-in class for nestable datastore with disallowed keys.
 
     Use this class for datastores in which metastore shares namespace.
     For example, when the key is a file name in a directory and
@@ -315,6 +315,10 @@ class MixInDataStoreNestableAutoValue(BaseDataStoreNestable):
 
 class MixInDataStoreFileSystem(BaseDataStore):
 
+    """
+    Mix-in class for file-based datastore.
+    """
+
     def __init__(self, path, *args, **kwds):
         self.path = path
         super(MixInDataStoreFileSystem, self).__init__(*args, **kwds)
@@ -324,6 +328,10 @@ class MixInDataStoreFileSystem(BaseDataStore):
 
 
 class BaseDataDirectory(MixInDataStoreFileSystem, BaseDataStoreNestable):
+
+    """
+    Base class for file-based nestable datastore.
+    """
 
     def get_substore(self, key, dstype=None, dskwds={}, **kwds):
         if 'path' not in dskwds:
