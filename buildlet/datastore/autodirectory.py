@@ -93,7 +93,7 @@ class DataAutoDirectory(_DataDirectory):
             super(DataAutoDirectory, self).__setitem__(key, value)
 
 
-class DataAutoDirectoryAutoValue(MixInDataStoreNestableAutoValue,
+class DataAutoDirectoryWithMagic(MixInDataStoreNestableAutoValue,
                                  DataAutoDirectory):
     """
     Directory based nestable data store with auto-serializer.

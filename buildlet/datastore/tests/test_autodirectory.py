@@ -1,6 +1,6 @@
 import unittest
 
-from ..autodirectory import DataAutoDirectory, DataAutoDirectoryAutoValue
+from ..autodirectory import DataAutoDirectory, DataAutoDirectoryWithMagic
 from .mixintestcase import (
     MixInNestableTestCase, MixInWithTempDirectory,
     MixInNestableAutoValueTestCase,
@@ -12,7 +12,7 @@ class TestDataAutoDirectory(MixInNestableTestCase, MixInWithTempDirectory,
     dstype = DataAutoDirectory
 
 
-class TestDataAutoDirectoryAutoValue(MixInNestableAutoValueTestCase,
+class TestDataAutoDirectoryWithMagic(MixInNestableAutoValueTestCase,
                                      MixInWithTempDirectory,
                                      unittest.TestCase):
-    dstype = DataAutoDirectoryAutoValue
+    dstype = DataAutoDirectoryWithMagic

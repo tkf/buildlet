@@ -143,7 +143,7 @@ class DataDirectory(MixInDataStoreNestableMetaInKey, _DataDirectory):
     """
 
 
-class DataDirectoryAutoValue(MixInDataStoreNestableAutoValue, DataDirectory):
+class DataDirectoryWithMagic(MixInDataStoreNestableAutoValue, DataDirectory):
     """
     Directory based nestable data store with auto-serializer.
     """

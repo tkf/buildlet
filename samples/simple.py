@@ -1,4 +1,4 @@
-from buildlet.datastore import DataAutoDirectoryAutoValue
+from buildlet.datastore import DataAutoDirectoryWithMagic
 from buildlet.task import BaseCachedTask, BaseSimpleTask
 from buildlet.runner import SimpleRunner
 
@@ -14,7 +14,7 @@ class SimpleRootTask(BaseSimpleCachedTask):
     num_parents = 3
 
     def __init__(self, basepath, **kwds):
-        self.datastore = DataAutoDirectoryAutoValue(basepath)
+        self.datastore = DataAutoDirectoryWithMagic(basepath)
         super(SimpleRootTask, self).__init__(basepath=basepath, **kwds)
 
     def generate_parents(self):
