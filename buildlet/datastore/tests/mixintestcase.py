@@ -11,6 +11,9 @@ class BaseMixnInTestCase(object):
             "Child class must set `dstype` to a data store class.")
 
     def setUp(self):
+        self.setup_datastore()
+
+    def setup_datastore(self):
         self.ds = self.dstype()
 
     def set_some_value(self):
@@ -198,6 +201,31 @@ class MixInNestableTestCase(BaseMixnInTestCase):
         key_allocator_list.append(('key_custom_streamstore', custom_allocator))
         return key_allocator_list
 
+    def test_reinitialize_then_clear(self):
+
+        def get_subfilestore(k, d):
+            s = d.get_substore(k)
+            return (s, s.get_filestore('dummy'))
+
+        # Make subsub file store
+        ds = self.ds
+        key = 'key'
+        self.assertEqual(list(ds), [])
+        (sub, subfile) = get_subfilestore(key, ds)
+        subfile.open('w').close()
+        assert sub.exists()
+        self.assertEqual(list(ds), [key])
+
+        # Reinitialize datastore
+        self.setup_datastore()
+        reds = self.ds
+        assert reds is not ds
+        reds.clear()
+        self.assertEqual(list(reds), [])
+        # Make sure old subsub file store is removed
+        (_, resubfile) = get_subfilestore(key, reds)
+        assert not resubfile.exists()
+
 
 class MixInNestableAutoValueTestCase(MixInNestableTestCase):
 
@@ -253,10 +281,14 @@ class MixInWithTempDirectory(BaseMixnInTestCase):
 
     def setUp(self):
         self.tempdir = tempfile.mkdtemp()
+        self.setup_datastore()
+
+    def setup_datastore(self):
         self.ds = self.dstype(self.tempdir)
 
     def tearDown(self):
-        shutil.rmtree(self.tempdir)
+        if os.path.exists(self.tempdir):
+            shutil.rmtree(self.tempdir)
 
 
 class MixInWithTempFile(MixInWithTempDirectory):
@@ -264,4 +296,7 @@ class MixInWithTempFile(MixInWithTempDirectory):
     def setUp(self):
         self.tempdir = tempfile.mkdtemp()
         self.tempfilename = os.path.join(self.tempdir, 'tempfile')
+        self.setup_datastore()
+
+    def setup_datastore(self):
         self.ds = self.dstype(self.tempfilename)
