@@ -1,33 +1,43 @@
 from ..task.cachedtask import BaseCachedTask
 from ..datastore.inmemory import DataStoreNestableInMemory
 
-from .test_simple import TestingTaskBase, TestSimpleTask, SimpleRootTask
+# Avoid importing test case at top-level to duplicated test
+from . import test_simple
 
 
-class TestingCachedTask(BaseCachedTask, TestingTaskBase):
+class TestingCachedTask(BaseCachedTask, test_simple.TestingTaskBase):
     pass
 
 
-class TestCachedTask(TestSimpleTask):
+class CachedRootTask(TestingCachedTask, test_simple.SimpleRootTask):
 
+    def generate_parents(self):
+        return [
+            self.ParentTaskClass(
+                MockClass=self.MockClass,
+                # Only string key is supported by all nestable
+                # data store types.
+                datastore=self.datastore.get_substore(str(i)))
+            for i in range(self.num_parents)]
+
+
+class TestCachedTask(test_simple.TestSimpleTask):
+
+    TaskClass = CachedRootTask
+    ParentTaskClass = TestingCachedTask
     DataStoreClass = DataStoreNestableInMemory
-
-    class TaskClass(TestingCachedTask, SimpleRootTask):
-
-        def generate_parents(self):
-            return [
-                TestingCachedTask(
-                    # Only string key is supported by all nestable
-                    # data store types.
-                    datastore=self.datastore.get_substore(str(i)))
-                for i in range(self.num_parents)]
 
     def setup_task(self):
         self.setup_datastore()
-        self.task = self.TaskClass(datastore=self.ds)
+        super(TestCachedTask, self).setup_task()
 
     def setup_datastore(self):
         self.ds = self.DataStoreClass()
+
+    def get_taskclass_kwds(self):
+        kwds = super(TestCachedTask, self).get_taskclass_kwds()
+        kwds.update(datastore=self.ds)
+        return kwds
 
     def teardown_task(self):
         self.teardown_datastore()
@@ -85,7 +95,7 @@ class TestCachedTask(TestSimpleTask):
 
     def test_rerun_new_instance(self):
         self.test_simple_run()
-        self.task = self.TaskClass(datastore=self.ds)
+        self.task = self.TaskClass(**self.get_taskclass_kwds())
         self.runner.run(self.task)
         self.assert_run_num(0)
         self.assert_run_num(1, 0, func='pre_run')
