@@ -44,6 +44,7 @@ def run_simple_task(runner_class, **kwds):
     runner = getrunner(runner_class)()
     print "Runner:", runner
     runner.run(task)
+    return (runner, task)
 
 
 def main(args=None):
@@ -57,8 +58,8 @@ def main(args=None):
     parser.add_argument('--clear-before-run', '-c', default=False,
                         action='store_true')
     ns = parser.parse_args(args)
-    run_simple_task(**vars(ns))
+    return run_simple_task(**vars(ns))
 
 
 if __name__ == '__main__':
-    main()
+    ret = main()
