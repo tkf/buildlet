@@ -25,15 +25,16 @@ class MultiprocessingRunner(MixInParallelRunner, SimpleRunner):
         results = self.results
         for node in self.cached_sorted_nodes:
             predecessors = self.cached_predecessors[node]
-            if all(p in results and results[p].ready() for p in predecessors):
-                self.pool.apply_async(self.run_func, self.nodetaskmap[node],
-                                      callback=self.submit_ready_tasks)
-                # Otherwise, there are unfinished tasks. this will be
-                # called when all the unfinished tasks are finished.
+            if node not in results and \
+               all(p in results and results[p].ready() for p in predecessors):
+                results[node] = self.pool.apply_async(
+                    self.run_func, [self.nodetaskmap[node]])
 
     def wait_tasks(self):
         while True:
             for r in self.results.values():
-                r.wait()
+                # This would raise an error if there is one in subprocesses
+                r.get()
+            self.submit_ready_tasks()
             if set(self.nodetaskmap) == set(self.results):
                 break
