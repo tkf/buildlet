@@ -18,6 +18,17 @@ class BaseDataStore(object):
         """
         raise NotImplementedError
 
+    def exists(self):
+        """
+        Return True if location to store value exists.
+
+        For file-based datastore, this method is equivalent to::
+
+            os.path.exists(self.path)
+
+        """
+        raise NotImplementedError
+
     def hash(self):
         """
         Return some comparable object for automatic dependency check.
@@ -40,10 +51,6 @@ class BaseDataValue(BaseDataStore):
         """Get saved value."""
         raise NotImplementedError
 
-    def exists(self):
-        """Return True if value is stored."""
-        raise NotImplementedError
-
 
 class BaseDataStream(BaseDataStore):
 
@@ -60,17 +67,6 @@ class BaseDataStream(BaseDataStore):
         For file-based datastore, this method is equivalent to::
 
             open(self.path, *args)
-
-        """
-        raise NotImplementedError
-
-    def exists(self):
-        """
-        Return True if datastore is allocated.
-
-        For file-based datastore, this method is equivalent to::
-
-            os.path.exists(self.path)
 
         """
         raise NotImplementedError
