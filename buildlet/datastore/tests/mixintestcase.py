@@ -32,6 +32,14 @@ class BaseMixnInTestCase(object):
     def test_clear_empty_store_should_not_fail(self):
         self.ds.clear()
 
+    def test_set_value_after_clear(self):
+        self.ds.clear()
+        # For directory type, this does hold:
+        # assert not self.ds.exists()
+
+        # It should be possible to set some value:
+        self.test_exists()
+
 
 class MixInValueTestCase(BaseMixnInTestCase):
 
