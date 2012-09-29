@@ -3,6 +3,7 @@ Base data store classes.
 """
 
 import os
+import shutil
 import collections
 import itertools
 
@@ -349,6 +350,11 @@ class BaseDataDirectory(MixInDataStoreFileSystem, BaseDataStoreNestable):
             dskwds['path'] = self.aspath(key)
         return super(BaseDataDirectory, self) \
             .get_substore(key, dstype=dstype, dskwds=dskwds, **kwds)
+
+    def clear(self):
+        super(BaseDataDirectory, self).clear()
+        if os.path.exists(self.path):
+            shutil.rmtree(self.path)
 
 
 # -------------------------------------------------------------------------

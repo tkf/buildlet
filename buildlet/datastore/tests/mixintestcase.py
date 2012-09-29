@@ -284,7 +284,8 @@ class MixInWithTempDirectory(BaseMixnInTestCase):
         self.ds = self.dstype(self.tempdir)
 
     def tearDown(self):
-        shutil.rmtree(self.tempdir)
+        if os.path.exists(self.tempdir):
+            shutil.rmtree(self.tempdir)
 
 
 class MixInWithTempFile(MixInWithTempDirectory):
