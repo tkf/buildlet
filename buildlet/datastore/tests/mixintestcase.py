@@ -141,13 +141,17 @@ class MixInNestableTestCase(BaseMixnInTestCase):
 
     def test_substore_is_cached_in_memory(self):
         key_allocator_list = self.get_key_allocator_list()
-        key_class_list = []
+        key_store_list = []
         for (key, alloc) in key_allocator_list:
-            key_class_list.append((key, type(alloc(key))))
+            key_store_list.append((key, alloc(key)))
 
-        for (key, dstype) in key_class_list:
-            assert isinstance(self.ds[key], dstype), \
-                "self.ds[{0!r}] (= {1!r}) is not type of {2}" \
+        for (key, store) in key_store_list:
+            self.assert_store_is_cached(key, store)
+
+    def assert_store_is_cached(self, key, store):
+        dstype = type(store)
+        assert isinstance(self.ds[key], dstype), \
+            "self.ds[{0!r}] (= {1!r}) is not type of {2}" \
                 .format(key, self.ds[key], dstype.__name__)
 
     def get_key_allocator_list(self):
