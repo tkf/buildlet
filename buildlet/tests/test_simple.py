@@ -1,12 +1,13 @@
 import unittest
 
-import mock
-
+from ..utils.mocklet import Mock
 from ..task import BaseSimpleTask
 from ..runner.simple import SimpleRunner
 
 
 class TestingTaskBase(BaseSimpleTask):
+
+    MockClass = Mock
 
     mock_methods = [
         'run', 'load', 'pre_run', 'post_success_run', 'post_error_run']
@@ -18,7 +19,7 @@ class TestingTaskBase(BaseSimpleTask):
         # mock "indirectly" here (don't do ``self.run = mock.Mock()``).
         self.mock = {}
         for func in self.mock_methods:
-            self.mock[func] = mock.Mock()
+            self.mock[func] = self.MockClass()
 
     def get_counter(self, key):
         return self.mock[key].call_count
