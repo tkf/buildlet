@@ -105,8 +105,9 @@ class _DataDirectory(BaseDataDirectory):
         path = self.aspath(key)
         if isinstance(value, BaseDataDirectory):
             mkdirp(path)
-        elif isinstance(value, DataFile) and not os.path.exists(path):
-            open(path, 'wb').close()
+        elif isinstance(value, (DataFile, BaseDataValueAutoSerialize)):
+            if not os.path.exists(path):
+                open(path, 'wb').close()
         else:
             raise ValueError(
                 'Value {0!r} is not supported data store type.'.format(value))
