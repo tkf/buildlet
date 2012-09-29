@@ -8,6 +8,7 @@ import collections
 from .base import (
     assert_datastore, BaseDataValue, BaseDataStream, BaseDataStoreNestable,
     MixInDataStoreNestableAutoValue)
+from ..utils import _pickle as pickle
 
 
 class DataValueInMemory(BaseDataValue):
@@ -41,6 +42,26 @@ class DataValueInMemory(BaseDataValue):
     def hash(self):
         if isinstance(self._value, collections.Hashable):
             return hash(self._value)
+
+
+class DataValuePickledInMemory(DataValueInMemory):
+
+    """
+    In-memory value store.
+
+    >>> ds = DataValuePickledInMemory()
+    >>> obj = {'a': 1}
+    >>> ds.set(obj)
+    >>> ds.get()
+    {'a': 1}
+
+    """
+
+    def set(self, value):
+        self._value = pickle.dumps(value)
+
+    def get(self):
+        return pickle.loads(self._value)
 
 
 class BytesIOWrapper(io.BytesIO):
