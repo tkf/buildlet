@@ -35,6 +35,9 @@ class DataValueInMemory(BaseDataValue):
     def get(self):
         return self._value
 
+    def exists(self):
+        return hasattr(self, '_value')
+
     def hash(self):
         if isinstance(self._value, collections.Hashable):
             return hash(self._value)
@@ -149,6 +152,9 @@ class DataStoreNestableInMemory(BaseDataStoreNestable):
     def __setitem__(self, key, value):
         assert_datastore(value, ValueError)
         self.__data[key] = value
+
+    def exists(self):
+        return bool(self.__data)
 
 
 class DataStoreNestableInMemoryAutoValue(MixInDataStoreNestableAutoValue,

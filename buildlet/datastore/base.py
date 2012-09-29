@@ -2,6 +2,7 @@
 Base data store classes.
 """
 
+import os
 import collections
 import itertools
 
@@ -15,6 +16,17 @@ class BaseDataStore(object):
     def clear(self):
         """
         Delete data stored in this datastore.
+        """
+        raise NotImplementedError
+
+    def exists(self):
+        """
+        Return True if location to store value exists.
+
+        For file-based datastore, this method is equivalent to::
+
+            os.path.exists(self.path)
+
         """
         raise NotImplementedError
 
@@ -56,17 +68,6 @@ class BaseDataStream(BaseDataStore):
         For file-based datastore, this method is equivalent to::
 
             open(self.path, *args)
-
-        """
-        raise NotImplementedError
-
-    def exists(self):
-        """
-        Return True if datastore is allocated.
-
-        For file-based datastore, this method is equivalent to::
-
-            os.path.exists(self.path)
 
         """
         raise NotImplementedError
@@ -300,6 +301,8 @@ class MixInDataStoreNestableAutoValue(BaseDataStoreNestable):
     def __getitem__(self, key):
         value = self._get_store(key)
         if isinstance(value, BaseDataValue):
+            if not value.exists():
+                raise KeyError('Value for {0!r} is not yet set.'.format(key))
             return value.get()
         else:
             return value
@@ -321,6 +324,9 @@ class MixInDataStoreFileSystem(BaseDataStore):
     def __init__(self, path, *args, **kwds):
         self.path = path
         super(MixInDataStoreFileSystem, self).__init__(*args, **kwds)
+
+    def exists(self):
+        return os.path.exists(self.path)
 
     def aspath(self, key):
         raise NotImplementedError
@@ -347,6 +353,18 @@ class BaseDataDirectory(MixInDataStoreFileSystem, BaseDataStoreNestable):
 
 def is_datastore(obj):
     return isinstance(obj, BaseDataStore)
+
+
+def is_streamstore(obj):
+    return isinstance(obj, BaseDataStream)
+
+
+def is_valuestore(obj):
+    return isinstance(obj, BaseDataValue)
+
+
+def is_nestablestore(obj):
+    return isinstance(obj, BaseDataStoreNestable)
 
 
 def assert_datastore(obj, exception=AssertionError):

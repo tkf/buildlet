@@ -24,6 +24,22 @@ class BaseMixnInTestCase(object):
         assert hasattr(val, '__eq__'), \
             "`{0!r}` does not have __eq__".format(val)
 
+    def test_exists(self):
+        assert isinstance(self.ds.exists(), bool)
+        self.set_some_value()
+        assert self.ds.exists()
+
+    def test_clear_empty_store_should_not_fail(self):
+        self.ds.clear()
+
+    def test_set_value_after_clear(self):
+        self.ds.clear()
+        # For directory type, this does hold:
+        # assert not self.ds.exists()
+
+        # It should be possible to set some value:
+        self.test_exists()
+
 
 class MixInValueTestCase(BaseMixnInTestCase):
 
@@ -139,6 +155,36 @@ class MixInNestableTestCase(BaseMixnInTestCase):
     def test_keyerror(self):
         self.assertRaises(KeyError, lambda: self.ds['non_existing_key'])
 
+    def test_substore_is_cached_in_memory(self):
+        key_allocator_list = self.get_key_allocator_list()
+        key_store_list = []
+        for (key, alloc) in key_allocator_list:
+            key_store_list.append((key, alloc(key)))
+
+        for (key, store) in key_store_list:
+            self.assert_store_is_cached(key, store)
+
+    def assert_store_is_cached(self, key, store):
+        dstype = type(store)
+        assert isinstance(self.ds[key], dstype), \
+            "self.ds[{0!r}] (= {1!r}) is not type of {2}" \
+                .format(key, self.ds[key], dstype.__name__)
+
+    def get_key_allocator_list(self):
+        key_allocator_list = list(
+            ('key_{0}'.format(k),
+             getattr(self.ds, 'get_{0}store'.format(k)))
+            for k in ['sub', 'file', 'value'])
+
+        class CustomStreamStore(self.ds.default_streamstore_type):
+            pass
+
+        def custom_allocator(key):
+            return self.ds.get_substore(key, dstype=CustomStreamStore)
+
+        key_allocator_list.append(('key_custom_streamstore', custom_allocator))
+        return key_allocator_list
+
 
 class MixInNestableAutoValueTestCase(MixInNestableTestCase):
 
@@ -174,6 +220,20 @@ class MixInNestableAutoValueTestCase(MixInNestableTestCase):
 
     def test_nondatastore_value(self):
         self.callback_nondatastore_value()
+
+    def get_key_allocator_list(self):
+        kal = super(MixInNestableAutoValueTestCase, self) \
+            .get_key_allocator_list()
+        # As ds[key] returns the stored value for value store,
+        # this test does not work for value store.
+        return filter(lambda x: 'valuestore' in x[0], kal)
+
+    def test_not_yet_set_valuestore_keyerror(self):
+        key = 'key_value'
+        # allocate valuestore but don't set value
+        self.ds.get_valuestore(key)
+        # self.ds[key] should raise KeyError
+        self.assertRaises(KeyError, self.ds.__getitem__, key)
 
 
 class MixInWithTempDirectory(BaseMixnInTestCase):
