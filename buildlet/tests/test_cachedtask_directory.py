@@ -7,7 +7,7 @@ from ..datastore.directory import DataDirectory
 from . import test_cachedtask
 
 
-class TestCachedTaskWithDirectory(test_cachedtask.TestCachedTask):
+class TestCachedTaskDirectory(test_cachedtask.TestCachedTask):
 
     DataStoreClass = DataDirectory
 
