@@ -11,21 +11,21 @@ class SimpleRunner(object):
         Run `task` and its unfinished ancestors.
 
         """
-        primitive_run(task, self.run_parent)
+        primitive_run(task, self.do_run)
 
-    def run_parent(self, task):
+    def do_run(self, task):
         for parent in task.get_parents():
             self.run(parent)
+        task.run()
 
 
-def primitive_run(task, run_parent):
+def primitive_run(task, do_run):
     task.pre_run()
     try:
         if task.is_finished():
             task.load()
         else:
-            run_parent(task)
-            task.run()
+            do_run(task)
         task.post_success_run()
     except Exception as e:
         task.post_error_run(e)

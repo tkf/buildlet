@@ -5,6 +5,7 @@ Runner classes to execute tasks.
 _namemodmap = dict(
     SimpleRunner='simple',
     IPythonParallelRunner='ipython',
+    MultiprocessingRunner='multiprocessingpool',
 )
 
 
