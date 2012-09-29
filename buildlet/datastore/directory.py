@@ -5,8 +5,10 @@ File system directory oriented data store.
 import os
 
 from .base import (
-    assert_datastore, BaseDataDirectory, BaseDataStream,
-    MixInDataStoreFileSystem, MixInDataStoreNestableMetaInKey, METAKEY)
+    assert_datastore, METAKEY, BaseDataDirectory, BaseDataStream,
+    MixInDataStoreFileSystem, MixInDataStoreNestableMetaInKey,
+    MixInDataStoreNestableAutoValue,
+)
 
 from .autoserialize import BaseDataValueAutoSerialize, DataValuePickle
 
@@ -138,4 +140,10 @@ class DataDirectory(MixInDataStoreNestableMetaInKey, _DataDirectory):
     ...     print(ds_nested)                           # doctest: +ELLIPSIS
     <buildlet.datastore.directory.DataDirectory object at ...>
 
+    """
+
+
+class DataDirectoryAutoValue(MixInDataStoreNestableAutoValue, DataDirectory):
+    """
+    Directory based nestable data store with auto-serializer.
     """

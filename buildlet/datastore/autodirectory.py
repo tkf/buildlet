@@ -6,6 +6,7 @@ import os
 
 from ..kvstore.picklestore import KVStorePickle
 from .directory import _DataDirectory, DataDirectory
+from .base import MixInDataStoreNestableAutoValue
 
 
 class DataAutoDirectory(_DataDirectory):
@@ -95,3 +96,10 @@ class DataAutoDirectory(_DataDirectory):
         with self.keypathmap.autosync():
             self.getpath(key)
             super(DataAutoDirectory, self).__setitem__(key, value)
+
+
+class DataAutoDirectoryAutoValue(MixInDataStoreNestableAutoValue,
+                                 DataAutoDirectory):
+    """
+    Directory based nestable data store with auto-serializer.
+    """

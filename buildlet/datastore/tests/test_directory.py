@@ -1,8 +1,8 @@
 import unittest
 
-from ..directory import DataFile, DataDirectory
+from ..directory import DataFile, DataDirectory, DataDirectoryAutoValue
 from .mixintestcase import (
-    MixInStreamTestCase, MixInNestableTestCase,
+    MixInStreamTestCase, MixInNestableTestCase, MixInNestableAutoValueTestCase,
     MixInWithTempFile, MixInWithTempDirectory,
 )
 
@@ -14,3 +14,9 @@ class TestDataFile(MixInStreamTestCase, MixInWithTempFile, unittest.TestCase):
 class TestDataDirectory(MixInNestableTestCase, MixInWithTempDirectory,
                         unittest.TestCase):
     dstype = DataDirectory
+
+
+class TestDataDirectoryAutoValue(MixInNestableAutoValueTestCase,
+                                 MixInWithTempDirectory,
+                                 unittest.TestCase):
+    dstype = DataDirectoryAutoValue
