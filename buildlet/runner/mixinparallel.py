@@ -23,7 +23,7 @@ class MixInParallelRunner(object):
             for p in t.get_parents():
                 k = counter()
                 graph.add_node(k)
-                graph.add_edge(i, k)
+                graph.add_edge(k, i)
                 creator(k, p)
 
         creator(root, task)
