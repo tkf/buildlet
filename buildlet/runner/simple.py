@@ -17,10 +17,14 @@ class SimpleRunner(object):
             if task.is_finished():
                 task.load()
             else:
-                for parent in task.get_parents():
-                    cls.run(parent)
+                cls.run_parent(task)
                 task.run()
             task.post_success_run()
         except Exception as e:
             task.post_error_run(e)
             raise
+
+    @classmethod
+    def run_parent(cls, task):
+        for parent in task.get_parents():
+            cls.run(parent)
