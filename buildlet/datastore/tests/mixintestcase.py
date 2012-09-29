@@ -219,8 +219,9 @@ class MixInNestableTestCase(BaseMixnInTestCase):
         reds = self.ds
         assert reds is not ds
         reds.clear()
-        (_, resubfile) = get_subfilestore(key, ds)
         self.assertEqual(list(reds), [])
+        # Make sure old file store is removed
+        (_, resubfile) = get_subfilestore(key, reds)
         assert not resubfile.exists()
 
 
