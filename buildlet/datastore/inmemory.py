@@ -35,6 +35,9 @@ class DataValueInMemory(BaseDataValue):
     def get(self):
         return self._value
 
+    def hasvalue(self):
+        return hasattr(self, '_value')
+
     def hash(self):
         if isinstance(self._value, collections.Hashable):
             return hash(self._value)

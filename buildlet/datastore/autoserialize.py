@@ -2,6 +2,8 @@
 Value store with automatic serialization (Pickle/JSON/YAML).
 """
 
+import os
+
 from .base import MixInDataStoreFileSystem, BaseDataValue
 
 
@@ -16,6 +18,9 @@ class BaseDataValueAutoSerialize(MixInDataStoreFileSystem, BaseDataValue):
     def get(self):
         with open(self.path, 'r' + self.mode) as fp:
             return self.load(fp)
+
+    def hasvalue(self):
+        return os.path.exists(self.path)
 
     def dump(self, obj, fp):
         raise NotImplementedError
