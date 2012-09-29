@@ -83,11 +83,6 @@ class DataAutoDirectory(_DataDirectory):
             super(DataAutoDirectory, self).__delitem__(key)
             del self.keypathmap[key]
 
-    # TODO: Data store type handling depends on DataDirectory
-    #       implementation, which is not good because it relies only
-    #       on information of file system.  Store the information on
-    #       self.keypathmap to support rich type of data stores.
-
     def __getitem__(self, key):
         with self.keypathmap.autosync():
             return super(DataAutoDirectory, self).__getitem__(key)
