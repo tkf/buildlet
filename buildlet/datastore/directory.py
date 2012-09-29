@@ -9,6 +9,8 @@ from .base import (
     BaseDataDirectory, BaseDataStream, MixInDataStoreFileSystem,
     MixInDataStoreNestableMetaInKey, METAKEY)
 
+from .autoserialize import BaseDataValueAutoSerialize, DataValuePickle
+
 
 def mkdirp(path):
     """Do ``mkdir -p {path}``"""
@@ -57,6 +59,7 @@ class _DataDirectory(BaseDataDirectory):
     """
 
     default_streamstore_type = DataFile
+    default_valuestore_type = DataValuePickle
 
     metakey = METAKEY
     # this is needed to use this class w/o MixInDataStoreNestableMetaInKey.
