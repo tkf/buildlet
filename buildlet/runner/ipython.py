@@ -15,55 +15,24 @@ in `IPython Documentation`_.
 
 """
 
-import itertools
-
-import networkx as nx
 from IPython import parallel
 
 from .simple import SimpleRunner
+from .mixinparallel import MixInParallelRunner
 
 
-class IPythonParallelRunner(SimpleRunner):
+class IPythonParallelRunner(MixInParallelRunner, SimpleRunner):
 
-    @classmethod
-    def run_parent(cls, task):
-        client = parallel.Client()
-        view = client.load_balanced_view()
-        (root, G, jobs) = cls.create_tree(task)
-        results = cls.submit_jobs(view, G, jobs)
-        view.wait(results.values())
-        return results[root].get()
-
-    @staticmethod
-    def create_tree(task):
-        G = nx.DiGraph()
-        jobs = {}
-        counter = itertools.count().next
-
-        def creator(i, t):
-            jobs[i] = t
-            for p in t.get_parents():
-                k = counter()
-                G.add_node(k)
-                G.add_edge(i, k)
-                creator(k, p)
-
-        root = counter()
-        creator(root, task)
-        return (root, G, jobs)
-
-    @staticmethod
-    def submit_jobs(view, G, jobs):
-        """Submit jobs via client where G describes dependencies."""
-        results = {}
-        for node in nx.topological_sort(G):
-            deps = [results[n] for n in G.predecessors(node)]
+    def submit_tasks(self):
+        self.client = parallel.Client()
+        self.view = view = self.client.load_balanced_view()
+        self.results = results = {}
+        for node in self.sorted_nodes():
+            deps = [results[n] for n in self.graph.predecessors(node)]
+            results[node] = self.apply_async(self.nodetaskmap[node], deps)
             with view.temp_flags(after=deps):
-                results[node] = view.apply_async(run_task, jobs[node])
-        return results
+                results[node] = view.apply_async(self.run_func,
+                                                 self.nodetaskmap[node])
 
-
-def run_task(task):
-    SimpleRunner.run(task)
-    # TBD: Should I return task object?
-    # return task
+    def wait_tasks(self):
+        self.view.wait(self.results.values())
