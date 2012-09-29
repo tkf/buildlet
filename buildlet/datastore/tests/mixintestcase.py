@@ -140,12 +140,7 @@ class MixInNestableTestCase(BaseMixnInTestCase):
         self.assertRaises(KeyError, lambda: self.ds['non_existing_key'])
 
     def test_substore_is_cached_in_memory(self):
-        key_allocator_list = list(
-            ('key_{0}'.format(k),
-             getattr(self.ds, 'get_{0}store'.format(k)))
-            for k in ['sub', 'file', 'value'])
-        key_allocator_list += self.additional_key_allocator_list()
-
+        key_allocator_list = self.get_key_allocator_list()
         key_class_list = []
         for (key, alloc) in key_allocator_list:
             key_class_list.append((key, type(alloc(key))))
@@ -155,15 +150,20 @@ class MixInNestableTestCase(BaseMixnInTestCase):
                 "self.ds[{0!r}] (= {1!r}) is not type of {2}" \
                 .format(key, self.ds[key], dstype.__name__)
 
-    def additional_key_allocator_list(self):
+    def get_key_allocator_list(self):
+        key_allocator_list = list(
+            ('key_{0}'.format(k),
+             getattr(self.ds, 'get_{0}store'.format(k)))
+            for k in ['sub', 'file', 'value'])
 
-        class CustomFileStore(self.ds.default_streamstore_type):
+        class CustomStreamStore(self.ds.default_streamstore_type):
             pass
 
         def custom_allocator(key):
-            return self.ds.get_substore(key, dstype=CustomFileStore)
+            return self.ds.get_substore(key, dstype=CustomStreamStore)
 
-        return [('key_custom_filestore', custom_allocator)]
+        key_allocator_list.append(('key_custom_streamstore', custom_allocator))
+        return key_allocator_list
 
 
 class MixInNestableAutoValueTestCase(MixInNestableTestCase):
@@ -200,6 +200,13 @@ class MixInNestableAutoValueTestCase(MixInNestableTestCase):
 
     def test_nondatastore_value(self):
         self.callback_nondatastore_value()
+
+    def get_key_allocator_list(self):
+        kal = super(MixInNestableAutoValueTestCase, self) \
+            .get_key_allocator_list()
+        # As ds[key] returns the stored value for value store,
+        # this test does not work for value store.
+        return filter(lambda x: 'valuestore' in x[0], kal)
 
 
 class MixInWithTempDirectory(BaseMixnInTestCase):
