@@ -98,6 +98,7 @@ class TestCachedTask(test_simple.TestSimpleTask):
         self.task = self.TaskClass(**self.get_taskclass_kwds())
         self.runner.run(self.task)
         self.assert_run_num(0)
+        self.assert_run_num(1, 0, func='load')
         self.assert_run_num(1, 0, func='pre_run')
         self.assert_run_num(1, 0, func='post_success_run')
         self.assert_run_num(0, func='post_error_run')
