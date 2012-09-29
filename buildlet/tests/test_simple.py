@@ -41,9 +41,10 @@ TestingTaskBase.define_all_mocked_methods()
 
 class SimpleRootTask(TestingTaskBase):
     num_parents = 3
+    ParentClass = TestingTaskBase
 
     def generate_parents(self):
-        return [TestingTaskBase() for _ in range(self.num_parents)]
+        return [self.ParentClass() for _ in range(self.num_parents)]
 
 
 class TestSimpleTask(unittest.TestCase):
