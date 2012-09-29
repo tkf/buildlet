@@ -349,6 +349,18 @@ def is_datastore(obj):
     return isinstance(obj, BaseDataStore)
 
 
+def is_streamstore(obj):
+    return isinstance(obj, BaseDataStream)
+
+
+def is_valuestore(obj):
+    return isinstance(obj, BaseDataValue)
+
+
+def is_nestablestore(obj):
+    return isinstance(obj, BaseDataStoreNestable)
+
+
 def assert_datastore(obj, exception=AssertionError):
     if not is_datastore(obj):
         raise exception("`{0!r}` is not datastore.".format(obj))
