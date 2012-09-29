@@ -208,6 +208,13 @@ class MixInNestableAutoValueTestCase(MixInNestableTestCase):
         # this test does not work for value store.
         return filter(lambda x: 'valuestore' in x[0], kal)
 
+    def test_not_yet_set_valuestore_keyerror(self):
+        key = 'key_value'
+        # allocate valuestore but don't set value
+        self.ds.get_valuestore(key)
+        # self.ds[key] should raise KeyError
+        self.assertRaises(KeyError, self.ds.__getitem__, key)
+
 
 class MixInWithTempDirectory(BaseMixnInTestCase):
 
