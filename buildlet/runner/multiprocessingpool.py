@@ -35,6 +35,6 @@ class MultiprocessingRunner(MixInParallelRunner, SimpleRunner):
             for r in self.results.values():
                 # This would raise an error if there is one in subprocesses
                 r.get()
-            self.submit_ready_tasks()
             if set(self.nodetaskmap) == set(self.results):
                 break
+            self.submit_ready_tasks()
