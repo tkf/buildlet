@@ -1,6 +1,6 @@
 from buildlet.datastore import DataAutoDirectoryWithMagic
 from buildlet.task import BaseCachedTask, BaseSimpleTask
-from buildlet.runner import SimpleRunner
+from buildlet.runner import getrunner, listrunner
 
 
 class BaseSimpleCachedTask(BaseSimpleTask, BaseCachedTask):
@@ -26,9 +26,10 @@ class SimpleRootTask(BaseSimpleCachedTask):
             for i in range(self.num_parents)]
 
 
-def run_simple_task(**kwds):
+def run_simple_task(runner_class, **kwds):
     task = SimpleRootTask(**kwds)
-    runner = SimpleRunner()
+    runner = getrunner(runner_class)()
+    print "Runner:", runner
     runner.run(task)
 
 
@@ -38,6 +39,8 @@ def main(args=None):
     parser.add_argument('--basepath', default=".")
     parser.add_argument('--num-parents', type=int,
                         default=SimpleRootTask.num_parents)
+    parser.add_argument('--runner-class', choices=sorted(listrunner()),
+                        default='SimpleRunner')
     ns = parser.parse_args(args)
     run_simple_task(**vars(ns))
 
