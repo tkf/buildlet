@@ -13,6 +13,9 @@ METAKEY = '.buildlet'
 class BaseDataStore(object):
 
     def clear(self):
+        """
+        Delete data stored in this datastore.
+        """
         raise NotImplementedError
 
     def hash(self):
@@ -30,20 +33,42 @@ class BaseDataStore(object):
 class BaseDataValue(BaseDataStore):
 
     def set(self, value):
+        """Save `value`."""
         raise NotImplementedError
 
     def get(self):
+        """Get saved value."""
         raise NotImplementedError
 
 
 class BaseDataStream(BaseDataStore):
 
     path = None
-
-    def exists(self):
-        raise NotImplementedError
+    """
+    Path to file to store the data.
+    This value is None for non-file based datastore.
+    """
 
     def open(self, *args):
+        """
+        Return an opened file-like (stream) object.
+
+        For file-based datastore, this method is equivalent to::
+
+            open(self.path, *args)
+
+        """
+        raise NotImplementedError
+
+    def exists(self):
+        """
+        Return True if datastore is allocated.
+
+        For file-based datastore, this method is equivalent to::
+
+            os.path.exists(self.path)
+
+        """
         raise NotImplementedError
 
 
@@ -51,6 +76,10 @@ class BaseDataStoreNestable(collections.MutableMapping, BaseDataStore):
 
     """
     Base class for nestable data store.
+
+    Dict-like interface defined by :class:`collections.MutableMapping`
+    can be used.
+
     """
 
     @property
