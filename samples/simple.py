@@ -1,3 +1,5 @@
+import os
+
 from buildlet.datastore import DataAutoDirectoryWithMagic
 from buildlet.task import BaseCachedTask, BaseSimpleTask
 from buildlet.runner import getrunner, listrunner
@@ -14,6 +16,8 @@ class SimpleRootTask(BaseSimpleCachedTask):
     num_parents = 3
 
     def __init__(self, basepath, **kwds):
+        # Use absolute path for IPython runner
+        basepath = os.path.abspath(basepath)
         self.datastore = DataAutoDirectoryWithMagic(basepath)
         super(SimpleRootTask, self).__init__(basepath=basepath, **kwds)
 
