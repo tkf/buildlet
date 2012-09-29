@@ -124,6 +124,19 @@ class MixInNestableTestCase(BaseMixnInTestCase):
         ds = self.ds
         self.check_clear(ds, ds.get_substore)
 
+    def test_clear_metastore(self):
+        ds = self.ds
+        self.assertEqual(sorted(ds.get_metastore()), [])
+
+        # Just make an empty data
+        metadummykey = 'metadummy'
+        ds.get_metastore().get_filestore(metadummykey).open('w').close()
+
+        self.assertEqual(sorted(ds.get_metastore()), [metadummykey])
+        ds.clear()
+        self.assertEqual(sorted(ds.get_metastore()), [])
+        assert not ds.get_metastore().get_filestore(metadummykey).exists()
+
     def test_metastore(self):
         ms = self.ds.get_metastore()
         assert isinstance(ms, self.ds.default_metastore_type)

@@ -214,6 +214,11 @@ class BaseDataStoreNestable(collections.MutableMapping, BaseDataStore):
         """
         return sum(1 for _ in self)
 
+    def clear(self):
+        super(BaseDataStoreNestable, self).clear()
+        if self._metastore:
+            self._metastore.clear()
+
     def hash(self):
         strings = []
         for key in itertools.chain(sorted(self)):
