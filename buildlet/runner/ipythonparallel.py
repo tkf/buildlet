@@ -34,4 +34,5 @@ class IPythonParallelRunner(MixInParallelRunner, SimpleRunner):
                                                  self.nodetaskmap[node])
 
     def wait_tasks(self):
-        self.view.wait(self.results.values())
+        for r in self.results.values():
+            r.get()
