@@ -40,7 +40,7 @@ class BaseDataValue(BaseDataStore):
         """Get saved value."""
         raise NotImplementedError
 
-    def hasvalue(self):
+    def exists(self):
         """Return True if value is stored."""
         raise NotImplementedError
 
@@ -304,7 +304,7 @@ class MixInDataStoreNestableAutoValue(BaseDataStoreNestable):
     def __getitem__(self, key):
         value = self._get_store(key)
         if isinstance(value, BaseDataValue):
-            if not value.hasvalue():
+            if not value.exists():
                 raise KeyError('Value for {0!r} is not yet set.'.format(key))
             return value.get()
         else:

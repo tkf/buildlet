@@ -35,7 +35,7 @@ class DataValueInMemory(BaseDataValue):
     def get(self):
         return self._value
 
-    def hasvalue(self):
+    def exists(self):
         return hasattr(self, '_value')
 
     def hash(self):
