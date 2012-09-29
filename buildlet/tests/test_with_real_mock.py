@@ -7,7 +7,7 @@ import mock
 # Avoid importing test case at top-level to duplicated test
 from . import test_simple
 from . import test_cachedtask
-from . import test_cachedtask_with_directory
+from . import test_cachedtask_directory
 
 
 class TestSimpleTaskWithRealMock(test_simple.TestSimpleTask):
@@ -19,5 +19,5 @@ class TestCachedTaskWithRealMock(test_cachedtask.TestCachedTask):
 
 
 class TestCachedTaskWithDirectoryAndWithRealMock(
-        test_cachedtask_with_directory.TestCachedTaskWithDirectory):
+        test_cachedtask_directory.TestCachedTaskWithDirectory):
     MockClass = mock.Mock
