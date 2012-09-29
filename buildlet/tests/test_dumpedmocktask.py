@@ -53,11 +53,7 @@ class TestDumpedMockTask(test_cachedtask.TestCachedTask):
 
         for (nm, lm) in zip(newmocks[1:], loadedmocks[1:]):
             assert nm is lm, "Mocks for the parent task should not be loaded."
-
-        pnum_is_zero = 0
-        # As tasks are not re-run, methods in parent tasks
-        # are never called.  Therefore, the second argument to
-        # :meth:`assert_run_num` must be always zero here.
+        pnum_is_zero = 0  # see TestCachedTask
 
         # Until `run`, the numbers are the same as in TestCachedTask
         self.assert_run_num(0, pnum_is_zero)
