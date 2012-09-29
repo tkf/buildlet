@@ -207,6 +207,7 @@ class MixInNestableTestCase(BaseMixnInTestCase):
             s = d.get_substore(k)
             return (s, s.get_filestore('dummy'))
 
+        # Make subsub file store
         ds = self.ds
         key = 'key'
         self.assertEqual(list(ds), [])
@@ -215,12 +216,13 @@ class MixInNestableTestCase(BaseMixnInTestCase):
         assert sub.exists()
         self.assertEqual(list(ds), [key])
 
+        # Reinitialize datastore
         self.setup_datastore()
         reds = self.ds
         assert reds is not ds
         reds.clear()
         self.assertEqual(list(reds), [])
-        # Make sure old file store is removed
+        # Make sure old subsub file store is removed
         (_, resubfile) = get_subfilestore(key, reds)
         assert not resubfile.exists()
 

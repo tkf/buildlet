@@ -353,6 +353,11 @@ class BaseDataDirectory(MixInDataStoreFileSystem, BaseDataStoreNestable):
 
     def clear(self):
         super(BaseDataDirectory, self).clear()
+        # Newly initialized data store can't remove subdirectories and
+        # files by simple `self.clear` because there is no keys
+        # registered.  So, remove whole tree to prevent accidentally
+        # load old data in substores.
+        # See also: `MixInNestableTestCase.test_reinitialize_then_clear`.
         if os.path.exists(self.path):
             shutil.rmtree(self.path)
 
