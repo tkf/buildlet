@@ -144,6 +144,7 @@ class MixInNestableTestCase(BaseMixnInTestCase):
             ('key_{0}'.format(k),
              getattr(self.ds, 'get_{0}store'.format(k)))
             for k in ['sub', 'file', 'value'])
+        key_allocator_list += self.additional_key_allocator_list()
 
         key_class_list = []
         for (key, alloc) in key_allocator_list:
@@ -153,6 +154,16 @@ class MixInNestableTestCase(BaseMixnInTestCase):
             assert isinstance(self.ds[key], dstype), \
                 "self.ds[{0!r}] (= {1!r}) is not type of {2}" \
                 .format(key, self.ds[key], dstype.__name__)
+
+    def additional_key_allocator_list(self):
+
+        class CustomFileStore(self.ds.default_streamstore_type):
+            pass
+
+        def custom_allocator(key):
+            return self.ds.get_substore(key, dstype=CustomFileStore)
+
+        return [('key_custom_filestore', custom_allocator)]
 
 
 class MixInNestableAutoValueTestCase(MixInNestableTestCase):
