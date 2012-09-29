@@ -40,7 +40,7 @@ def run_simple_task(runner_class, **kwds):
 def main(args=None):
     from argparse import ArgumentParser
     parser = ArgumentParser(description=__doc__)
-    parser.add_argument('--basepath', default=".")
+    parser.add_argument('--basepath', default="tmp")
     parser.add_argument('--num-parents', type=int,
                         default=SimpleRootTask.num_parents)
     parser.add_argument('--runner-class', choices=sorted(listrunner()),

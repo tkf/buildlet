@@ -1,4 +1,5 @@
 .tox
 doc/build/
 build/
+tmp
 MANIFEST
