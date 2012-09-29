@@ -18,6 +18,7 @@ class TestCachedTask(test_simple.TestSimpleTask):
         def generate_parents(self):
             return [
                 TestingCachedTask(
+                    MockClass=self.MockClass,
                     # Only string key is supported by all nestable
                     # data store types.
                     datastore=self.datastore.get_substore(str(i)))
@@ -25,10 +26,15 @@ class TestCachedTask(test_simple.TestSimpleTask):
 
     def setup_task(self):
         self.setup_datastore()
-        self.task = self.TaskClass(datastore=self.ds)
+        super(TestCachedTask, self).setup_task()
 
     def setup_datastore(self):
         self.ds = self.DataStoreClass()
+
+    def get_taskclass_kwds(self):
+        kwds = super(TestCachedTask, self).get_taskclass_kwds()
+        kwds.update(datastore=self.ds)
+        return kwds
 
     def teardown_task(self):
         self.teardown_datastore()
@@ -86,7 +92,7 @@ class TestCachedTask(test_simple.TestSimpleTask):
 
     def test_rerun_new_instance(self):
         self.test_simple_run()
-        self.task = self.TaskClass(datastore=self.ds)
+        self.task = self.TaskClass(**self.get_taskclass_kwds())
         self.runner.run(self.task)
         self.assert_run_num(0)
         self.assert_run_num(1, 0, func='pre_run')

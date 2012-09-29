@@ -7,12 +7,12 @@ from ..runner.simple import SimpleRunner
 
 class TestingTaskBase(BaseSimpleTask):
 
-    MockClass = Mock
-
     mock_methods = [
         'run', 'load', 'pre_run', 'post_success_run', 'post_error_run']
 
-    def __init__(self, *args, **kwds):
+    def __init__(self, MockClass, ParentTaskClass=None, *args, **kwds):
+        self.MockClass = MockClass
+        self.ParentTaskClass = ParentTaskClass
         super(TestingTaskBase, self).__init__(*args, **kwds)
 
         # As these methods can be inherited from other classes, use
@@ -41,16 +41,18 @@ TestingTaskBase.define_all_mocked_methods()
 
 class SimpleRootTask(TestingTaskBase):
     num_parents = 3
-    ParentClass = TestingTaskBase
 
     def generate_parents(self):
-        return [self.ParentClass() for _ in range(self.num_parents)]
+        return [self.ParentTaskClass(MockClass=self.MockClass)
+                for _ in range(self.num_parents)]
 
 
 class TestSimpleTask(unittest.TestCase):
 
     RunnerClass = SimpleRunner
     TaskClass = SimpleRootTask
+    ParentTaskClass = TestingTaskBase
+    MockClass = Mock
 
     def setUp(self):
         self.setup_runner()
@@ -60,7 +62,13 @@ class TestSimpleTask(unittest.TestCase):
         self.runner = self.RunnerClass()
 
     def setup_task(self):
-        self.task = self.TaskClass()
+        self.task = self.TaskClass(**self.get_taskclass_kwds())
+
+    def get_taskclass_kwds(self):
+        return dict(
+            MockClass=self.MockClass,
+            ParentTaskClass=self.ParentTaskClass,
+        )
 
     def tearDown(self):
         self.teardown_runner()

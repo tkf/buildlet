@@ -8,14 +8,5 @@ import mock
 from . import test_simple
 
 
-class TestingTaskBaseWithRealMock(test_simple.TestingTaskBase):
-    MockClass = mock.Mock
-
-
-class SimpleRootTaskWithRealMock(test_simple.SimpleRootTask):
-    MockClass = mock.Mock
-    ParentClass = TestingTaskBaseWithRealMock
-
-
 class TestSimpleTaskWithRealMock(test_simple.TestSimpleTask):
-    TaskClass = SimpleRootTaskWithRealMock
+    MockClass = mock.Mock
