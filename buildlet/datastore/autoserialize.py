@@ -22,6 +22,10 @@ class BaseDataValueAutoSerialize(MixInDataStoreFileSystem, BaseDataValue):
     def hasvalue(self):
         return os.path.exists(self.path)
 
+    def clear(self):
+        if self.hasvalue():
+            os.remove(self.path)
+
     def dump(self, obj, fp):
         raise NotImplementedError
 
