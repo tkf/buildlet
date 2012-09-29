@@ -149,8 +149,10 @@ class MixInNestableTestCase(BaseMixnInTestCase):
         for (key, alloc) in key_allocator_list:
             key_class_list.append((key, type(alloc(key))))
 
-        for (key, dstype) in key_allocator_list:
-            assert isinstance(self.ds[key], dstype)
+        for (key, dstype) in key_class_list:
+            assert isinstance(self.ds[key], dstype), \
+                "self.ds[{0!r}] (= {1!r}) is not type of {2}" \
+                .format(key, self.ds[key], dstype.__name__)
 
 
 class MixInNestableAutoValueTestCase(MixInNestableTestCase):
