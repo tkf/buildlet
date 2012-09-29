@@ -145,8 +145,7 @@ class BaseDataStoreNestable(collections.MutableMapping, BaseDataStore):
         """
         self[key] = value
 
-    def get_substore(self, key, dstype=None, dskwds={},
-                     allow_specialkeys=False):
+    def get_substore(self, key, dstype=None, dskwds={}):
         """
         Get or create sub-data store under `key`.
 
