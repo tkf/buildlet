@@ -9,21 +9,23 @@ class TestingCachedTask(BaseCachedTask, test_simple.TestingTaskBase):
     pass
 
 
+class CachedRootTask(TestingCachedTask, test_simple.SimpleRootTask):
+
+    def generate_parents(self):
+        return [
+            self.ParentTaskClass(
+                MockClass=self.MockClass,
+                # Only string key is supported by all nestable
+                # data store types.
+                datastore=self.datastore.get_substore(str(i)))
+            for i in range(self.num_parents)]
+
+
 class TestCachedTask(test_simple.TestSimpleTask):
 
+    TaskClass = CachedRootTask
     ParentTaskClass = TestingCachedTask
     DataStoreClass = DataStoreNestableInMemory
-
-    class TaskClass(TestingCachedTask, test_simple.SimpleRootTask):
-
-        def generate_parents(self):
-            return [
-                self.ParentTaskClass(
-                    MockClass=self.MockClass,
-                    # Only string key is supported by all nestable
-                    # data store types.
-                    datastore=self.datastore.get_substore(str(i)))
-                for i in range(self.num_parents)]
 
     def setup_task(self):
         self.setup_datastore()
