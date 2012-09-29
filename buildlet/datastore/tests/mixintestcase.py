@@ -139,6 +139,19 @@ class MixInNestableTestCase(BaseMixnInTestCase):
     def test_keyerror(self):
         self.assertRaises(KeyError, lambda: self.ds['non_existing_key'])
 
+    def test_substore_is_cached_in_memory(self):
+        key_allocator_list = list(
+            ('key_{0}'.format(k),
+             getattr(self.ds, 'get_{0}store'.format(k)))
+            for k in ['sub', 'file', 'value'])
+
+        key_class_list = []
+        for (key, alloc) in key_allocator_list:
+            key_class_list.append((key, type(alloc(key))))
+
+        for (key, dstype) in key_allocator_list:
+            assert isinstance(self.ds[key], dstype)
+
 
 class MixInNestableAutoValueTestCase(MixInNestableTestCase):
 
