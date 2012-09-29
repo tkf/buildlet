@@ -2,6 +2,8 @@ import os
 import collections
 from contextlib import contextmanager
 
+from ..utils import mkdirp
+
 
 class BaseKVStore(collections.MutableMapping):
 
@@ -10,6 +12,10 @@ class BaseKVStore(collections.MutableMapping):
     def __init__(self, path):
         self.path = path
         self._db = []
+        self._mkdirp()
+
+    def _mkdirp(self):
+        mkdirp(os.path.dirname(self.path))
 
     def load(self, fp):
         raise NotImplementedError
@@ -55,6 +61,7 @@ class BaseKVStore(collections.MutableMapping):
         """
         Context manger to automatically load/dump any change.
         """
+        self._mkdirp()
         if os.path.exists(self.path):
             with open(self.path, 'r' + self.mode) as fp:
                 self.load(fp)
