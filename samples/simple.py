@@ -20,6 +20,8 @@ class SimpleRootTask(BaseSimpleCachedTask):
         basepath = os.path.abspath(basepath)
         self.datastore = DataAutoDirectoryWithMagic(basepath)
         super(SimpleRootTask, self).__init__(basepath=basepath, **kwds)
+        if self.clean:
+            self.datastore.clean()
 
     def generate_parents(self):
         return [
@@ -45,6 +47,7 @@ def main(args=None):
                         default=SimpleRootTask.num_parents)
     parser.add_argument('--runner-class', choices=sorted(listrunner()),
                         default='SimpleRunner')
+    parser.add_argument('--clean', default=False, action='store_true')
     ns = parser.parse_args(args)
     run_simple_task(**vars(ns))
 
