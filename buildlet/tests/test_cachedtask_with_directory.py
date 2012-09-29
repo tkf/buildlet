@@ -3,10 +3,11 @@ import shutil
 
 from ..datastore.directory import DataDirectory
 
-from .test_cachedtask import TestCachedTask
+# Avoid importing test case at top-level to duplicated test
+from . import test_cachedtask
 
 
-class TestCachedTaskWithDirectory(TestCachedTask):
+class TestCachedTaskWithDirectory(test_cachedtask.TestCachedTask):
 
     DataStoreClass = DataDirectory
 

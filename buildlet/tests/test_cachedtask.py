@@ -1,18 +1,19 @@
 from ..task.cachedtask import BaseCachedTask
 from ..datastore.inmemory import DataStoreNestableInMemory
 
-from .test_simple import TestingTaskBase, TestSimpleTask, SimpleRootTask
+# Avoid importing test case at top-level to duplicated test
+from . import test_simple
 
 
-class TestingCachedTask(BaseCachedTask, TestingTaskBase):
+class TestingCachedTask(BaseCachedTask, test_simple.TestingTaskBase):
     pass
 
 
-class TestCachedTask(TestSimpleTask):
+class TestCachedTask(test_simple.TestSimpleTask):
 
     DataStoreClass = DataStoreNestableInMemory
 
-    class TaskClass(TestingCachedTask, SimpleRootTask):
+    class TaskClass(TestingCachedTask, test_simple.SimpleRootTask):
 
         def generate_parents(self):
             return [
