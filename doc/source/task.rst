@@ -7,7 +7,6 @@
 .. inheritance-diagram::
    buildlet.task.cachedtask.BaseCachedTask
    buildlet.task.cachedtask.BaseSimpleCachedTask
-   buildlet.task.cachedtask.BaseSimpleCachedRootTask
    :parts: 1
 
 
