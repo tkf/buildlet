@@ -11,9 +11,9 @@ class SimpleRunner(object):
         Run `task` and its unfinished ancestors.
 
         """
-        primitive_run(task, self.do_run)
+        primitive_run(task, self.__do_run)
 
-    def do_run(self, task):
+    def __do_run(self, task):
         for parent in task.get_parents():
             self.run(parent)
         task.run()

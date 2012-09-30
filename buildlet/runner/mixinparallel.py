@@ -7,7 +7,7 @@ from .simple import primitive_run
 
 class MixInParallelRunner(object):
 
-    def do_run(self, task):
+    def run(self, task):
         self.create_graph(task)
         self.submit_tasks()
         self.wait_tasks()
