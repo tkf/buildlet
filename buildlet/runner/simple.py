@@ -15,12 +15,15 @@ class SimpleRunner(BaseRunner):
         Run `task` and its unfinished ancestors.
 
         """
+        for parent in task.get_parents():
+            # This is redundant because `.load` or `.run` is called
+            # for *all* tasks regardless the state (need rerun or not).
+            cls.run(parent)
+        # .. note:: Do *not* put ``cls.run(parent)`` in the next try
+        #    block because the error in parent task is treated by its
+        #    `post_error_run` hook.
         task.pre_run()
         try:
-            for parent in task.get_parents():
-                # This is redundant because `.load` or `.run` is called
-                # for *all* tasks regardless the state (need rerun or not).
-                cls.run(parent)
             if task.is_finished():
                 task.load()
             else:
