@@ -10,13 +10,8 @@ from .base import (
     MixInDataStoreNestableAutoValue,
 )
 
+from ..utils import mkdirp
 from .autoserialize import BaseDataValueAutoSerialize, DataValuePickle
-
-
-def mkdirp(path):
-    """Do ``mkdir -p {path}``"""
-    if not os.path.isdir(path):
-        os.makedirs(path)
 
 
 class DataFile(MixInDataStoreFileSystem, BaseDataStream):

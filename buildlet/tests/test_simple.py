@@ -1,7 +1,6 @@
 import unittest
 
-import mock
-
+from ..utils.mocklet import Mock
 from ..task import BaseSimpleTask
 from ..runner.simple import SimpleRunner
 
@@ -11,14 +10,16 @@ class TestingTaskBase(BaseSimpleTask):
     mock_methods = [
         'run', 'load', 'pre_run', 'post_success_run', 'post_error_run']
 
-    def __init__(self, *args, **kwds):
+    def __init__(self, MockClass, ParentTaskClass=None, *args, **kwds):
+        self.MockClass = MockClass
+        self.ParentTaskClass = ParentTaskClass
         super(TestingTaskBase, self).__init__(*args, **kwds)
 
         # As these methods can be inherited from other classes, use
         # mock "indirectly" here (don't do ``self.run = mock.Mock()``).
         self.mock = {}
         for func in self.mock_methods:
-            self.mock[func] = mock.Mock()
+            self.mock[func] = self.MockClass()
 
     def get_counter(self, key):
         return self.mock[key].call_count
@@ -42,13 +43,16 @@ class SimpleRootTask(TestingTaskBase):
     num_parents = 3
 
     def generate_parents(self):
-        return [TestingTaskBase() for _ in range(self.num_parents)]
+        return [self.ParentTaskClass(MockClass=self.MockClass)
+                for _ in range(self.num_parents)]
 
 
 class TestSimpleTask(unittest.TestCase):
 
     RunnerClass = SimpleRunner
     TaskClass = SimpleRootTask
+    ParentTaskClass = TestingTaskBase
+    MockClass = Mock
 
     def setUp(self):
         self.setup_runner()
@@ -58,7 +62,13 @@ class TestSimpleTask(unittest.TestCase):
         self.runner = self.RunnerClass()
 
     def setup_task(self):
-        self.task = self.TaskClass()
+        self.task = self.TaskClass(**self.get_taskclass_kwds())
+
+    def get_taskclass_kwds(self):
+        return dict(
+            MockClass=self.MockClass,
+            ParentTaskClass=self.ParentTaskClass,
+        )
 
     def tearDown(self):
         self.teardown_runner()
@@ -70,14 +80,35 @@ class TestSimpleTask(unittest.TestCase):
     def teardown_task(self):
         pass
 
+    def iter_task_expr_val_pairs(self, levels=(0, 1)):
+        if 0 in levels:
+            yield ('self.task', self.task)
+        for (i, p) in enumerate(self.task.get_parents()):
+            if 1 in levels:
+                yield ('self.task.get_parents()[{0}]'.format(i), p)
+
+    def assert_task_counter(self, func, num, task=None, taskname=None):
+        if task is None:
+            task = self.task
+            taskname = 'self.task'
+        if taskname is None:
+            taskname = repr(task)
+        if isinstance(num, int):
+            num = (num,)
+        real_num = task.get_counter(func)
+        self.assertTrue(
+            real_num in num,
+            "{0}.{1} is expected to be called {2} times but called {3} times"
+            .format(taskname, func, "or ".join(map(str, num)), real_num))
+
     def assert_run_num(self, root_num, parent_num=None, func='run'):
         if parent_num is None:
             parent_num = root_num
-        self.assertEqual(self.task.get_counter(func), root_num)
+        self.assert_task_counter(func, root_num)
         parents = self.task.get_parents()
         self.assertEqual(len(parents), self.task.num_parents)
-        for p in parents:
-            self.assertEqual(p.get_counter(func), parent_num)
+        for (expr, task) in self.iter_task_expr_val_pairs((1,)):
+            self.assert_task_counter(func, parent_num, task, expr)
 
     def test_simple_run(self):
         self.assert_run_num(0)
@@ -97,4 +128,15 @@ class TestSimpleTask(unittest.TestCase):
         self.assert_run_num(1, func='pre_run')
         self.assert_run_num(0, 1, func='post_success_run')
         self.assert_run_num(1, 0, func='post_error_run')
-        self.task.mock['post_error_run'].assert_called_once_with(exception)
+
+        # Do `assert call_args_list == ((exception,), {})`,
+        # but it should work with `exception` coming from
+        # other process.
+        call_args_list = self.task.mock['post_error_run'].call_args_list
+        self.assertEqual(len(call_args_list), 1)
+        self.assertEqual(len(call_args_list[0]), 2)
+        self.assertEqual(len(call_args_list[0][0]), 1)
+        self.assertEqual(call_args_list[0][1], {})
+        should_be_exception = call_args_list[0][0][0]
+        assert isinstance(should_be_exception, ValueError)
+        self.assertEqual(should_be_exception.message, exception.message)

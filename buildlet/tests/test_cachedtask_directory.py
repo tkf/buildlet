@@ -3,10 +3,11 @@ import shutil
 
 from ..datastore.directory import DataDirectory
 
-from .test_cachedtask import TestCachedTask
+# Avoid importing test case at top-level to duplicated test
+from . import test_cachedtask
 
 
-class TestCachedTaskWithDirectory(TestCachedTask):
+class MixInTestDataDirectory(object):
 
     DataStoreClass = DataDirectory
 
@@ -16,3 +17,8 @@ class TestCachedTaskWithDirectory(TestCachedTask):
 
     def teardown_datastore(self):
         shutil.rmtree(self.tempdir)
+
+
+class TestCachedTaskDirectory(MixInTestDataDirectory,
+                              test_cachedtask.TestCachedTask):
+    pass

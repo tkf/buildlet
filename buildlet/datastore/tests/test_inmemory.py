@@ -1,7 +1,7 @@
 import unittest
 
 from ..inmemory import (
-    DataValueInMemory, DataStreamInMemory,
+    DataValueInMemory, DataValuePickledInMemory, DataStreamInMemory,
     DataStoreNestableInMemory, DataStoreNestableInMemoryAutoValue)
 from .mixintestcase import (
     MixInValueTestCase, MixInStreamTestCase,
@@ -16,6 +16,10 @@ class TestDataValueInMemory(MixInValueTestCase, unittest.TestCase):
         obj = object()
         self.ds.set(obj)
         self.assertTrue(self.ds.get() is obj)
+
+
+class TestDataValuePickledInMemory(MixInValueTestCase, unittest.TestCase):
+    dstype = DataValuePickledInMemory
 
 
 class TestDataStreamInMemory(MixInStreamTestCase, unittest.TestCase):
