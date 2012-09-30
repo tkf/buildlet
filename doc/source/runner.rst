@@ -6,6 +6,8 @@
 
 .. inheritance-diagram::
    buildlet.runner.simple.SimpleRunner
+   buildlet.runner.multiprocessingpool.MultiprocessingRunner
+   buildlet.runner.ipythonparallel.IPythonParallelRunner
    :parts: 1
 
 
@@ -13,4 +15,18 @@
 ================================
 
 .. automodule:: buildlet.runner.simple
+   :members:
+
+
+:py:mod:`buildlet.runner.multiprocessingpool`
+=============================================
+
+.. automodule:: buildlet.runner.multiprocessingpool
+   :members:
+
+
+:py:mod:`buildlet.runner.ipythonparallel`
+=========================================
+
+.. automodule:: buildlet.runner.ipythonparallel
    :members:
