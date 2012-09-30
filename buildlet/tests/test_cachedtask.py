@@ -1,3 +1,11 @@
+"""
+Test with two-level task tree.
+
+The task tree is like the one in `test_simple`.
+The main difference is that task class subclasses `BaseCachedTask` now.
+
+"""
+
 from ..task.cachedtask import BaseCachedTask
 from ..datastore.inmemory import DataStoreNestableInMemory
 

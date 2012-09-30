@@ -1,3 +1,23 @@
+"""
+Test with three-level task tree.
+
+The task tree is like this (when ``num_parents = 2``):
+
+  * ``L3RootTask()`` (``self.task``)
+
+    * ``L3BranchTask()`` (``ptask`` / "parent task")
+
+      * ``L3LeafTask()`` (``gptask`` / "grand parent task")
+      * ``L3LeafTask()``
+
+    * ``L3BranchTask()``
+
+      * ``L3LeafTask()``
+      * ``L3LeafTask()``
+
+"""
+
+
 from . import test_cachedtask
 
 

@@ -1,3 +1,14 @@
+"""
+Test with two-level task tree.
+
+The task tree is like this (when ``num_parents = 3``):
+
+  * ``SimpleRootTask()`` (``self.task``)
+
+    * ``TestingTaskBase()`` (``ptask`` / "parent task")
+    * ``TestingTaskBase()``
+
+"""
 import unittest
 
 from ..utils.mocklet import Mock
