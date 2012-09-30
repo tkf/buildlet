@@ -13,6 +13,6 @@ class TestingMultiprocessingRunner(MultiprocessingRunner):
                 task.load_mock()
 
 
-class TestDumpedMockTaskDirectoryMultiprocessing(
-        test_dumpedmocktask_directory.TestDumpedMockTaskDirectory):
-    RunnerClass = TestingMultiprocessingRunner
+# class TestDumpedMockTaskDirectoryMultiprocessing(
+#         test_dumpedmocktask_directory.TestDumpedMockTaskDirectory):
+#     RunnerClass = TestingMultiprocessingRunner
