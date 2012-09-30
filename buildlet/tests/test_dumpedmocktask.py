@@ -6,6 +6,9 @@ basis for parallel runner (such as `multiprocessing`) testing.
 
 """
 
+from ..datastore.inmemory import (
+    DataStoreNestableInMemory, DataValuePickledInMemory)
+
 # Avoid importing test case at top-level to duplicated test
 from . import test_cachedtask
 
@@ -26,10 +29,22 @@ class DumpedMockRootTask(test_cachedtask.CachedRootTask,
     pass
 
 
+class DataStoreNestableCopiedInMemory(DataStoreNestableInMemory):
+    # To be compatible with file-based store:
+    default_valuestore_type = DataValuePickledInMemory
+
+
+# # I don't need to worry about this because valuestore is not
+# # used in BaseCachedTask.
+# class TestCachedTaskCopiedInMemory(test_cachedtask.TestCachedTask):
+#     DataStoreClass = DataStoreNestableCopiedInMemory
+
+
 class TestDumpedMockTask(test_cachedtask.TestCachedTask):
 
     TaskClass = DumpedMockRootTask
     ParentTaskClass = TestingDumpedMockTask
+    DataStoreClass = DataStoreNestableCopiedInMemory
 
     def test_rerun_new_instance(self):
         self.test_simple_run()
