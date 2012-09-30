@@ -32,17 +32,6 @@ class DumpedMockRootTask(test_cachedtask.CachedRootTask,
     pass
 
 
-class DataStoreNestableCopiedInMemory(DataStoreNestableInMemory):
-    # To be compatible with file-based store:
-    default_valuestore_type = DataValuePickledInMemory
-
-
-# # I don't need to worry about this because valuestore is not
-# # used in BaseCachedTask.
-# class TestCachedTaskCopiedInMemory(test_cachedtask.TestCachedTask):
-#     DataStoreClass = DataStoreNestableCopiedInMemory
-
-
 class TestDumpedMockTask(test_cachedtask.TestCachedTask):
 
     TaskClass = DumpedMockRootTask
@@ -64,6 +53,17 @@ class TestDumpedMockTask(test_cachedtask.TestCachedTask):
 
         # post_error_run is never called anyway
         self.assert_run_num(0, pnum_is_zero, func='post_error_run')
+
+
+class DataStoreNestableCopiedInMemory(DataStoreNestableInMemory):
+    # To be compatible with file-based store:
+    default_valuestore_type = DataValuePickledInMemory
+
+
+# # I don't need to worry about this because valuestore is not
+# # used in BaseCachedTask.
+# class TestCachedTaskCopiedInMemory(test_cachedtask.TestCachedTask):
+#     DataStoreClass = DataStoreNestableCopiedInMemory
 
 
 class TestDumpedMockTaskCopiedInMemory(TestDumpedMockTask):
