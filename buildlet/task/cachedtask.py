@@ -187,6 +187,11 @@ class BaseSimpleCachedTask(BaseCachedTask, BaseSimpleTask):
     """
     Base class for cached task.
 
+    This class can be used as a root class (task to be passed
+    to the runner) or any other upstream tasks.
+    To use as a root class, pass the argument `basepath`.
+    To use as one of upstream tasks, pass `datastore` argument.
+
     See also: :class:`buildlet.task.base.BaseSimpleTask`.
     """
 
@@ -196,6 +201,8 @@ class BaseSimpleCachedTask(BaseCachedTask, BaseSimpleTask):
 
     Must be a subclass of
     :class:`buildlet.datastore.base.BaseDataStoreNestable`.
+    Note that this attribute will *not* be used when the `datastore`
+    argument is passed to the constructor.
 
     """
 
