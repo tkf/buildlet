@@ -1,5 +1,5 @@
 ======================
- Buildlet Task module
+ Buildlet task module
 ======================
 
 .. automodule:: buildlet.task

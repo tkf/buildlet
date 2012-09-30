@@ -9,6 +9,7 @@ Contents:
    task
    runner
    datastore
+   kvstore
 
 
 

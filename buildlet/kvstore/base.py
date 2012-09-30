@@ -7,6 +7,15 @@ from ..utils import mkdirp
 
 class BaseKVStore(collections.MutableMapping):
 
+    """
+    Base class for key-value stores.
+
+    This class is mainly for data store class
+    :class:`buildlet.datastore.autodirectory.DataAutoDirectory`.
+    It is used for storing key-to-path map.
+
+    """
+
     mode = 't'
 
     def __init__(self, path):
