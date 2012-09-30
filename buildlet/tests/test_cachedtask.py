@@ -124,6 +124,39 @@ class TestCachedTask(test_simple.TestSimpleTask):
         # The effect must be the same as of :meth:`test_invalidate_root`
         self.check_invalidate_root()
 
+    def test_update_parent_paramvalue(self):
+        self.test_simple_run()
+        # Update parameter of the 0-th parent node
+        ptask = self.task.get_parents()[0]
+        ptask.paramvalue = 'new value'
+        self.runner.run(self.task)
+
+        self.assertRaises(AssertionError, self.assert_run_num, 1)
+        self.check_update_parent_paramvalue([self.task, ptask],
+                                            ['self.task', 'ptask'])
+
+    def check_update_parent_paramvalue(self, tasks, names):
+        for (expr, task) in self.iter_task_expr_val_pairs():
+            num = 2 if any(task is t for t in tasks) else 1
+            self.assert_task_counter('run', num, task, expr)
+
+        # The updated tasks and its downstreams
+        for func in ['pre_run', 'post_success_run']:
+            for (t, n) in zip(tasks, names):
+                self.assert_task_counter(func, 2, t, n)
+        for (t, n) in zip(tasks, names):
+            self.assert_task_counter('load', 0, t, n)
+
+        # All tasks
+        for (expr, task) in self.iter_task_expr_val_pairs():
+            for func in ['pre_run', 'post_success_run']:
+                self.assert_task_counter(func, (1, 2), task, expr)
+            self.assert_task_counter('load', (0, 1), task, expr)
+
+        # Finally, there should be no post_error_run call for all tasks
+        for (expr, task) in self.iter_task_expr_val_pairs():
+            self.assert_task_counter('post_error_run', 0, task, expr)
+
     def test_rerun_new_instance(self):
         self.test_simple_run()
         self.task = self.TaskClass(**self.get_taskclass_kwds())
