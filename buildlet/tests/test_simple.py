@@ -80,14 +80,35 @@ class TestSimpleTask(unittest.TestCase):
     def teardown_task(self):
         pass
 
+    def iter_task_expr_val_pairs(self, levels=(0, 1)):
+        if 0 in levels:
+            yield ('self.task', self.task)
+        for (i, p) in enumerate(self.task.get_parents()):
+            if 1 in levels:
+                yield ('self.task.get_parents()[{0}]'.format(i), p)
+
+    def assert_task_counter(self, func, num, task=None, taskname=None):
+        if task is None:
+            task = self.task
+            taskname = 'self.task'
+        if taskname is None:
+            taskname = repr(task)
+        if isinstance(num, int):
+            num = (num,)
+        real_num = task.get_counter(func)
+        self.assertTrue(
+            real_num in num,
+            "{0}.{1} is expected to be called {2} times but called {3} times"
+            .format(taskname, func, "or ".join(map(str, num)), real_num))
+
     def assert_run_num(self, root_num, parent_num=None, func='run'):
         if parent_num is None:
             parent_num = root_num
-        self.assertEqual(self.task.get_counter(func), root_num)
+        self.assert_task_counter(func, root_num)
         parents = self.task.get_parents()
         self.assertEqual(len(parents), self.task.num_parents)
-        for p in parents:
-            self.assertEqual(p.get_counter(func), parent_num)
+        for (expr, task) in self.iter_task_expr_val_pairs((1,)):
+            self.assert_task_counter(func, parent_num, task, expr)
 
     def test_simple_run(self):
         self.assert_run_num(0)

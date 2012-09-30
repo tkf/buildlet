@@ -51,17 +51,16 @@ class TestDumpedMockTask(test_cachedtask.TestCachedTask):
         self.task = self.TaskClass(**self.get_taskclass_kwds())
         self.runner.run(self.task)
 
-        pnum_is_zero = 0  # See TestCachedTask
-
-        # root_num is +1 than TestCachedTask to count the calls in old
+        # One more call count than TestCachedTask to count the calls in old
         # instance.
-        self.assert_run_num(1, pnum_is_zero)
-        self.assert_run_num(1, pnum_is_zero, func='load')
-        self.assert_run_num(2, pnum_is_zero, func='pre_run')
-        self.assert_run_num(2, pnum_is_zero, func='post_success_run')
+        self.assert_run_num(1, (0, 1))
+        self.assert_run_num(1, (0, 1), func='load')  # except this [#]_
+        self.assert_run_num(2, (1, 2), func='pre_run')
+        self.assert_run_num(2, (1, 2), func='post_success_run')
+        # .. [#] Because self.task.load is not called in the old instance!
 
         # post_error_run is never called anyway
-        self.assert_run_num(0, pnum_is_zero, func='post_error_run')
+        self.assert_run_num(0, func='post_error_run')
 
 
 class DataStoreNestableCopiedInMemory(DataStoreNestableInMemory):
