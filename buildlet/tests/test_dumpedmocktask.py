@@ -30,6 +30,11 @@ class TestingDumpedMockTask(test_cachedtask.TestingCachedTask):
         # Save mock at the very end:
         self.datastore.get_valuestore('mock').set(self.mock)
 
+    def post_error_run(self, exception):
+        super(TestingDumpedMockTask, self).post_error_run(exception)
+        # Save mock at the very end:
+        self.datastore.get_valuestore('mock').set(self.mock)
+
 
 class DumpedMockRootTask(test_cachedtask.CachedRootTask,
                          TestingDumpedMockTask):

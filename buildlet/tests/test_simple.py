@@ -107,4 +107,15 @@ class TestSimpleTask(unittest.TestCase):
         self.assert_run_num(1, func='pre_run')
         self.assert_run_num(0, 1, func='post_success_run')
         self.assert_run_num(1, 0, func='post_error_run')
-        self.task.mock['post_error_run'].assert_called_once_with(exception)
+
+        # Do `assert call_args_list == ((exception,), {})`,
+        # but it should work with `exception` coming from
+        # other process.
+        call_args_list = self.task.mock['post_error_run'].call_args_list
+        self.assertEqual(len(call_args_list), 1)
+        self.assertEqual(len(call_args_list[0]), 2)
+        self.assertEqual(len(call_args_list[0][0]), 1)
+        self.assertEqual(call_args_list[0][1], {})
+        should_be_exception = call_args_list[0][0][0]
+        assert isinstance(should_be_exception, ValueError)
+        self.assertEqual(should_be_exception.message, exception.message)
