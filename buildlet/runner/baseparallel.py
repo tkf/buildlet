@@ -3,8 +3,7 @@ import itertools
 import networkx as nx
 
 
-# TODO: this is base class now so rename it after...
-class MixInParallelRunner(object):
+class BaseParallelRunner(object):
 
     def run(self, task):
         self.create_graph(task)
