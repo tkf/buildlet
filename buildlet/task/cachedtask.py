@@ -183,10 +183,23 @@ class BaseCachedTask(BaseTask):
 
 
 class BaseSimpleCachedTask(BaseCachedTask, BaseSimpleTask):
-    pass
+
+    """
+    Base class for cached tasks with some predefined methods.
+
+    See also: :class:`buildlet.task.base.BaseSimpleTask`.
+
+    """
 
 
 class BaseSimpleCachedRootTask(BaseSimpleCachedTask):
+
+    """
+    Base class for cached root task.
+
+    Use this for entry point task (root task).
+
+    """
 
     datastore_type = DataDirectoryWithMagic
     """
