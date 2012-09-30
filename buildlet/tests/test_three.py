@@ -59,8 +59,7 @@ class TestThreeLayerCachedTask(test_cachedtask.TestCachedTask):
     def test_invalidate_grand_parent(self):
         self.test_simple_run()
         # Invalidate 0-th grand parent node cache
-        ptask = self.task.get_parents()[0]
-        gptask = ptask.get_parents()[0]
+        gptask = self.task.get_parents()[0].get_parents()[0]
         gptask.invalidate_cache()
         self.runner.run(self.task)
 
