@@ -185,20 +185,9 @@ class BaseCachedTask(BaseTask):
 class BaseSimpleCachedTask(BaseCachedTask, BaseSimpleTask):
 
     """
-    Base class for cached tasks with some predefined methods.
+    Base class for cached task.
 
     See also: :class:`buildlet.task.base.BaseSimpleTask`.
-
-    """
-
-
-class BaseSimpleCachedRootTask(BaseSimpleCachedTask):
-
-    """
-    Base class for cached root task.
-
-    Use this for entry point task (root task).
-
     """
 
     datastore_type = DataDirectoryWithMagic
@@ -210,8 +199,20 @@ class BaseSimpleCachedRootTask(BaseSimpleCachedTask):
 
     """
 
-    def __init__(self, basepath, **kwds):
-        super(BaseSimpleCachedRootTask, self).__init__(**kwds)
-        # Use absolute path for IPython runner
-        self.basepath = basepath = os.path.abspath(basepath)
-        self.datastore = self.datastore_type(basepath)
+    def __init__(self, basepath=None, datastore=None, **kwds):
+        """
+        Initialize cached task.
+
+        One of (and only one) `basepath` or `datastore` must be given.
+
+        """
+        super(BaseSimpleCachedTask, self).__init__(**kwds)
+        if basepath is not None:
+            assert datastore is None
+            # Use absolute path for IPython runner
+            self.basepath = basepath = os.path.abspath(basepath)
+            self.datastore = self.datastore_type(basepath)
+        else:
+            assert datastore is not None
+            self.datastore = datastore
+            self.basepath = basepath

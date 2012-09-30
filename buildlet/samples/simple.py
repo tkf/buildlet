@@ -1,4 +1,4 @@
-from buildlet.task import BaseSimpleCachedTask, BaseSimpleCachedRootTask
+from buildlet.task import BaseSimpleCachedTask
 from buildlet.runner import run, listrunner
 
 
@@ -9,7 +9,7 @@ class SimpleCachedTask(BaseSimpleCachedTask):
         print "Running {0}...".format(self)
 
 
-class SimpleCachedRootTask(SimpleCachedTask, BaseSimpleCachedRootTask):
+class SimpleCachedRootTask(SimpleCachedTask):
 
     num_parents = 3
 
