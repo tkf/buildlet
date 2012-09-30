@@ -15,13 +15,16 @@ from . import test_cachedtask
 
 class TestingDumpedMockTask(test_cachedtask.TestingCachedTask):
 
-    def run(self):
-        super(TestingDumpedMockTask, self).run()
-        self.datastore.get_valuestore('mock').set(self.mock)
+    def pre_run(self):
+        # Load mock always at the very first stage.
+        if 'mock' in self.datastore:
+            self.mock = self.datastore.get_valuestore('mock').get()
+        super(TestingDumpedMockTask, self).pre_run()
 
-    def load(self):
-        super(TestingDumpedMockTask, self).load()
-        self.mock = self.datastore.get_valuestore('mock').get()
+    def post_success_run(self):
+        super(TestingDumpedMockTask, self).post_success_run()
+        # Save mock at the very end:
+        self.datastore.get_valuestore('mock').set(self.mock)
 
 
 class DumpedMockRootTask(test_cachedtask.CachedRootTask,
