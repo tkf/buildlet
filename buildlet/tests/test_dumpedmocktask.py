@@ -16,8 +16,9 @@ from . import test_cachedtask
 class TestingDumpedMockTask(test_cachedtask.TestingCachedTask):
 
     def load_mock(self):
-        if 'mock' in self.datastore:
-            self.mock = self.datastore.get_valuestore('mock').get()
+        store = self.datastore.get_valuestore('mock')
+        if store.exists():
+            self.mock = store.get()
 
     def pre_run(self):
         # Load mock always at the very first stage.
