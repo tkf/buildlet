@@ -97,7 +97,14 @@ class TestCachedTask(test_simple.TestSimpleTask):
         self.test_simple_run()
         self.task = self.TaskClass(**self.get_taskclass_kwds())
         self.runner.run(self.task)
-        self.assert_run_num(0)
-        self.assert_run_num(1, 0, func='pre_run')
-        self.assert_run_num(1, 0, func='post_success_run')
-        self.assert_run_num(0, func='post_error_run')
+
+        pnum_is_zero = 0
+        # As tasks are not re-run, methods in parent tasks
+        # are never called.  Therefore, the second argument to
+        # :meth:`assert_run_num` must be always zero here.
+
+        self.assert_run_num(0, pnum_is_zero)
+        self.assert_run_num(1, pnum_is_zero, func='load')
+        self.assert_run_num(1, pnum_is_zero, func='pre_run')
+        self.assert_run_num(1, pnum_is_zero, func='post_success_run')
+        self.assert_run_num(0, pnum_is_zero, func='post_error_run')
