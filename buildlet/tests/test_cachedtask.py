@@ -98,13 +98,13 @@ class TestCachedTask(test_simple.TestSimpleTask):
         self.task = self.TaskClass(**self.get_taskclass_kwds())
         self.runner.run(self.task)
 
-        pnum_is_zero = 0
-        # As tasks are not re-run, methods in parent tasks
-        # are never called.  Therefore, the second argument to
-        # :meth:`assert_run_num` must be always zero here.
+        self.assert_run_num(0)
 
-        self.assert_run_num(0, pnum_is_zero)
-        self.assert_run_num(1, pnum_is_zero, func='load')
-        self.assert_run_num(1, pnum_is_zero, func='pre_run')
-        self.assert_run_num(1, pnum_is_zero, func='post_success_run')
-        self.assert_run_num(0, pnum_is_zero, func='post_error_run')
+        # These function must be called once at root task.
+        # There is no need to call them for parent tasks, but it's OK to call.
+        self.assert_run_num(1, (0, 1), func='load')
+        self.assert_run_num(1, (0, 1), func='pre_run')
+        self.assert_run_num(1, (0, 1), func='post_success_run')
+
+        # No error should be raised
+        self.assert_run_num(0, func='post_error_run')
