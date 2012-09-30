@@ -9,12 +9,15 @@
    buildlet.datastore.inmemory.DataStreamInMemory
    buildlet.datastore.directory.DataFile
    buildlet.datastore.inmemory.DataValueInMemory
+   buildlet.datastore.inmemory.DataValuePickledInMemory
    buildlet.datastore.autoserialize.DataValuePickle
    buildlet.datastore.autoserialize.DataValueJSON
    buildlet.datastore.autoserialize.DataValueYAML
    buildlet.datastore.inmemory.DataStoreNestableInMemory
    buildlet.datastore.directory.DataDirectory
+   buildlet.datastore.directory.DataDirectoryWithMagic
    buildlet.datastore.autodirectory.DataAutoDirectory
+   buildlet.datastore.autodirectory.DataAutoDirectoryWithMagic
    :parts: 1
    :private-bases:
 
@@ -50,6 +53,7 @@ Value store
 
 .. inheritance-diagram::
    buildlet.datastore.inmemory.DataValueInMemory
+   buildlet.datastore.inmemory.DataValuePickledInMemory
    buildlet.datastore.autoserialize.DataValuePickle
    buildlet.datastore.autoserialize.DataValueJSON
    buildlet.datastore.autoserialize.DataValueYAML
@@ -64,7 +68,9 @@ Nestable
 
 .. inheritance-diagram::
    buildlet.datastore.directory.DataDirectory
+   buildlet.datastore.directory.DataDirectoryWithMagic
    buildlet.datastore.autodirectory.DataAutoDirectory
+   buildlet.datastore.autodirectory.DataAutoDirectoryWithMagic
    buildlet.datastore.inmemory.DataStoreNestableInMemory
    :parts: 1
    :private-bases:
