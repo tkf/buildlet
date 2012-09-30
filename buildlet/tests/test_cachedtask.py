@@ -78,10 +78,10 @@ class TestCachedTask(test_simple.TestSimpleTask):
 
         # self.task and ptask must have same call counts
         for func in ['run', 'pre_run', 'post_success_run']:
-            self.assertEqual(self.task.get_counter(func), 2)
-            self.assertEqual(ptask.get_counter(func), 2)
-        self.assertEqual(self.task.get_counter('load'), 0)
-        self.assertEqual(ptask.get_counter('load'), 0)
+            self.assert_task_counter(func, 2)
+            self.assert_task_counter(func, 2, ptask, 'ptask')
+        self.assert_task_counter('load', 0)
+        self.assert_task_counter('load', 0, ptask, 'ptask')
 
         # check other parents
         for other in self.task.get_parents()[1:]:
