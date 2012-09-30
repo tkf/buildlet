@@ -32,6 +32,18 @@ class BaseDataValueAutoSerialize(MixInDataStoreFileSystem, BaseDataValue):
 
 class DataValuePickle(BaseDataValueAutoSerialize):
 
+    """
+    Pickle-based value store.
+
+    >>> from buildlet.utils.tempdir import TemporaryDirectory
+    >>> with TemporaryDirectory() as tempdir:
+    ...     ds = DataValuePickle(os.path.join(tempdir, 'tmp'))
+    ...     ds.set({'some': 'data'})
+    ...     ds.get()
+    {'some': 'data'}
+
+    """
+
     mode = 'b'
 
     def dump(self, obj, fp):
@@ -45,6 +57,18 @@ class DataValuePickle(BaseDataValueAutoSerialize):
 
 class DataValueJSON(BaseDataValueAutoSerialize):
 
+    """
+    JSON-based value store.
+
+    >>> from buildlet.utils.tempdir import TemporaryDirectory
+    >>> with TemporaryDirectory() as tempdir:
+    ...     ds = DataValueJSON(os.path.join(tempdir, 'tmp'))
+    ...     ds.set({'some': 'data'})
+    ...     print(ds.get()['some'])
+    data
+
+    """
+
     def dump(self, obj, fp):
         import json
         json.dump(obj, fp)
@@ -55,6 +79,18 @@ class DataValueJSON(BaseDataValueAutoSerialize):
 
 
 class DataValueYAML(BaseDataValueAutoSerialize):
+
+    """
+    YAML-based value store.
+
+    >>> from buildlet.utils.tempdir import TemporaryDirectory
+    >>> with TemporaryDirectory() as tempdir:
+    ...     ds = DataValueYAML(os.path.join(tempdir, 'tmp'))
+    ...     ds.set({'some': 'data'})
+    ...     ds.get()
+    {'some': 'data'}
+
+    """
 
     def dump(self, obj, fp):
         import yaml
