@@ -2,9 +2,8 @@ import itertools
 
 import networkx as nx
 
-from .simple import primitive_run
 
-
+# TODO: this is base class now so rename it after...
 class MixInParallelRunner(object):
 
     def run(self, task):
@@ -46,10 +45,15 @@ class MixInParallelRunner(object):
 
 
 def run_task_load_parents(task):
-    primitive_run(task, do_run_load_parents)
-
-
-def do_run_load_parents(task):
-    for parent in task.get_parents():
-        parent.load()
-    task.run()
+    task.pre_run()
+    try:
+        if task.is_finished():
+            task.load()
+        else:
+            for parent in task.get_parents():
+                parent.load()
+            task.run()
+        task.post_success_run()
+    except Exception as e:
+        task.post_error_run(e)
+        raise
