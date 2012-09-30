@@ -18,3 +18,9 @@ def getrunner(classname):
 
 def listrunner():
     return list(_namemodmap)
+
+
+def run(classname, task, *args, **kwds):
+    runner = getrunner(classname)(*args, **kwds)
+    runner.run(task)
+    return runner

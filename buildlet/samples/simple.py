@@ -1,5 +1,5 @@
 from buildlet.task import BaseSimpleCachedTask, BaseSimpleCachedRootTask
-from buildlet.runner import getrunner, listrunner
+from buildlet.runner import run, listrunner
 
 
 class SimpleCachedTask(BaseSimpleCachedTask):
@@ -34,9 +34,8 @@ class SimpleCachedRootTask(SimpleCachedTask, BaseSimpleCachedRootTask):
 
 def run_simple_task(runner_class, **kwds):
     task = SimpleCachedRootTask(**kwds)
-    runner = getrunner(runner_class)()
-    print "Runner:", runner
-    runner.run(task)
+    print "Runner:", runner_class
+    runner = run(runner_class, task)
     return (runner, task)
 
 
