@@ -47,7 +47,6 @@ class TestDumpedMockTask(test_cachedtask.TestCachedTask):
 
     TaskClass = DumpedMockRootTask
     ParentTaskClass = TestingDumpedMockTask
-    DataStoreClass = DataStoreNestableCopiedInMemory
 
     def test_rerun_new_instance(self):
         self.test_simple_run()
@@ -65,3 +64,7 @@ class TestDumpedMockTask(test_cachedtask.TestCachedTask):
 
         # post_error_run is never called anyway
         self.assert_run_num(0, pnum_is_zero, func='post_error_run')
+
+
+class TestDumpedMockTaskCopiedInMemory(TestDumpedMockTask):
+    DataStoreClass = DataStoreNestableCopiedInMemory
