@@ -14,6 +14,21 @@ METAKEY = '.buildlet'
 
 class BaseDataStore(object):
 
+    """
+    Base class for all datastore classes.
+
+    The datasotre classes are used for the task class
+    :class:`buildlet.task.cachedtask.BaseCachedTask` to support
+    automatic dependency check.
+
+    There are three kinds of datastore classes:
+
+    * Stream type       -- :class:`BaseDataStream`
+    * Value store type  -- :class:`BaseDataValue`
+    * Nestable type     -- :class:`BaseDataStoreNestable`
+
+    """
+
     def clear(self):
         """
         Delete data stored in this datastore.

@@ -50,6 +50,14 @@ class BaseCachedTask(BaseTask):
     datastore = None
     """
     Data store instance.  Child class **must** set this attribute.
+
+    Only the **nestable**-type datastore (subclass of
+    :class:`buildlet.datastore.base.BaseDataStoreNestable`)
+    is allowed.  State of this task is dumped to the metastore of this
+    :attr:`datastore`.  User of this task class can use this
+    :attr:`datastore` attribute to store any task-related information,
+    result, etc.
+
     """
 
     def is_finished(self):

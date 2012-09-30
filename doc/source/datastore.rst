@@ -21,19 +21,13 @@
    :parts: 1
    :private-bases:
 
+.. py:currentmodule:: buildlet.datastore.base
 .. autoclass:: buildlet.datastore.base.BaseDataStore
    :members:
 
 
 Three kinds of datastore classes
 ================================
-
-.. py:currentmodule:: buildlet.datastore.base
-
-There are three kinds of datastore classes:
-stream type (:py:class:`BaseDataStream`),
-value store type (:py:class:`BaseDataValue`) and
-nestable type (:py:class:`BaseDataStoreNestable`).
 
 Stream
 ------
