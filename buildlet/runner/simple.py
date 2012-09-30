@@ -15,6 +15,8 @@ class SimpleRunner(object):
         task.pre_run()
         try:
             for parent in task.get_parents():
+                # This is redundant because `.load` or `.run` is called
+                # for *all* tasks regardless the state (need rerun or not).
                 cls.run(parent)
             if task.is_finished():
                 task.load()
