@@ -6,7 +6,11 @@ from . import test_simple
 
 
 class TestingCachedTask(BaseCachedTask, test_simple.TestingTaskBase):
-    pass
+
+    paramvalue = None
+
+    def get_paramvalue(self):
+        return self.paramvalue
 
 
 class CachedRootTask(TestingCachedTask, test_simple.SimpleRootTask):
@@ -68,7 +72,9 @@ class TestCachedTask(test_simple.TestSimpleTask):
         self.test_simple_run()
         self.task.invalidate_cache()
         self.runner.run(self.task)
+        self.check_invalidate_root()
 
+    def check_invalidate_root(self):
         self.assertRaises(AssertionError, self.assert_run_num, 1)
         self.assert_run_num(2, 1)
         self.assert_run_num(0, 1, func='load')
@@ -110,6 +116,13 @@ class TestCachedTask(test_simple.TestSimpleTask):
         # Finally, there should be no post_error_run call for all tasks
         for (expr, task) in self.iter_task_expr_val_pairs():
             self.assert_task_counter('post_error_run', 0, task, expr)
+
+    def test_update_root_paramvalue(self):
+        self.test_simple_run()
+        self.task.paramvalue = 'new value'
+        self.runner.run(self.task)
+        # The effect must be the same as of :meth:`test_invalidate_root`
+        self.check_invalidate_root()
 
     def test_rerun_new_instance(self):
         self.test_simple_run()
