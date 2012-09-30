@@ -54,9 +54,10 @@ class TestDumpedMockTask(test_cachedtask.TestCachedTask):
         # One more call count than TestCachedTask to count the calls in old
         # instance.
         self.assert_run_num(1, (0, 1))
-        self.assert_run_num(1, (0, 1), func='load')
+        self.assert_run_num(1, (0, 1), func='load')  # except this [#]_
         self.assert_run_num(2, (1, 2), func='pre_run')
         self.assert_run_num(2, (1, 2), func='post_success_run')
+        # .. [#] Because self.task.load is not called in the old instance!
 
         # post_error_run is never called anyway
         self.assert_run_num(0, func='post_error_run')
