@@ -1,4 +1,7 @@
-class SimpleRunner(object):
+from .base import BaseRunner
+
+
+class SimpleRunner(BaseRunner):
 
     """
     Simple blocking task runner.

@@ -2,8 +2,10 @@ import itertools
 
 import networkx as nx
 
+from .base import BaseRunner
 
-class BaseParallelRunner(object):
+
+class BaseParallelRunner(BaseRunner):
 
     def run(self, task):
         self.create_graph(task)
