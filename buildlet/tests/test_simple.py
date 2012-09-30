@@ -80,6 +80,20 @@ class TestSimpleTask(unittest.TestCase):
     def teardown_task(self):
         pass
 
+    def assert_task_counter(self, func, num, task=None, taskname=None):
+        if task is None:
+            task = self.task
+            taskname = 'self.task'
+        if taskname is None:
+            taskname = repr(task)
+        if isinstance(num, int):
+            num = (num,)
+        real_num = task.get_counter(func)
+        self.assertTrue(
+            real_num in num,
+            "{0}.{1} is expected to be called {2} times but called {3} times"
+            .format(taskname, func, "or ".join(map(str, num)), real_num))
+
     def assert_run_num(self, root_num, parent_num=None, func='run'):
         if parent_num is None:
             parent_num = root_num
