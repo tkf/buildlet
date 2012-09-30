@@ -1,26 +1,20 @@
-import os
-
-from buildlet.datastore import DataDirectoryWithMagic
-from buildlet.task import BaseCachedTask, BaseSimpleTask
+from buildlet.task import BaseSimpleCachedTask, BaseSimpleCachedRootTask
 from buildlet.runner import getrunner, listrunner
 
 
-class BaseSimpleCachedTask(BaseSimpleTask, BaseCachedTask):
+class SimpleCachedTask(BaseSimpleCachedTask):
 
     def run(self):
         self.datastore['result'] = {'key': 1}
         print "Running {0}...".format(self)
 
 
-class SimpleRootTask(BaseSimpleCachedTask):
+class SimpleCachedRootTask(SimpleCachedTask, BaseSimpleCachedRootTask):
 
     num_parents = 3
 
-    def __init__(self, basepath, **kwds):
-        # Use absolute path for IPython runner
-        basepath = os.path.abspath(basepath)
-        self.datastore = DataDirectoryWithMagic(basepath)
-        super(SimpleRootTask, self).__init__(**kwds)
+    def __init__(self, **kwds):
+        super(SimpleCachedRootTask, self).__init__(**kwds)
 
         # --clear-before-run
         for i in range(self.num_parents):
@@ -31,7 +25,7 @@ class SimpleRootTask(BaseSimpleCachedTask):
 
     def generate_parents(self):
         return [
-            BaseSimpleCachedTask(
+            SimpleCachedTask(
                 # Only string key is supported by all nestable
                 # data store types.
                 datastore=self.datastore.get_substore(str(i)))
@@ -39,7 +33,7 @@ class SimpleRootTask(BaseSimpleCachedTask):
 
 
 def run_simple_task(runner_class, **kwds):
-    task = SimpleRootTask(**kwds)
+    task = SimpleCachedRootTask(**kwds)
     runner = getrunner(runner_class)()
     print "Runner:", runner
     runner.run(task)
@@ -51,7 +45,7 @@ def main(args=None):
     parser = ArgumentParser(description=__doc__)
     parser.add_argument('--basepath', default="tmp")
     parser.add_argument('--num-parents', type=int,
-                        default=SimpleRootTask.num_parents)
+                        default=SimpleCachedRootTask.num_parents)
     parser.add_argument('--runner-class', choices=sorted(listrunner()),
                         default='SimpleRunner')
     parser.add_argument('--clear-before-run', '-c', default=False,

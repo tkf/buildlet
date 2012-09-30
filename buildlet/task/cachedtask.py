@@ -2,9 +2,11 @@
 Tasks cached on data store.
 """
 
+import os
 import operator
 
-from .base import BaseTask
+from .base import BaseTask, BaseSimpleTask
+from ..datastore import DataDirectoryWithMagic
 
 
 class BaseCachedTask(BaseTask):
@@ -178,3 +180,25 @@ class BaseCachedTask(BaseTask):
         """
         self.get_hashfilestore('result').clear()
         self.get_hashfilestore('param').clear()
+
+
+class BaseSimpleCachedTask(BaseCachedTask, BaseSimpleTask):
+    pass
+
+
+class BaseSimpleCachedRootTask(BaseSimpleCachedTask):
+
+    datastore_type = DataDirectoryWithMagic
+    """
+    Data store type.
+
+    Must be a subclass of
+    :class:`buildlet.datastore.base.BaseDataStoreNestable`.
+
+    """
+
+    def __init__(self, basepath, **kwds):
+        super(BaseSimpleCachedRootTask, self).__init__(**kwds)
+        # Use absolute path for IPython runner
+        self.basepath = basepath = os.path.abspath(basepath)
+        self.datastore = self.datastore_type(basepath)
