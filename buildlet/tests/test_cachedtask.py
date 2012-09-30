@@ -76,22 +76,29 @@ class TestCachedTask(test_simple.TestSimpleTask):
 
         self.assertRaises(AssertionError, self.assert_run_num, 1)
 
-        # self.task and ptask must have same call counts
-        for func in ['run', 'pre_run', 'post_success_run']:
-            self.assert_task_counter(func, 2)
+        for (expr, task) in self.iter_task_expr_val_pairs():
+            num = 2 if task is ptask else 1
+            self.assert_task_counter('run', num, task, expr)
+
+        # The invalidated parent task
+        for func in ['pre_run', 'post_success_run']:
             self.assert_task_counter(func, 2, ptask, 'ptask')
-        self.assert_task_counter('load', 0)
         self.assert_task_counter('load', 0, ptask, 'ptask')
 
-        # check other parents
-        for other in self.task.get_parents()[1:]:
-            self.assertEqual(other.get_counter('run'), 1)
-            self.assertEqual(other.get_counter('load'), 1)
-            self.assertEqual(other.get_counter('pre_run'), 2)
-            self.assertEqual(other.get_counter('post_success_run'), 2)
+        # The root task
+        for func in ['pre_run', 'post_success_run']:
+            self.assert_task_counter(func, 2)
+        self.assert_task_counter('load', 1)
 
-        # finally, there should be no post_error_run call for all tasks
-        self.assert_run_num(0, func='post_error_run')
+        # All tasks
+        for (expr, task) in self.iter_task_expr_val_pairs():
+            for func in ['pre_run', 'post_success_run']:
+                self.assert_task_counter(func, (1, 2), task, expr)
+            self.assert_task_counter('load', (0, 1), task, expr)
+
+        # Finally, there should be no post_error_run call for all tasks
+        for (expr, task) in self.iter_task_expr_val_pairs():
+            self.assert_task_counter('post_error_run', 0, task, expr)
 
     def test_rerun_new_instance(self):
         self.test_simple_run()
