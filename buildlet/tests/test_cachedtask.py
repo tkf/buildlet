@@ -47,12 +47,21 @@ class TestCachedTask(test_simple.TestSimpleTask):
 
     def test_cached_run(self):
         self.test_simple_run()
+
+        def assert_run_num_p_in_range(i, root_num_base, func):
+            # Call count of `func` for root task must be increased with `i`
+            root_num = root_num_base + i
+            # There is no need to call `func` for parent tasks for
+            # rerun, but it is OK to call them as many as root tasks.
+            parent_num_range = range(root_num_base - 1, root_num + 1)
+            self.assert_run_num(root_num, parent_num_range, func=func)
+
         for i in range(2):
             self.runner.run(self.task)
             self.assert_run_num(1)
-            self.assert_run_num(1 + i, 0, func='load')
-            self.assert_run_num(2 + i, 1, func='pre_run')
-            self.assert_run_num(2 + i, 1, func='post_success_run')
+            assert_run_num_p_in_range(i, 1, 'load')
+            assert_run_num_p_in_range(i, 2, 'pre_run')
+            assert_run_num_p_in_range(i, 2, 'post_success_run')
             self.assert_run_num(0, func='post_error_run')
 
     def test_invalidate_root(self):
