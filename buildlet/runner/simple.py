@@ -4,29 +4,25 @@ class SimpleRunner(object):
     Simple blocking task runner.
     """
 
-    def run(self, task):
+    @classmethod
+    def run(cls, task):
         """
         Simple blocking task runner.
 
         Run `task` and its unfinished ancestors.
 
         """
-        primitive_run(task, self.do_run)
-
-    def do_run(self, task):
-        for parent in task.get_parents():
-            self.run(parent)
-        task.run()
-
-
-def primitive_run(task, do_run):
-    task.pre_run()
-    try:
-        if task.is_finished():
-            task.load()
-        else:
-            do_run(task)
-        task.post_success_run()
-    except Exception as e:
-        task.post_error_run(e)
-        raise
+        task.pre_run()
+        try:
+            for parent in task.get_parents():
+                # This is redundant because `.load` or `.run` is called
+                # for *all* tasks regardless the state (need rerun or not).
+                cls.run(parent)
+            if task.is_finished():
+                task.load()
+            else:
+                task.run()
+            task.post_success_run()
+        except Exception as e:
+            task.post_error_run(e)
+            raise

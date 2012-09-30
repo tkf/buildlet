@@ -18,10 +18,10 @@ in `IPython Documentation`_.
 import IPython.parallel
 
 from .simple import SimpleRunner
-from .mixinparallel import MixInParallelRunner
+from .baseparallel import BaseParallelRunner
 
 
-class IPythonParallelRunner(MixInParallelRunner, SimpleRunner):
+class IPythonParallelRunner(BaseParallelRunner, SimpleRunner):
 
     def submit_tasks(self):
         self.client = IPython.parallel.Client()

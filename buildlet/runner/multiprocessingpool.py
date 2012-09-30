@@ -4,11 +4,10 @@ Task runner based on :class:`multiprocessing.Pool`.
 
 import multiprocessing
 
-from .simple import SimpleRunner
-from .mixinparallel import MixInParallelRunner
+from .baseparallel import BaseParallelRunner
 
 
-class MultiprocessingRunner(MixInParallelRunner, SimpleRunner):
+class MultiprocessingRunner(BaseParallelRunner):
 
     def __init__(self, num_proc=2):
         self.num_proc = num_proc

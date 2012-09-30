@@ -15,14 +15,23 @@ from . import test_cachedtask
 
 class TestingDumpedMockTask(test_cachedtask.TestingCachedTask):
 
+    def load_mock(self):
+        store = self.datastore.get_valuestore('mock')
+        if store.exists():
+            self.mock = store.get()
+
     def pre_run(self):
         # Load mock always at the very first stage.
-        if 'mock' in self.datastore:
-            self.mock = self.datastore.get_valuestore('mock').get()
+        self.load_mock()
         super(TestingDumpedMockTask, self).pre_run()
 
     def post_success_run(self):
         super(TestingDumpedMockTask, self).post_success_run()
+        # Save mock at the very end:
+        self.datastore.get_valuestore('mock').set(self.mock)
+
+    def post_error_run(self, exception):
+        super(TestingDumpedMockTask, self).post_error_run(exception)
         # Save mock at the very end:
         self.datastore.get_valuestore('mock').set(self.mock)
 
@@ -42,17 +51,16 @@ class TestDumpedMockTask(test_cachedtask.TestCachedTask):
         self.task = self.TaskClass(**self.get_taskclass_kwds())
         self.runner.run(self.task)
 
-        pnum_is_zero = 0  # See TestCachedTask
-
-        # root_num is +1 than TestCachedTask to count the calls in old
+        # One more call count than TestCachedTask to count the calls in old
         # instance.
-        self.assert_run_num(1, pnum_is_zero)
-        self.assert_run_num(1, pnum_is_zero, func='load')
-        self.assert_run_num(2, pnum_is_zero, func='pre_run')
-        self.assert_run_num(2, pnum_is_zero, func='post_success_run')
+        self.assert_run_num(1, (0, 1))
+        self.assert_run_num(1, (0, 1), func='load')  # except this [#]_
+        self.assert_run_num(2, (1, 2), func='pre_run')
+        self.assert_run_num(2, (1, 2), func='post_success_run')
+        # .. [#] Because self.task.load is not called in the old instance!
 
         # post_error_run is never called anyway
-        self.assert_run_num(0, pnum_is_zero, func='post_error_run')
+        self.assert_run_num(0, func='post_error_run')
 
 
 class DataStoreNestableCopiedInMemory(DataStoreNestableInMemory):

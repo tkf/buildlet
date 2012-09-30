@@ -22,13 +22,12 @@ class SimpleRootTask(BaseSimpleCachedTask):
         self.datastore = DataDirectoryWithMagic(basepath)
         super(SimpleRootTask, self).__init__(basepath=basepath, **kwds)
 
-    def pre_run(self):
+        # --clear-before-run
         for i in range(self.num_parents):
             self.datastore.get_substore(str(i))
             # so that `self.datastore.clear` clears substore.
         if self.clear_before_run:
             self.datastore.clear()
-        super(SimpleRootTask, self).pre_run()
 
     def generate_parents(self):
         return [
