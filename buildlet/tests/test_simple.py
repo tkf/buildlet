@@ -150,4 +150,4 @@ class TestSimpleTask(unittest.TestCase):
         self.assertEqual(call_args_list[0][1], {})
         should_be_exception = call_args_list[0][0][0]
         assert isinstance(should_be_exception, ValueError)
-        self.assertEqual(should_be_exception.message, exception.message)
+        self.assertEqual(should_be_exception.args, exception.args)
