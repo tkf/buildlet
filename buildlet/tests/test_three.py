@@ -65,3 +65,15 @@ class TestThreeLayerCachedTask(test_cachedtask.TestCachedTask):
 
         self.assertRaises(AssertionError, self.assert_run_num, 1)
         self.check_run_num_one_invalidated_task(gptask, 'gptask')
+
+    def test_update_grand_parent_paramvalue(self):
+        self.test_simple_run()
+        # Update parameter of the 0-th grand parent node
+        ptask = self.task.get_parents()[0]
+        gptask = ptask.get_parents()[0]
+        gptask.paramvalue = 'new value'
+        self.runner.run(self.task)
+
+        self.assertRaises(AssertionError, self.assert_run_num, 1)
+        self.check_update_parent_paramvalue([self.task, ptask, gptask],
+                                            ['self.task', 'ptask', 'gptask'])
