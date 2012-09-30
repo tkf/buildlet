@@ -1,10 +1,21 @@
+import os
+import sys
 try:
     from setuptools import setup
 except:
     from distutils.core import setup
-import sys
 
 import buildlet
+
+
+def find_packages():
+    packages = []
+    for (dir, subdirs, files) in os.walk('buildlet'):
+        package = dir.replace(os.path.sep, '.')
+        if '__init__.py' in files:
+            packages.append(package)
+    return packages
+
 
 setup_kwds = {}
 
@@ -14,10 +25,7 @@ if sys.version_info[0] >= 3:
 setup(
     name='buildlet',
     version=buildlet.__version__,
-    packages=['buildlet',
-              'buildlet.runner',
-              'buildlet.tests',
-             ],
+    packages=find_packages(),
     author=buildlet.__author__,
     author_email='aka.tkf@gmail.com',
     url='https://github.com/tkf/buildlet',
