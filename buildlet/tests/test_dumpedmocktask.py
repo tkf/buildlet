@@ -15,10 +15,13 @@ from . import test_cachedtask
 
 class TestingDumpedMockTask(test_cachedtask.TestingCachedTask):
 
-    def pre_run(self):
-        # Load mock always at the very first stage.
+    def load_mock(self):
         if 'mock' in self.datastore:
             self.mock = self.datastore.get_valuestore('mock').get()
+
+    def pre_run(self):
+        # Load mock always at the very first stage.
+        self.load_mock()
         super(TestingDumpedMockTask, self).pre_run()
 
     def post_success_run(self):
