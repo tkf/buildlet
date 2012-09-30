@@ -75,15 +75,17 @@ class TestCachedTask(test_simple.TestSimpleTask):
         self.runner.run(self.task)
 
         self.assertRaises(AssertionError, self.assert_run_num, 1)
+        self.check_run_num_one_invalidated_task(ptask, 'ptask')
 
+    def check_run_num_one_invalidated_task(self, invtask, invtaskname):
         for (expr, task) in self.iter_task_expr_val_pairs():
-            num = 2 if task is ptask else 1
+            num = 2 if task is invtask else 1
             self.assert_task_counter('run', num, task, expr)
 
-        # The invalidated parent task
+        # The invalidated task
         for func in ['pre_run', 'post_success_run']:
-            self.assert_task_counter(func, 2, ptask, 'ptask')
-        self.assert_task_counter('load', 0, ptask, 'ptask')
+            self.assert_task_counter(func, 2, invtask, invtaskname)
+        self.assert_task_counter('load', 0, invtask, invtaskname)
 
         # The root task
         for func in ['pre_run', 'post_success_run']:

@@ -65,27 +65,4 @@ class TestThreeLayerCachedTask(test_cachedtask.TestCachedTask):
         self.runner.run(self.task)
 
         self.assertRaises(AssertionError, self.assert_run_num, 1)
-
-        for (expr, task) in self.iter_task_expr_val_pairs():
-            num = 2 if task is gptask else 1
-            self.assert_task_counter('run', num, task, expr)
-
-        # The invalidated grand parent task
-        for func in ['pre_run', 'post_success_run']:
-            self.assert_task_counter(func, 2, gptask, 'gptask')
-        self.assert_task_counter('load', 0, gptask, 'gptask')
-
-        # The root task
-        for func in ['pre_run', 'post_success_run']:
-            self.assert_task_counter(func, 2)
-        self.assert_task_counter('load', 1)
-
-        # All tasks
-        for (expr, task) in self.iter_task_expr_val_pairs():
-            for func in ['pre_run', 'post_success_run']:
-                self.assert_task_counter(func, (1, 2), task, expr)
-            self.assert_task_counter('load', (0, 1), task, expr)
-
-        # Finally, there should be no post_error_run call for all tasks
-        for (expr, task) in self.iter_task_expr_val_pairs():
-            self.assert_task_counter('post_error_run', 0, task, expr)
+        self.check_run_num_one_invalidated_task(gptask, 'gptask')
