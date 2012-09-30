@@ -20,7 +20,7 @@ class SimpleRootTask(BaseSimpleCachedTask):
         # Use absolute path for IPython runner
         basepath = os.path.abspath(basepath)
         self.datastore = DataDirectoryWithMagic(basepath)
-        super(SimpleRootTask, self).__init__(basepath=basepath, **kwds)
+        super(SimpleRootTask, self).__init__(**kwds)
 
         # --clear-before-run
         for i in range(self.num_parents):
