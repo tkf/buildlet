@@ -17,11 +17,10 @@ in `IPython Documentation`_.
 
 import IPython.parallel
 
-from .simple import SimpleRunner
 from .baseparallel import BaseParallelRunner
 
 
-class IPythonParallelRunner(BaseParallelRunner, SimpleRunner):
+class IPythonParallelRunner(BaseParallelRunner):
 
     def submit_tasks(self):
         self.client = IPython.parallel.Client()
