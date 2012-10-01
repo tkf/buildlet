@@ -25,7 +25,7 @@ class L3LeafTask(test_cacheabletask.TestingCacheableTask):
     pass
 
 
-class L3BranchTask(test_cacheabletask.CachedRootTask):
+class L3BranchTask(test_cacheabletask.CacheableRootTask):
     num_parents = 2
 
 

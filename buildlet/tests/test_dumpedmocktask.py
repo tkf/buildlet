@@ -36,7 +36,7 @@ class TestingDumpedMockTask(test_cacheabletask.TestingCacheableTask):
         self.datastore.get_valuestore('mock').set(self.mock)
 
 
-class DumpedMockRootTask(test_cacheabletask.CachedRootTask,
+class DumpedMockRootTask(test_cacheabletask.CacheableRootTask,
                          TestingDumpedMockTask):
     pass
 

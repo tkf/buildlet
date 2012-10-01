@@ -21,7 +21,7 @@ class TestingCacheableTask(BaseCacheableTask, test_simple.TestingTaskBase):
         return self.paramvalue
 
 
-class CachedRootTask(TestingCacheableTask, test_simple.SimpleRootTask):
+class CacheableRootTask(TestingCacheableTask, test_simple.SimpleRootTask):
 
     def generate_parents(self):
         return [
@@ -35,7 +35,7 @@ class CachedRootTask(TestingCacheableTask, test_simple.SimpleRootTask):
 
 class TestCachedTask(test_simple.TestSimpleTask):
 
-    TaskClass = CachedRootTask
+    TaskClass = CacheableRootTask
     ParentTaskClass = TestingCacheableTask
     DataStoreClass = DataStoreNestableInMemory
 
