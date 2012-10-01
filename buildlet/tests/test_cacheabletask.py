@@ -2,18 +2,18 @@
 Test with two-level task tree.
 
 The task tree is like the one in `test_simple`.
-The main difference is that task class subclasses `BaseCachedTask` now.
+The main difference is that task class subclasses `BaseCacheableTask` now.
 
 """
 
-from ..task.cachedtask import BaseCachedTask
+from ..task.cacheabletask import BaseCacheableTask
 from ..datastore.inmemory import DataStoreNestableInMemory
 
 # Avoid importing test case at top-level to duplicated test
 from . import test_simple
 
 
-class TestingCachedTask(BaseCachedTask, test_simple.TestingTaskBase):
+class TestingCacheableTask(BaseCacheableTask, test_simple.TestingTaskBase):
 
     paramvalue = None
 
@@ -21,7 +21,7 @@ class TestingCachedTask(BaseCachedTask, test_simple.TestingTaskBase):
         return self.paramvalue
 
 
-class CachedRootTask(TestingCachedTask, test_simple.SimpleRootTask):
+class CacheableRootTask(TestingCacheableTask, test_simple.SimpleRootTask):
 
     def generate_parents(self):
         return [
@@ -33,21 +33,21 @@ class CachedRootTask(TestingCachedTask, test_simple.SimpleRootTask):
             for i in range(self.num_parents)]
 
 
-class TestCachedTask(test_simple.TestSimpleTask):
+class TestCacheableTask(test_simple.TestSimpleTask):
 
-    TaskClass = CachedRootTask
-    ParentTaskClass = TestingCachedTask
+    TaskClass = CacheableRootTask
+    ParentTaskClass = TestingCacheableTask
     DataStoreClass = DataStoreNestableInMemory
 
     def setup_task(self):
         self.setup_datastore()
-        super(TestCachedTask, self).setup_task()
+        super(TestCacheableTask, self).setup_task()
 
     def setup_datastore(self):
         self.ds = self.DataStoreClass()
 
     def get_taskclass_kwds(self):
-        kwds = super(TestCachedTask, self).get_taskclass_kwds()
+        kwds = super(TestCacheableTask, self).get_taskclass_kwds()
         kwds.update(datastore=self.ds)
         return kwds
 

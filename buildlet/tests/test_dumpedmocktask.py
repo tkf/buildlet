@@ -1,5 +1,5 @@
 """
-Same as test_cachedtask but mock data is dumped in datastore.
+Same as test_cacheabletask but mock data is dumped in datastore.
 
 This test module serves as functional test for datastore and
 basis for parallel runner (such as `multiprocessing`) testing.
@@ -10,10 +10,10 @@ from ..datastore.inmemory import (
     DataStoreNestableInMemory, DataValuePickledInMemory)
 
 # Avoid importing test case at top-level to duplicated test
-from . import test_cachedtask
+from . import test_cacheabletask
 
 
-class TestingDumpedMockTask(test_cachedtask.TestingCachedTask):
+class TestingDumpedMockTask(test_cacheabletask.TestingCacheableTask):
 
     def load_mock(self):
         store = self.datastore.get_valuestore('mock')
@@ -36,12 +36,12 @@ class TestingDumpedMockTask(test_cachedtask.TestingCachedTask):
         self.datastore.get_valuestore('mock').set(self.mock)
 
 
-class DumpedMockRootTask(test_cachedtask.CachedRootTask,
+class DumpedMockRootTask(test_cacheabletask.CacheableRootTask,
                          TestingDumpedMockTask):
     pass
 
 
-class TestDumpedMockTask(test_cachedtask.TestCachedTask):
+class TestDumpedMockTask(test_cacheabletask.TestCacheableTask):
 
     TaskClass = DumpedMockRootTask
     ParentTaskClass = TestingDumpedMockTask
@@ -51,7 +51,7 @@ class TestDumpedMockTask(test_cachedtask.TestCachedTask):
         self.task = self.TaskClass(**self.get_taskclass_kwds())
         self.runner.run(self.task)
 
-        # One more call count than TestCachedTask to count the calls in old
+        # One more call count than TestCacheableTask to count the calls in old
         # instance.
         self.assert_run_num(1, (0, 1))
         self.assert_run_num(1, (0, 1), func='load')  # except this [#]_
@@ -69,8 +69,8 @@ class DataStoreNestableCopiedInMemory(DataStoreNestableInMemory):
 
 
 # # I don't need to worry about this because valuestore is not
-# # used in BaseCachedTask.
-# class TestCachedTaskCopiedInMemory(test_cachedtask.TestCachedTask):
+# # used in BaseCacheableTask.
+# class TestCacheableTaskCopiedInMemory(test_cacheabletask.TestCacheableTask):
 #     DataStoreClass = DataStoreNestableCopiedInMemory
 
 

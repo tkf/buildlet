@@ -1,20 +1,20 @@
-from buildlet.task import BaseSimpleCachedTask
+from buildlet.task import BaseSimpleCacheableTask
 from buildlet.runner import run, listrunner
 
 
-class SimpleCachedTask(BaseSimpleCachedTask):
+class SimpleCacheableTask(BaseSimpleCacheableTask):
 
     def run(self):
         self.datastore['result'] = {'key': 1}
         print "Running {0}...".format(self)
 
 
-class SimpleCachedRootTask(SimpleCachedTask):
+class SimpleCacheableRootTask(SimpleCacheableTask):
 
     num_parents = 3
 
     def __init__(self, **kwds):
-        super(SimpleCachedRootTask, self).__init__(**kwds)
+        super(SimpleCacheableRootTask, self).__init__(**kwds)
 
         # --clear-before-run
         for i in range(self.num_parents):
@@ -25,7 +25,7 @@ class SimpleCachedRootTask(SimpleCachedTask):
 
     def generate_parents(self):
         return [
-            SimpleCachedTask(
+            SimpleCacheableTask(
                 # Only string key is supported by all nestable
                 # data store types.
                 datastore=self.datastore.get_substore(str(i)))
@@ -33,7 +33,7 @@ class SimpleCachedRootTask(SimpleCachedTask):
 
 
 def run_simple_task(runner_class, **kwds):
-    task = SimpleCachedRootTask(**kwds)
+    task = SimpleCacheableRootTask(**kwds)
     print "Runner:", runner_class
     runner = run(runner_class, task)
     return (runner, task)
@@ -44,7 +44,7 @@ def main(args=None):
     parser = ArgumentParser(description=__doc__)
     parser.add_argument('--basepath', default="tmp")
     parser.add_argument('--num-parents', type=int,
-                        default=SimpleCachedRootTask.num_parents)
+                        default=SimpleCacheableRootTask.num_parents)
     parser.add_argument('--runner-class', choices=sorted(listrunner()),
                         default='SimpleRunner')
     parser.add_argument('--clear-before-run', '-c', default=False,

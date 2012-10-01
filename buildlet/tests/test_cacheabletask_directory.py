@@ -4,7 +4,7 @@ import shutil
 from ..datastore.directory import DataDirectory
 
 # Avoid importing test case at top-level to duplicated test
-from . import test_cachedtask
+from . import test_cacheabletask
 
 
 class MixInTestDataDirectory(object):
@@ -19,6 +19,6 @@ class MixInTestDataDirectory(object):
         shutil.rmtree(self.tempdir)
 
 
-class TestCachedTaskDirectory(MixInTestDataDirectory,
-                              test_cachedtask.TestCachedTask):
+class TestCacheableTaskDirectory(MixInTestDataDirectory,
+                                 test_cacheabletask.TestCacheableTask):
     pass

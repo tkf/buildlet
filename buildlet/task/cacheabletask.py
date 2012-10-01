@@ -9,7 +9,7 @@ from .base import BaseTask, BaseSimpleTask
 from ..datastore import DataDirectoryWithMagic
 
 
-class BaseCachedTask(BaseTask):
+class BaseCacheableTask(BaseTask):
 
     """
     Base task class for automatic dependency check based on cached result.
@@ -139,7 +139,8 @@ class BaseCachedTask(BaseTask):
         return tuple(map(get, self.get_parents()))
 
     def is_parent_cacheable(self):
-        return all(isinstance(p, BaseCachedTask) for p in self.get_parents())
+        return all(isinstance(p, BaseCacheableTask)
+                   for p in self.get_parents())
 
     #----------------------------------------------------------------------
     # Hash caching
@@ -172,7 +173,7 @@ class BaseCachedTask(BaseTask):
     def post_success_run(self):
         self.set_cached_hash('result')
         self.set_cached_hash('param')
-        super(BaseCachedTask, self).post_success_run()
+        super(BaseCacheableTask, self).post_success_run()
 
     def invalidate_cache(self):
         """
@@ -182,7 +183,7 @@ class BaseCachedTask(BaseTask):
         self.get_hashfilestore('param').clear()
 
 
-class BaseSimpleCachedTask(BaseCachedTask, BaseSimpleTask):
+class BaseSimpleCacheableTask(BaseCacheableTask, BaseSimpleTask):
 
     """
     Base class for cached task.
@@ -213,7 +214,7 @@ class BaseSimpleCachedTask(BaseCachedTask, BaseSimpleTask):
         One of (and only one) `basepath` or `datastore` must be given.
 
         """
-        super(BaseSimpleCachedTask, self).__init__(**kwds)
+        super(BaseSimpleCacheableTask, self).__init__(**kwds)
         if basepath is not None:
             assert datastore is None
             # Use absolute path for IPython runner

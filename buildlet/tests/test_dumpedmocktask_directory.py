@@ -1,5 +1,5 @@
 from . import test_dumpedmocktask
-from .test_cachedtask_directory import MixInTestDataDirectory
+from .test_cacheabletask_directory import MixInTestDataDirectory
 
 
 class TestDumpedMockTaskDirectory(MixInTestDataDirectory,
