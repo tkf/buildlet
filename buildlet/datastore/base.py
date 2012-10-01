@@ -360,6 +360,12 @@ class MixInDataStoreFileSystem(BaseDataStore):
     def aspath(self, key):
         raise NotImplementedError
 
+    def get_storeid(self):
+        """
+        Return store ID, which is :attr:`path` for file-based datastore.
+        """
+        return self.path
+
 
 class BaseDataDirectory(MixInDataStoreFileSystem, BaseDataStoreNestable):
 
