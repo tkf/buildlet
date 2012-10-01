@@ -18,6 +18,6 @@ class TestCacheableTaskWithRealMock(test_cacheabletask.TestCacheableTask):
     MockClass = mock.Mock
 
 
-class TestCachedTaskDirectoryAndWithRealMock(
+class TestCacheableTaskDirectoryAndWithRealMock(
         test_cacheabletask_directory.TestCachedTaskDirectory):
     MockClass = mock.Mock
