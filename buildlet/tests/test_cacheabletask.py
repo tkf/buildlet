@@ -2,18 +2,18 @@
 Test with two-level task tree.
 
 The task tree is like the one in `test_simple`.
-The main difference is that task class subclasses `BaseCachedTask` now.
+The main difference is that task class subclasses `BaseCacheableTask` now.
 
 """
 
-from ..task.cacheabletask import BaseCachedTask
+from ..task.cacheabletask import BaseCacheableTask
 from ..datastore.inmemory import DataStoreNestableInMemory
 
 # Avoid importing test case at top-level to duplicated test
 from . import test_simple
 
 
-class TestingCachedTask(BaseCachedTask, test_simple.TestingTaskBase):
+class TestingCachedTask(BaseCacheableTask, test_simple.TestingTaskBase):
 
     paramvalue = None
 
