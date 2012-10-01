@@ -1,5 +1,5 @@
 """
-Same as test_cachedtask but mock data is dumped in datastore.
+Same as test_cacheabletask but mock data is dumped in datastore.
 
 This test module serves as functional test for datastore and
 basis for parallel runner (such as `multiprocessing`) testing.
@@ -10,10 +10,10 @@ from ..datastore.inmemory import (
     DataStoreNestableInMemory, DataValuePickledInMemory)
 
 # Avoid importing test case at top-level to duplicated test
-from . import test_cachedtask
+from . import test_cacheabletask
 
 
-class TestingDumpedMockTask(test_cachedtask.TestingCachedTask):
+class TestingDumpedMockTask(test_cacheabletask.TestingCachedTask):
 
     def load_mock(self):
         store = self.datastore.get_valuestore('mock')
@@ -36,12 +36,12 @@ class TestingDumpedMockTask(test_cachedtask.TestingCachedTask):
         self.datastore.get_valuestore('mock').set(self.mock)
 
 
-class DumpedMockRootTask(test_cachedtask.CachedRootTask,
+class DumpedMockRootTask(test_cacheabletask.CachedRootTask,
                          TestingDumpedMockTask):
     pass
 
 
-class TestDumpedMockTask(test_cachedtask.TestCachedTask):
+class TestDumpedMockTask(test_cacheabletask.TestCachedTask):
 
     TaskClass = DumpedMockRootTask
     ParentTaskClass = TestingDumpedMockTask
@@ -70,7 +70,7 @@ class DataStoreNestableCopiedInMemory(DataStoreNestableInMemory):
 
 # # I don't need to worry about this because valuestore is not
 # # used in BaseCachedTask.
-# class TestCachedTaskCopiedInMemory(test_cachedtask.TestCachedTask):
+# class TestCachedTaskCopiedInMemory(test_cacheabletask.TestCachedTask):
 #     DataStoreClass = DataStoreNestableCopiedInMemory
 
 

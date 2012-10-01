@@ -18,14 +18,14 @@ The task tree is like this (when ``num_parents = 2``):
 """
 
 
-from . import test_cachedtask
+from . import test_cacheabletask
 
 
-class L3LeafTask(test_cachedtask.TestingCachedTask):
+class L3LeafTask(test_cacheabletask.TestingCachedTask):
     pass
 
 
-class L3BranchTask(test_cachedtask.CachedRootTask):
+class L3BranchTask(test_cacheabletask.CachedRootTask):
     num_parents = 2
 
 
@@ -40,7 +40,7 @@ class L3RootTask(L3BranchTask):
             for i in range(self.num_parents)]
 
 
-class TestThreeLayerCachedTask(test_cachedtask.TestCachedTask):
+class TestThreeLayerCachedTask(test_cacheabletask.TestCachedTask):
 
     GrandParentTaskClass = L3LeafTask
     ParentTaskClass = L3BranchTask
