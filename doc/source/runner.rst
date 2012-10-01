@@ -3,6 +3,7 @@
 ========================
 
 .. automodule:: buildlet.runner
+   :members:
 
 .. inheritance-diagram::
    buildlet.runner.simple.SimpleRunner

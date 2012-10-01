@@ -1,13 +1,13 @@
-"""
-Task runner based on :class:`multiprocessing.Pool`.
-"""
-
 import multiprocessing
 
 from .baseparallel import BaseParallelRunner
 
 
 class MultiprocessingRunner(BaseParallelRunner):
+
+    """
+    Task runner class based on :class:`multiprocessing.Pool`.
+    """
 
     def __init__(self, num_proc=2):
         self.num_proc = num_proc

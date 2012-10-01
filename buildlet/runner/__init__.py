@@ -1,5 +1,5 @@
 """
-Runner classes to execute tasks.
+Utility functions to execute tasks.
 """
 
 _namemodmap = dict(
@@ -12,6 +12,10 @@ _namemodmap = dict(
 def getrunner(classname):
     """
     Get a runner class named `classname`.
+
+    >>> getrunner('SimpleRunner')
+    <class 'buildlet.runner.simple.SimpleRunner'>
+
     """
     import sys
     module = 'buildlet.runner.{0}'.format(_namemodmap[classname])
@@ -22,6 +26,12 @@ def getrunner(classname):
 def listrunner():
     """
     Get a list of runner class names (a list of strings).
+
+    Currently defined runners:
+
+    >>> sorted(listrunner())
+    ['IPythonParallelRunner', 'MultiprocessingRunner', 'SimpleRunner']
+
     """
     return list(_namemodmap)
 
@@ -32,6 +42,10 @@ def run(classname, task, *args, **kwds):
 
     Rest of the arguments are passed to the runner class.
     Return the instance of the used runner class.
+
+    Usage::
+
+        runner = run('SimpleRunner', task)
 
     """
     runner = getrunner(classname)(*args, **kwds)
