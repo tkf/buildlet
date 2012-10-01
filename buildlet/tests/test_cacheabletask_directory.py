@@ -19,6 +19,6 @@ class MixInTestDataDirectory(object):
         shutil.rmtree(self.tempdir)
 
 
-class TestCachedTaskDirectory(MixInTestDataDirectory,
+class TestCacheableTaskDirectory(MixInTestDataDirectory,
                               test_cacheabletask.TestCacheableTask):
     pass
