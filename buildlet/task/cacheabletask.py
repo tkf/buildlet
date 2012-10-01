@@ -182,7 +182,7 @@ class BaseCacheableTask(BaseTask):
         self.get_hashfilestore('param').clear()
 
 
-class BaseSimpleCachedTask(BaseCacheableTask, BaseSimpleTask):
+class BaseSimpleCacheableTask(BaseCacheableTask, BaseSimpleTask):
 
     """
     Base class for cached task.
@@ -213,7 +213,7 @@ class BaseSimpleCachedTask(BaseCacheableTask, BaseSimpleTask):
         One of (and only one) `basepath` or `datastore` must be given.
 
         """
-        super(BaseSimpleCachedTask, self).__init__(**kwds)
+        super(BaseSimpleCacheableTask, self).__init__(**kwds)
         if basepath is not None:
             assert datastore is None
             # Use absolute path for IPython runner

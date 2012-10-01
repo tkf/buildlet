@@ -1,8 +1,8 @@
-from buildlet.task import BaseSimpleCachedTask
+from buildlet.task import BaseSimpleCacheableTask
 from buildlet.runner import run, listrunner
 
 
-class SimpleCachedTask(BaseSimpleCachedTask):
+class SimpleCachedTask(BaseSimpleCacheableTask):
 
     def run(self):
         self.datastore['result'] = {'key': 1}
