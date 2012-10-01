@@ -5,8 +5,8 @@
 .. automodule:: buildlet.task
 
 .. inheritance-diagram::
-   buildlet.task.cachedtask.BaseCachedTask
-   buildlet.task.cachedtask.BaseSimpleCachedTask
+   buildlet.task.cachedtask.BaseCacheableTask
+   buildlet.task.cachedtask.BaseSimpleCacheableTask
    :parts: 1
 
 

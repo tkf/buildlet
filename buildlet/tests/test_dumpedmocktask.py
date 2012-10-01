@@ -51,7 +51,7 @@ class TestDumpedMockTask(test_cacheabletask.TestCacheableTask):
         self.task = self.TaskClass(**self.get_taskclass_kwds())
         self.runner.run(self.task)
 
-        # One more call count than TestCachedTask to count the calls in old
+        # One more call count than TestCacheableTask to count the calls in old
         # instance.
         self.assert_run_num(1, (0, 1))
         self.assert_run_num(1, (0, 1), func='load')  # except this [#]_
@@ -69,8 +69,8 @@ class DataStoreNestableCopiedInMemory(DataStoreNestableInMemory):
 
 
 # # I don't need to worry about this because valuestore is not
-# # used in BaseCachedTask.
-# class TestCachedTaskCopiedInMemory(test_cacheabletask.TestCacheableTask):
+# # used in BaseCacheableTask.
+# class TestCacheableTaskCopiedInMemory(test_cacheabletask.TestCacheableTask):
 #     DataStoreClass = DataStoreNestableCopiedInMemory
 
 
