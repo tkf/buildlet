@@ -6,7 +6,7 @@ The main difference is that task class subclasses `BaseCachedTask` now.
 
 """
 
-from ..task.cachedtask import BaseCachedTask
+from ..task.cacheabletask import BaseCachedTask
 from ..datastore.inmemory import DataStoreNestableInMemory
 
 # Avoid importing test case at top-level to duplicated test
