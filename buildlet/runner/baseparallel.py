@@ -1,5 +1,3 @@
-import itertools
-
 import networkx as nx
 
 from .base import BaseRunner
@@ -15,18 +13,18 @@ class BaseParallelRunner(BaseRunner):
     def create_graph(self, task):
         self.graph = graph = nx.DiGraph()
         self.nodetaskmap = nodetaskmap = {}
-        counter = itertools.count().next
-        self.root = root = counter()
+        self.root = task.get_taskid()
 
-        def creator(i, t):
+        def creator(t):
+            i = t.get_taskid()
             nodetaskmap[i] = t
             for p in t.get_parents():
-                k = counter()
+                k = p.get_taskid()
                 graph.add_node(k)
                 graph.add_edge(k, i)
-                creator(k, p)
+                creator(p)
 
-        creator(root, task)
+        creator(task)
 
     def sorted_nodes(self):
         return nx.topological_sort(self.graph)
