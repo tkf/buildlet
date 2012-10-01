@@ -40,19 +40,19 @@ class L3RootTask(L3BranchTask):
             for i in range(self.num_parents)]
 
 
-class TestThreeLayerCachedTask(test_cacheabletask.TestCacheableTask):
+class TestThreeLayerCacheableTask(test_cacheabletask.TestCacheableTask):
 
     GrandParentTaskClass = L3LeafTask
     ParentTaskClass = L3BranchTask
     TaskClass = L3RootTask
 
     def get_taskclass_kwds(self):
-        kwds = super(TestThreeLayerCachedTask, self).get_taskclass_kwds()
+        kwds = super(TestThreeLayerCacheableTask, self).get_taskclass_kwds()
         kwds.update(GrandParentTaskClass=self.GrandParentTaskClass)
         return kwds
 
     def iter_task_expr_val_pairs(self, levels=(0, 1, 2)):
-        for pair in super(TestThreeLayerCachedTask, self) \
+        for pair in super(TestThreeLayerCacheableTask, self) \
                         .iter_task_expr_val_pairs(levels):
             yield pair
         if 2 in levels:
@@ -68,7 +68,7 @@ class TestThreeLayerCachedTask(test_cacheabletask.TestCacheableTask):
                 grand_parent_num = root_num
             else:
                 grand_parent_num = parent_num
-        super(TestThreeLayerCachedTask, self) \
+        super(TestThreeLayerCacheableTask, self) \
             .assert_run_num(root_num, parent_num, func=func)
         for p in self.task.get_parents():
             grand_parents = p.get_parents()
