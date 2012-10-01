@@ -57,8 +57,30 @@ class BaseTask(object):
 
     @memoize_no_arg_method('__taskid')
     def get_taskid(self):
-        """
+        r"""
         Return ID of this task, which must be a hashable object.
+
+        If an upstream task is referenced from more than two tasks,
+        then you must either:
+
+        1. override this method to return identical task ID for
+           the upstream task.
+        2. make sure same task instance is used for the shared
+           upstream task.
+
+        For example, when the task tree is like this::
+
+            Root -+-----> Mid1 --+
+                   \              \
+                    `---> Mid2 ----+---> Up
+
+        For cacheable task, using datastore path as a task ID
+        is a good choice since same task (with same parameter)
+        must has an unique datastore.
+
+        Default implementation of this method returns different
+        hashable object for each instance.
+
         """
         return object()
 
