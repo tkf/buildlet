@@ -139,7 +139,8 @@ class BaseCacheableTask(BaseTask):
         return tuple(map(get, self.get_parents()))
 
     def is_parent_cacheable(self):
-        return all(isinstance(p, BaseCacheableTask) for p in self.get_parents())
+        return all(isinstance(p, BaseCacheableTask)
+                   for p in self.get_parents())
 
     #----------------------------------------------------------------------
     # Hash caching
