@@ -40,7 +40,7 @@ class L3RootTask(L3BranchTask):
             for i in range(self.num_parents)]
 
 
-class TestThreeLayerCachedTask(test_cacheabletask.TestCachedTask):
+class TestThreeLayerCachedTask(test_cacheabletask.TestCacheableTask):
 
     GrandParentTaskClass = L3LeafTask
     ParentTaskClass = L3BranchTask

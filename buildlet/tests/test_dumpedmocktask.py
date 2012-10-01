@@ -41,7 +41,7 @@ class DumpedMockRootTask(test_cacheabletask.CacheableRootTask,
     pass
 
 
-class TestDumpedMockTask(test_cacheabletask.TestCachedTask):
+class TestDumpedMockTask(test_cacheabletask.TestCacheableTask):
 
     TaskClass = DumpedMockRootTask
     ParentTaskClass = TestingDumpedMockTask
@@ -70,7 +70,7 @@ class DataStoreNestableCopiedInMemory(DataStoreNestableInMemory):
 
 # # I don't need to worry about this because valuestore is not
 # # used in BaseCachedTask.
-# class TestCachedTaskCopiedInMemory(test_cacheabletask.TestCachedTask):
+# class TestCachedTaskCopiedInMemory(test_cacheabletask.TestCacheableTask):
 #     DataStoreClass = DataStoreNestableCopiedInMemory
 
 

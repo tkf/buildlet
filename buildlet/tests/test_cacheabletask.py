@@ -33,7 +33,7 @@ class CacheableRootTask(TestingCacheableTask, test_simple.SimpleRootTask):
             for i in range(self.num_parents)]
 
 
-class TestCachedTask(test_simple.TestSimpleTask):
+class TestCacheableTask(test_simple.TestSimpleTask):
 
     TaskClass = CacheableRootTask
     ParentTaskClass = TestingCacheableTask
@@ -41,13 +41,13 @@ class TestCachedTask(test_simple.TestSimpleTask):
 
     def setup_task(self):
         self.setup_datastore()
-        super(TestCachedTask, self).setup_task()
+        super(TestCacheableTask, self).setup_task()
 
     def setup_datastore(self):
         self.ds = self.DataStoreClass()
 
     def get_taskclass_kwds(self):
-        kwds = super(TestCachedTask, self).get_taskclass_kwds()
+        kwds = super(TestCacheableTask, self).get_taskclass_kwds()
         kwds.update(datastore=self.ds)
         return kwds
 

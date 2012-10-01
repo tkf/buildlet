@@ -20,5 +20,5 @@ class MixInTestDataDirectory(object):
 
 
 class TestCachedTaskDirectory(MixInTestDataDirectory,
-                              test_cacheabletask.TestCachedTask):
+                              test_cacheabletask.TestCacheableTask):
     pass

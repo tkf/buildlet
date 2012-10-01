@@ -14,7 +14,7 @@ class TestSimpleTaskWithRealMock(test_simple.TestSimpleTask):
     MockClass = mock.Mock
 
 
-class TestCachedTaskWithRealMock(test_cacheabletask.TestCachedTask):
+class TestCachedTaskWithRealMock(test_cacheabletask.TestCacheableTask):
     MockClass = mock.Mock
 
 
