@@ -1,3 +1,6 @@
+from ..utils import memoizemethod
+
+
 class BaseTask(object):
 
     """
@@ -51,6 +54,13 @@ class BaseTask(object):
         Return True when the task is finished and loadable by :meth:`load`.
         """
         return False
+
+    @memoizemethod
+    def get_taskid(self):
+        """
+        Return ID of this task, which must be a hashable object.
+        """
+        return object()
 
 
 class BaseSimpleTask(BaseTask):
