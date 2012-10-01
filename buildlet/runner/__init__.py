@@ -9,18 +9,18 @@ _namemodmap = dict(
 )
 
 
-def getrunner(classname):
+def getrunner(runnername):
     """
-    Get a runner class named `classname`.
+    Get a runner class named `runnername`.
 
     >>> getrunner('SimpleRunner')
     <class 'buildlet.runner.simple.SimpleRunner'>
 
     """
     import sys
-    module = 'buildlet.runner.{0}'.format(_namemodmap[classname])
+    module = 'buildlet.runner.{0}'.format(_namemodmap[runnername])
     __import__(module)
-    return getattr(sys.modules[module], classname)
+    return getattr(sys.modules[module], runnername)
 
 
 def listrunner():
@@ -36,9 +36,9 @@ def listrunner():
     return list(_namemodmap)
 
 
-def run(classname, task, *args, **kwds):
+def run(runnername, task, *args, **kwds):
     """
-    Run `task` using runner named `classname`.
+    Run `task` using runner named `runnername`.
 
     Rest of the arguments are passed to the runner class.
     Return the instance of the used runner class.
@@ -48,6 +48,6 @@ def run(classname, task, *args, **kwds):
         runner = run('SimpleRunner', task)
 
     """
-    runner = getrunner(classname)(*args, **kwds)
+    runner = getrunner(runnername)(*args, **kwds)
     runner.run(task)
     return runner
