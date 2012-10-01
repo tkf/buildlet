@@ -7,6 +7,7 @@ import shutil
 import collections
 import itertools
 
+from ..utils import memoize_no_arg_method
 from ..utils.hashutils import hexdigest
 
 METAKEY = '.buildlet'
@@ -56,6 +57,13 @@ class BaseDataStore(object):
 
         """
         return None
+
+    @memoize_no_arg_method('__storeid')
+    def get_storeid(self):
+        """
+        Return ID of this datastore, which must be a hashable object.
+        """
+        return object()
 
 
 class BaseDataValue(BaseDataStore):
