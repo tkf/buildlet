@@ -21,7 +21,7 @@ The task tree is like this (when ``num_parents = 2``):
 from . import test_cacheabletask
 
 
-class L3LeafTask(test_cacheabletask.TestingCachedTask):
+class L3LeafTask(test_cacheabletask.TestingCacheableTask):
     pass
 
 

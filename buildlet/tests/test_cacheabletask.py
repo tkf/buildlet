@@ -13,7 +13,7 @@ from ..datastore.inmemory import DataStoreNestableInMemory
 from . import test_simple
 
 
-class TestingCachedTask(BaseCacheableTask, test_simple.TestingTaskBase):
+class TestingCacheableTask(BaseCacheableTask, test_simple.TestingTaskBase):
 
     paramvalue = None
 
@@ -21,7 +21,7 @@ class TestingCachedTask(BaseCacheableTask, test_simple.TestingTaskBase):
         return self.paramvalue
 
 
-class CachedRootTask(TestingCachedTask, test_simple.SimpleRootTask):
+class CachedRootTask(TestingCacheableTask, test_simple.SimpleRootTask):
 
     def generate_parents(self):
         return [
@@ -36,7 +36,7 @@ class CachedRootTask(TestingCachedTask, test_simple.SimpleRootTask):
 class TestCachedTask(test_simple.TestSimpleTask):
 
     TaskClass = CachedRootTask
-    ParentTaskClass = TestingCachedTask
+    ParentTaskClass = TestingCacheableTask
     DataStoreClass = DataStoreNestableInMemory
 
     def setup_task(self):

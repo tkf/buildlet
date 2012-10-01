@@ -13,7 +13,7 @@ from ..datastore.inmemory import (
 from . import test_cacheabletask
 
 
-class TestingDumpedMockTask(test_cacheabletask.TestingCachedTask):
+class TestingDumpedMockTask(test_cacheabletask.TestingCacheableTask):
 
     def load_mock(self):
         store = self.datastore.get_valuestore('mock')
