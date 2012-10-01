@@ -69,6 +69,9 @@ class BaseCacheableTask(BaseTask):
             cached is not None and \
             current == cached
 
+    def get_taskid(self):
+        return self.datastore.get_storeid()
+
     #----------------------------------------------------------------------
     # Task value calculation
     #----------------------------------------------------------------------
