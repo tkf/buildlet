@@ -18,7 +18,7 @@ class BaseDataStore(object):
     Base class for all datastore classes.
 
     The datasotre classes are used for the task class
-    :class:`buildlet.task.cachedtask.BaseCacheableTask` to support
+    :class:`buildlet.task.cacheabletask.BaseCacheableTask` to support
     automatic dependency check.
 
     There are three kinds of datastore classes:
