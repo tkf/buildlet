@@ -2,14 +2,14 @@ from buildlet.task import BaseSimpleCacheableTask
 from buildlet.runner import run, listrunner
 
 
-class SimpleCachedTask(BaseSimpleCacheableTask):
+class SimpleCacheableTask(BaseSimpleCacheableTask):
 
     def run(self):
         self.datastore['result'] = {'key': 1}
         print "Running {0}...".format(self)
 
 
-class SimpleCachedRootTask(SimpleCachedTask):
+class SimpleCachedRootTask(SimpleCacheableTask):
 
     num_parents = 3
 
@@ -25,7 +25,7 @@ class SimpleCachedRootTask(SimpleCachedTask):
 
     def generate_parents(self):
         return [
-            SimpleCachedTask(
+            SimpleCacheableTask(
                 # Only string key is supported by all nestable
                 # data store types.
                 datastore=self.datastore.get_substore(str(i)))
