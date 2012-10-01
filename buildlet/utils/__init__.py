@@ -1,11 +1,25 @@
 import os
-import collections
+import functools
 
 
 def mkdirp(path):
     """Do ``mkdir -p {path}``"""
     if not os.path.isdir(path):
         os.makedirs(path)
+
+
+def memoize_no_arg_method(key):
+    def wrapper(func):
+        @functools.wraps(func)
+        def new_func(self):
+            if hasattr(self, key):
+                val = getattr(self, key)
+            else:
+                val = func(self)
+                setattr(self, key, val)
+            return val
+        return new_func
+    return wrapper
 
 
 class memoizemethod(object):

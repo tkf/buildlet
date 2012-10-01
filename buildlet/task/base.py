@@ -1,4 +1,4 @@
-from ..utils import memoizemethod
+from ..utils import memoize_no_arg_method
 
 
 class BaseTask(object):
@@ -55,7 +55,7 @@ class BaseTask(object):
         """
         return False
 
-    @memoizemethod
+    @memoize_no_arg_method('__taskid')
     def get_taskid(self):
         """
         Return ID of this task, which must be a hashable object.
